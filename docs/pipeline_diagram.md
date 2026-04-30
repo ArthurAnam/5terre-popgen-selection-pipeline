@@ -1,6 +1,5 @@
 # Pipeline diagram
 
-```text
 Raw / harmonized datasets
         ↓
 Variant-level QC backbone
