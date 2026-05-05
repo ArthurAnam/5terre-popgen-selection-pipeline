@@ -1,0 +1,277 @@
+# ============================================================
+# 5Terre population genomics and selection pipeline
+# Global configuration
+# ============================================================
+
+project:
+  name: "5Terre population genomics and selection pipeline"
+  workflow_manager: "Snakemake"
+  genome_build: "GRCh37.p13"
+  genome_alias: "hg19"
+
+
+# ============================================================
+# Datasets
+# ============================================================
+
+datasets:
+  target:
+    name: "5Terre"
+    description: "Target population under study"
+    vcf: null
+
+  reference_1kg_eur:
+    name: "1KG_EUR"
+    description: "European reference populations from the 1000 Genomes Project"
+    vcf: null
+    populations:
+      all_eur: ["CEU", "FIN", "GBR", "IBS", "TSI"]
+      selection_reference_panel: ["CEU", "TSI", "IBS"]
+    assumed_phased: true
+
+  ferrara_cohorts:
+    enabled: false
+    description: "Future genome-based cohorts from Northern Italy, Corsica, Sardinia, and France"
+    vcf: null
+
+
+# ============================================================
+# General variant-level QC
+# ============================================================
+
+qc:
+  description: "Common variant-level filtering applied before downstream branch-specific analyses"
+
+  autosomal_only: true
+  snp_only: true
+  biallelic_only: true
+  remove_monomorphic: true
+  remove_palindromic: true
+
+  missingness:
+    geno_threshold: 0.05
+    mind_threshold: 0.05
+
+  hwe:
+    apply: true
+    alpha: 0.05
+    correction: "bonferroni"
+    by_chromosome: true
+
+  output_dataset: "QC_CLEAN"
+
+
+# ============================================================
+# IBS / relatedness QC
+# ============================================================
+
+relatedness:
+  description: "Sample-level QC to identify duplicates, close relatives, and outliers"
+
+  run_before_population_structure: true
+
+  king:
+    tool: "KING"
+    purpose: "Relatedness estimation without LD pruning and without MAF filtering"
+    ld_pruning: false
+    maf_filter: false
+
+  plink_genome:
+    tool: "PLINK --genome"
+    purpose: "IBS/relatedness estimation on LD-pruned common variants"
+    ld_pruning: true
+    maf_threshold: 0.05
+    pruning: [50, 5, 0.2]
+
+  output_dataset: "MASTER_UNRELATED"
+
+
+# ============================================================
+# Population structure branch
+# ============================================================
+
+population_structure:
+  description: "Analyses aimed at describing ancestry, population structure, relatedness, and autozygosity"
+
+  input_dataset: "MASTER_UNRELATED"
+
+  datasets:
+    current:
+      - "5Terre"
+      - "1KG_EUR"
+    future:
+      - "Ferrara_cohorts_if_available"
+
+  harmonize_datasets: true
+
+  pca:
+    method: "smartpca"
+    purpose: "Ancestry placement and fine-scale European population structure"
+    maf_threshold: 0.05
+    ld_pruning: true
+    pruning: [50, 5, 0.2]
+    n_components: 20
+
+  roh:
+    method: "PLINK --homozyg"
+    purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity"
+    maf_threshold: 0.05
+    ld_pruning: true
+    pruning: [50, 5, 0.5]
+
+    parameters_to_refine:
+      homozyg_snp: null
+      homozyg_kb: null
+      homozyg_density: null
+      homozyg_gap: null
+
+
+# ============================================================
+# Selection / LASSI branch
+# ============================================================
+
+selection:
+  description: "Branch for haplotype-based selection scan using LASSI"
+
+  target_dataset: "5Terre"
+
+  reference_panel:
+    source: "1KG_EUR"
+    populations: ["CEU", "TSI", "IBS"]
+    assumed_phased: true
+
+  keep_target_and_reference_separate: true
+
+  preprocessing:
+    maf_threshold: 0.05
+    ld_pruning: false
+
+  ld_decay:
+    purpose: "Estimate LD decay and derive the LASSI window size"
+    baseline_distance_kb: 1
+    decay_fraction: 0.3333333333
+
+    derived_parameters:
+      lassi_window_snps: null
+      lassi_shift_snps: null
+      shift_fraction_of_window: 0.10
+
+  phasing:
+    method: "SHAPEIT2"
+    purpose: "Phase the 5Terre target dataset using phased 1KG EUR populations as reference panel"
+    genetic_map: null
+
+    parameters_to_refine:
+      effective_population_size: null
+      burn_in: null
+      pruning: null
+      main_iterations: null
+
+  lassi:
+    method: "LASSI"
+    purpose: "Likelihood-based inference of candidate selective sweep regions"
+    window_definition: "derived_from_ld_decay"
+
+    likelihood_window_snps: null
+    likelihood_shift_snps: null
+
+    parameters_to_refine:
+      grid_size: null
+      selection_model: null
+
+
+# ============================================================
+# Post-LASSI processing
+# ============================================================
+
+lassi_postprocessing:
+  description: "Interpretation and annotation of candidate sweep regions"
+
+  classify_hard_soft_sweeps: true
+
+  m_parameter_interpretation:
+    hard_sweep: "m = 1"
+    soft_sweep: "m > 1"
+
+  annotate_windows: true
+
+  region_classes:
+    - "genic"
+    - "intergenic"
+
+  gene_types:
+    - "protein_coding"
+    - "non_coding"
+    - "RNA"
+
+  ranking:
+    enabled: true
+    criteria:
+      - "LASSI score"
+      - "window overlap"
+      - "gene annotation"
+      - "biological relevance"
+
+
+# ============================================================
+# Functional interpretation
+# ============================================================
+
+enrichment:
+  description: "Functional interpretation of genes overlapping candidate sweep regions"
+
+  methods:
+    - "gProfiler"
+    - "STRING"
+
+  purpose:
+    - "Pathway over-representation analysis"
+    - "Protein-protein interaction network exploration"
+
+
+# ============================================================
+# Optional demographic branch: IBD / IBDNe
+# ============================================================
+
+demography:
+  enabled: false
+  description: "Optional branch for recent demographic history inference"
+
+  input_requirement:
+    phased_data: true
+    ibd_segments: true
+
+  ibd_detection:
+    enabled: false
+    purpose: "Detect IBD segments between individuals"
+    tool: null
+    candidate_tools:
+      - "Refined IBD"
+      - "hap-IBD"
+
+  ibdne:
+    enabled: false
+    tool: "IBDNe"
+    purpose: "Estimate recent effective population size over time from IBD segments"
+
+    input:
+      phased_data: "from_phasing_branch"
+      ibd_segments: "from_ibd_detection"
+
+    output:
+      - "Ne_over_time"
+      - "generation_time_series"
+
+    summary:
+      use_harmonic_mean: true
+      mean_generations: 50
+
+
+# ============================================================
+# Output folders
+# ============================================================
+
+output:
+  results_dir: "results"
+  logs_dir: "logs"
+  benchmark_dir: "benchmarks"
