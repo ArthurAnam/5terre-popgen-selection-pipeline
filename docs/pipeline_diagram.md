@@ -24,13 +24,9 @@ N --> O[ORA]
 
 E --> P[Optional: IBD / IBDNe]
 
+```
 
-
-
-
-
-
-## Description
+Description
 
 The pipeline is structured around a central quality-controlled dataset, from which multiple analysis branches originate.
 
