@@ -47,15 +47,15 @@ Each analysis operates on a dataset specifically tailored for its purpose.
 
 ## 📁 Repository structure
 
-
-config/ → pipeline configuration
-docs/ → methods, rationale, diagrams
-workflow/ → Snakemake rules (in development)
-envs/ → environments (conda)
-results/ → outputs (generated)
-logs/ → logs
-benchmarks/ → runtime benchmarks
-
+```
+config/         → pipeline configuration
+docs/           → methods, rationale, diagrams
+workflow/       → Snakemake rules (in development)
+envs/           → environments (conda)
+results/        → outputs (generated)
+logs/           → logs
+benchmarks/     → runtime benchmarks
+```
 
 ---
 
@@ -85,4 +85,4 @@ Execution rules and datasets will be integrated in future iterations.
 
 ## 👤 Author
 
-Tommaso  Barbaresi
+Tommaso Barbaresi
