@@ -23,4 +23,3 @@ M --> N[Annotation]
 N --> O[ORA]
 
 E --> P[Optional: IBD / IBDNe]
-...
