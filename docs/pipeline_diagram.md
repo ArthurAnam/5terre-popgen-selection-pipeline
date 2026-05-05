@@ -1,31 +1,25 @@
 # Pipeline diagram
 
-Raw / harmonized datasets
-        ↓
-Variant-level QC backbone
-        ↓
-MASTER QC DATASET
-        ↓
-├── Relatedness / IBS QC
-│       ↓
-│   MASTER_UNRELATED
-│       ↓
-│   ├── PCA-A: 5Terre + 1KG EUR
-│   ├── PCA-B: 5Terre + 1KG EUR + Human Origins
-│   └── ROH
-│
-├── LD decay
-│       ↓
-│   LASSI window parameter
-│
-└── Selection branch
-        ↓
-    MAF ≥ 0.05
-        ↓
-     Phasing
-        ↓
-      LASSI
-        ↓
-    Annotation
-        ↓
-       ORA
+```mermaid
+flowchart TD
+
+A[Raw / Harmonized datasets] --> B[Variant-level QC]
+B --> C[MASTER QC DATASET]
+
+C --> D[Relatedness / IBS QC]
+D --> E[MASTER_UNRELATED]
+
+E --> F[PCA]
+E --> G[ROH]
+
+C --> H[LD decay]
+H --> I[LASSI window definition]
+
+C --> J[Selection branch]
+J --> K[MAF ≥ 0.05]
+K --> L[Phasing]
+L --> M[LASSI]
+M --> N[Annotation]
+N --> O[ORA]
+
+E --> P[Optional: IBD / IBDNe]
