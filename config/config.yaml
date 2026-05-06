@@ -293,5 +293,3 @@ output:
   results_dir: "results"
   logs_dir: "logs"
   benchmark_dir: "benchmarks"
-  
-  
