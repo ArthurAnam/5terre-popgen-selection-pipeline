@@ -99,6 +99,8 @@ Citation:
 
 Browning, S. R., & Browning, B. L. (2015). Accurate non-parametric estimation of recent effective population size from segments of identity by descent. American Journal of Human Genetics, 97(3), 404–418. https://doi.org/10.1016/j.ajhg.2015.07.012
 
+Fenner, J. N. (2005). Cross-cultural estimation of the human generation interval for use in genetics-based population divergence studies. American Journal of Physical Anthropology, 128(2), 415–423. https://doi.org/10.1002/ajpa.20188
+
 ---
 
 ## hap-IBD
