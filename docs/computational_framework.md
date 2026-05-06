@@ -1,4 +1,4 @@
-# Software references
+# Computational framework
 
 This document summarizes the main software, utilities, and computational tools used throughout the pipeline, together with their primary purposes and reference citations.
 
