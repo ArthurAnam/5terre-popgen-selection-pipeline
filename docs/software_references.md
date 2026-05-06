@@ -171,10 +171,9 @@ Purpose:
 Manipulation, normalization, filtering, and harmonization of VCF/BCF files.
 
 Main functionalities used:
-- Variant normalization
-- Left alignment
-- Multiallelic splitting
 - Variant filtering
+- Dataset harmonization
+- VCF manipulation
 - Dataset merging
 
 Citation:
@@ -305,6 +304,7 @@ Main functionalities used:
 - Pipeline scripting
 - Workflow orchestration
 - Command chaining
+
 Citation:
 
 Free Software Foundation. Bash Reference Manual. https://www.gnu.org/software/bash/
