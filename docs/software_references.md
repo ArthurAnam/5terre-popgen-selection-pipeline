@@ -76,9 +76,8 @@ Purpose:
 Likelihood-based detection of selective sweep regions from haplotype data.
 
 Main functionalities used:
-- Selective sweep inference
 - Sweep likelihood estimation
-- Hard/soft sweep characterization
+- Hard/soft sweep inference (haplotype/s under selective sweep process)
 
 Citation:
 
