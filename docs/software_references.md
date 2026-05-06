@@ -85,6 +85,20 @@ Harris, A. M., & DeGiorgio, M. (2020). Identifying and classifying shared select
 
 ---
 
+## hap-IBD
+
+Purpose:
+Detection of identity-by-descent haplotype segments.
+
+Main functionalities used:
+- IBD segment detection
+
+Citation:
+
+Zhou, Y., Browning, S. R., & Browning, B. L. (2020). A fast and simple method for detecting identity-by-descent segments in large-scale data. American Journal of Human Genetics, 106(4), 426–437. https://doi.org/10.1016/j.ajhg.2020.02.010
+
+---
+
 ## IBDNe
 
 Purpose:
@@ -99,20 +113,6 @@ Citation:
 Browning, S. R., & Browning, B. L. (2015). Accurate non-parametric estimation of recent effective population size from segments of identity by descent. American Journal of Human Genetics, 97(3), 404–418. https://doi.org/10.1016/j.ajhg.2015.07.012
 
 Fenner, J. N. (2005). Cross-cultural estimation of the human generation interval for use in genetics-based population divergence studies. American Journal of Physical Anthropology, 128(2), 415–423. https://doi.org/10.1002/ajpa.20188
-
----
-
-## hap-IBD
-
-Purpose:
-Detection of identity-by-descent haplotype segments.
-
-Main functionalities used:
-- IBD segment detection
-
-Citation:
-
-Zhou, Y., Browning, S. R., & Browning, B. L. (2020). A fast and simple method for detecting identity-by-descent segments in large-scale data. American Journal of Human Genetics, 106(4), 426–437. https://doi.org/10.1016/j.ajhg.2020.02.010
 
 ---
 
