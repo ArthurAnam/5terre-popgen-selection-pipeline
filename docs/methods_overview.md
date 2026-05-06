@@ -93,3 +93,12 @@ An optional analysis of recent demographic history can be performed using IBDNe.
 This requires phased genotype data and detection of IBD segments between individuals. Longer IBD segments reflect recent shared ancestry, whereas shorter segments capture more ancient demographic events.
 
 IBDNe estimates effective population size (Ne) over time based on the distribution of IBD segment lengths.
+
+
+
+
+
+## Reproducibility
+
+All analyses are implemented within a Snakemake workflow to ensure full reproducibility.  
+Software environments are managed using Conda, and all parameters are centrally defined in a configuration file.
