@@ -108,7 +108,7 @@ Main functionalities used:
 - Recent demographic inference
 - Effective population size estimation
 
-Citation:
+Citations:
 
 Browning, S. R., & Browning, B. L. (2015). Accurate non-parametric estimation of recent effective population size from segments of identity by descent. American Journal of Human Genetics, 97(3), 404–418. https://doi.org/10.1016/j.ajhg.2015.07.012
 
