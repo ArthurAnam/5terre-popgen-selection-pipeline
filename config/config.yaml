@@ -4,10 +4,23 @@
 # ============================================================
 
 project:
-  name: "5Terre population genomics and selection pipeline"
+  name: "Cinque Terre population genomics and selection pipeline"
   workflow_manager: "Snakemake"
   genome_build: "GRCh37.p13"
   genome_alias: "hg19"
+
+
+# ============================================================
+# Variant representation and coordinate conventions
+# ============================================================
+
+variant_representation:
+  coordinate_system: "VCF 1-based"
+  chromosome_naming: "numeric"
+  allowed_chromosomes: "1-22"
+  variant_id_format: "CHR:POS:REF:ALT"
+  reference_build: "GRCh37.p13"
+  reference_alias: "hg19"
 
 
 # ============================================================
@@ -16,7 +29,7 @@ project:
 
 datasets:
   target:
-    name: "5Terre"
+    name: "Cinque Terre"
     description: "Target population under study"
     vcf: null
 
@@ -45,6 +58,7 @@ qc:
   autosomal_only: true
   snp_only: true
   biallelic_only: true
+  multiallelic_strategy: "exclude"
   remove_monomorphic: true
   remove_palindromic: true
 
@@ -97,7 +111,7 @@ population_structure:
 
   datasets:
     current:
-      - "5Terre"
+      - "Cinque Terre"
       - "1KG_EUR"
     future:
       - "Ferrara_cohorts_if_available"
@@ -133,7 +147,7 @@ population_structure:
 selection:
   description: "Branch for haplotype-based selection scan using LASSI"
 
-  target_dataset: "5Terre"
+  target_dataset: "Cinque Terre"
 
   reference_panel:
     source: "1KG_EUR"
@@ -158,7 +172,7 @@ selection:
 
   phasing:
     method: "SHAPEIT2"
-    purpose: "Phase the 5Terre target dataset using phased 1KG EUR populations as reference panel"
+    purpose: "Phase the Cinque Terre target dataset using phased 1KG EUR populations as reference panel"
     genetic_map: null
 
     parameters_to_refine:
@@ -237,6 +251,10 @@ demography:
   enabled: false
   description: "Optional branch for recent demographic history inference"
 
+  generation_time:
+    years: 29
+    reference: "Fenner 2005"
+
   input_requirement:
     phased_data: true
     ibd_segments: true
@@ -275,3 +293,5 @@ output:
   results_dir: "results"
   logs_dir: "logs"
   benchmark_dir: "benchmarks"
+  
+  
