@@ -1,4 +1,4 @@
-# 5Terre Population Genomics & Selection Pipeline
+# Cinque Terre Population Genomics & Selection Pipeline
 
 Reproducible workflow for population structure and natural selection analyses in the Cinque Terre population.
 
