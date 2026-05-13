@@ -19,6 +19,7 @@ Current open methodological decisions include:
 - empirical percentile thresholds
 - definition of candidate region boundaries
 - handling of overlapping windows
+- maximum distance allowed for candidate region merging
 - minimum genomic span required for candidate regions
 - ranking strategy for candidate sweeps
 
@@ -44,13 +45,35 @@ For this reason, candidate regions will be assessed using:
 
 - LASSI score magnitude
 - genomic span
+- maximum distance allowed for candidate region merging
 - overlap consistency across adjacent windows
 - local signal continuity
-- distance from annotated genes
-- functional annotation context
+- genomic accessibility / mappability
+- functional genomic context
 
 The distribution of candidate region widths will be inspected to distinguish broad, spatially coherent signals from isolated narrow peaks.
 
 The number of overlapping windows will not be interpreted as an independent measure of robustness, since it is strongly influenced by SNP density and window construction strategy.
 
 Very narrow candidate regions will not be automatically discarded, since selective signals may differ substantially in genomic extent depending on recombination patterns, sweep age, local genomic architecture, and demographic history.
+
+---
+
+## Genomic accessibility and problematic regions
+
+Candidate regions will be evaluated in relation to genomic accessibility and mappability.
+
+Regions overlapping poorly mappable or otherwise problematic genomic intervals may produce unreliable signals due to mapping uncertainty, phasing errors, local alignment ambiguity, or variant calling artifacts.
+
+Following the strategy adopted in the original LASSI framework, candidate windows overlapping regions of low alignability and mappability may be filtered using CRG100 scores.
+
+Previous exploratory analyses excluded windows overlapping genomic regions with mean CRG100 score < 0.9.
+
+This filtering step is intended to reduce false positive signals arising from technically unreliable genomic regions, rather than to impose biological assumptions about selection.
+
+Problematic regions may therefore be:
+
+- excluded before final candidate prioritization
+- retained but flagged as lower-confidence candidates
+
+depending on the final validation strategy.
