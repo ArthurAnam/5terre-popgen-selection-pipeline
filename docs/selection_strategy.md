@@ -9,7 +9,7 @@ Candidate regions are interpreted by considering both high-scoring windows and l
 The identification strategy combines:
 
 - likelihood score magnitude
-- spatial consistency across neighboring windows
+- local spatial coherence across neighboring windows
 - overlap between adjacent windows
 - biological interpretability
 
