@@ -1,10 +1,27 @@
 # Selection strategy
 
+## Conceptual framework
+
+The primary objective of the selection branch is to identify genomic regions showing patterns of variation incompatible with neutral expectations and potentially consistent with selective processes.
+
+Candidate regions are therefore interpreted as signals of deviation from neutrality rather than definitive evidence of adaptive loci or causal functional variants.
+
+---
+
 ## Candidate region definition
 
 Selective sweep candidates are identified from genome-wide LASSI likelihood profiles generated on phased haplotype data.
 
 Candidate regions are interpreted by considering both high-scoring windows and local consistency of the surrounding signal, since the true selective target may not necessarily coincide with the single highest-scoring genomic window.
+
+Candidate regions may consist of either:
+
+- single isolated high-scoring windows
+- clusters of consecutive high-scoring windows
+
+provided that neighboring windows remain within a biologically plausible genomic distance.
+
+Candidate region merging therefore considers both local signal continuity and maximum genomic distance (kb) between neighboring windows.
 
 The identification strategy combines:
 
@@ -19,7 +36,7 @@ Current open methodological decisions include:
 - empirical percentile thresholds
 - definition of candidate region boundaries
 - handling of overlapping windows
-- maximum distance allowed for candidate region merging
+- maximum distance (kb) allowed for candidate region merging
 - minimum genomic span required for candidate regions
 - ranking strategy for candidate sweeps
 
@@ -45,11 +62,13 @@ For this reason, candidate regions will be assessed using:
 
 - LASSI score magnitude
 - genomic span
-- maximum distance allowed for candidate region merging
+- maximum distance (kb) allowed for candidate region merging
 - overlap consistency across adjacent windows
 - local signal continuity
 - genomic accessibility / mappability
 - functional genomic context
+
+The persistence of elevated likelihood scores across consecutive overlapping windows may provide additional support for the local stability of the signal, despite the partial non-independence introduced by the sliding-window design.
 
 The distribution of candidate region widths will be inspected to distinguish broad, spatially coherent signals from isolated narrow peaks.
 
@@ -77,3 +96,15 @@ Problematic regions may therefore be:
 - retained but flagged as lower-confidence candidates
 
 depending on the final validation strategy.
+
+---
+
+## Functional interpretation
+
+Functional enrichment analyses are intended as exploratory biological contextualization rather than definitive evidence of adaptive mechanisms.
+
+ORA and/or network-based approaches may therefore be used to identify biological processes potentially enriched among genes overlapping candidate regions, while acknowledging the limitations introduced by linkage disequilibrium, gene density variation, annotation incompleteness, and uncertainty in causal target identification.
+
+Pathway-level enrichment patterns may be compatible with distributed adaptive processes acting across multiple loci, although no formal test of polygenic adaptation is performed.
+
+Functional interpretation will consequently be considered complementary to the primary population-genetic evidence rather than an independent validation of selection.
