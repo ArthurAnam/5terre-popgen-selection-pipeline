@@ -1,6 +1,6 @@
 # Cinque Terre Population Genomics & Selection Pipeline
 
-Reproducible workflow for population structure analyses and haplotype-based selection scans in the Cinque Terre population.
+Reproducible workflow for population structure analyses and haplotype-based selection scans focused on the Cinque Terre population.
 
 ---
 
@@ -93,6 +93,8 @@ Main tools and frameworks include:
 * hap-IBD / Refined IBD, if optional demographic analyses are performed
 * IBDNe, if optional demographic analyses are performed
 
+The main Conda environment is defined in `envs/pipeline.yaml`.
+
 ---
 
 ## 📁 Repository structure
@@ -101,7 +103,7 @@ Main tools and frameworks include:
 config/         → central pipeline configuration
 docs/           → methods, workflow design, selection strategy, and software framework
 workflow/       → Snakemake rules
-envs/           → Conda environments
+envs/           → Conda environment definition
 data/           → input and processed data placeholders
 results/        → generated outputs
 logs/           → execution logs
@@ -124,6 +126,10 @@ Current documentation:
 Central configuration:
 
 * `config/config.yaml`
+
+Main Conda environment:
+
+* `envs/pipeline.yaml`
 
 ---
 
