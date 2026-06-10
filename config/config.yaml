@@ -1,5 +1,5 @@
 # ============================================================
-# 5Terre population genomics and selection pipeline
+# Cinque Terre population genomics and selection pipeline
 # Global configuration
 # ============================================================
 
@@ -30,74 +30,106 @@ variant_representation:
 datasets:
   target:
     name: "Cinque Terre"
+    role: "target_population"
     description: "Target population under study"
+    data_type: "WGS"
+    sample_count: 46
+    mean_depth: "approximately 30x"
     vcf: null
+    upstream_processing:
+      variants_called: true
+      vqsr_filtered: true
+      notes: "Variant calling and VQSR were performed upstream and are not repeated in this workflow."
+
+  italian_wgs_reference_cohorts:
+    enabled: true
+    status: "under_evaluation"
+    role: "primary_comparative_framework"
+    description: "Italian WGS reference cohorts to be used as the main comparative framework, ideally representing North and South Italy."
+    candidate_source: "Sazzini et al. 2020"
+    candidate_groups:
+      - "North Italy"
+      - "South Italy"
+    vcf: null
+    upstream_processing:
+      original_published_qc: true
+      notes: "External Italian WGS reference cohorts are assumed to rely on their original published QC procedures."
 
   reference_1kg_eur:
-    name: "1KG_EUR"
-    description: "European reference populations from the 1000 Genomes Project"
+    enabled: true
+    name: "1000 Genomes Project EUR"
+    role: "European_reference_context_and_phasing_support"
+    description: "European reference populations from the 1000 Genomes Project."
     vcf: null
     populations:
       all_eur: ["CEU", "FIN", "GBR", "IBS", "TSI"]
-      selection_reference_panel: ["CEU", "TSI", "IBS"]
+      selection_comparison_candidates: ["TSI", "FIN", "IBS"]
     assumed_phased: true
-
-  ferrara_cohorts:
-    enabled: false
-    description: "Future genome-based cohorts from Northern Italy, Corsica, Sardinia, and France"
-    vcf: null
+    upstream_processing:
+      original_published_qc: true
+      notes: "The 1000 Genomes EUR panel is used as European reference context and phasing support; only selected populations may be retained for selection-related comparison."
 
 
 # ============================================================
-# General variant-level QC
+# General variant-level and sample-level filtering
 # ============================================================
 
 qc:
-  description: "Common variant-level filtering applied before downstream branch-specific analyses"
+  description: "Common population-genomics filtering applied before downstream branch-specific analyses."
 
-  autosomal_only: true
-  snp_only: true
-  biallelic_only: true
-  multiallelic_strategy: "exclude"
-  remove_monomorphic: true
-  remove_palindromic: true
+  upstream_quality_assumptions:
+    target_vqsr_already_applied: true
+    external_datasets_use_original_published_qc: true
+    repeat_variant_calling_or_vqsr: false
+    repeat_depth_or_genotype_quality_filtering_by_default: false
+
+  variant_filters:
+    remove_non_autosomal: true
+    remove_non_snp: true
+    remove_multiallelic: true
+    remove_monomorphic: true
+    remove_strand_ambiguous: true
+    strand_ambiguous_classes: ["A/T", "C/G"]
 
   missingness:
-    geno_threshold: 0.05
-    mind_threshold: 0.05
+    remove_variants_with_missingness_gt: 0.05
+    remove_individuals_with_missingness_gt: 0.05
 
   hwe:
     apply: true
     alpha: 0.05
     correction: "bonferroni"
     by_chromosome: true
+    threshold_definition: "0.05 / number_of_tested_variants_on_each_chromosome"
+    scope: "computed separately for each chromosome"
+    notes: "The HWE threshold is not a fixed genome-wide value; it is recalculated chromosome by chromosome according to the number of tested variants."
 
-  output_dataset: "QC_CLEAN"
+  output_dataset: "QC_FILTERED"
 
 
 # ============================================================
-# IBS / relatedness QC
+# IBS / relatedness exploration
 # ============================================================
 
 relatedness:
-  description: "Sample-level QC to identify duplicates, close relatives, and outliers"
+  description: "Pairwise IBS and relatedness analyses used mainly for population structure and relatedness exploration, with a secondary QC role."
 
-  run_before_population_structure: true
+  primary_role: "population_structure_and_relatedness_exploration"
+  secondary_qc_role: "check_for_unexpected_duplicates_or_close_relatives"
+  assumption: "Datasets are expected to be composed of unrelated individuals, but this assumption should be checked."
 
   king:
     tool: "KING"
-    purpose: "Relatedness estimation without LD pruning and without MAF filtering"
+    purpose: "Relatedness estimation without LD pruning and without MAF filtering."
     ld_pruning: false
     maf_filter: false
 
   plink_genome:
     tool: "PLINK --genome"
-    purpose: "IBS/relatedness estimation on LD-pruned common variants"
+    purpose: "Pairwise IBS estimation on LD-pruned common variants."
     ld_pruning: true
     maf_threshold: 0.05
     pruning: [50, 5, 0.2]
-
-  output_dataset: "MASTER_UNRELATED"
 
 
 # ============================================================
@@ -105,22 +137,36 @@ relatedness:
 # ============================================================
 
 population_structure:
-  description: "Analyses aimed at describing ancestry, population structure, relatedness, and autozygosity"
+  description: "Analyses aimed at describing genetic structure, relatedness, and autozygosity in the Cinque Terre population within an Italian and European context."
 
-  input_dataset: "MASTER_UNRELATED"
+  target_dataset: "Cinque Terre"
 
-  datasets:
-    current:
-      - "Cinque Terre"
-      - "1KG_EUR"
-    future:
-      - "Ferrara_cohorts_if_available"
+  main_comparative_framework:
+    - "North Italy WGS reference cohort"
+    - "South Italy WGS reference cohort"
+
+  secondary_reference_context:
+    - "1000 Genomes Project EUR"
 
   harmonize_datasets: true
 
+  analyses:
+    pca: true
+    roh: true
+    froh: true
+    roh_sum: true
+    roh_length_distribution: true
+    pairwise_ibs: true
+
+  excluded_analyses:
+    admixture: true
+    fst: true
+    ancestry_proportions: true
+    population_grouping_inference: true
+
   pca:
     method: "smartpca"
-    purpose: "Ancestry placement and fine-scale European population structure"
+    purpose: "Ancestry placement and fine-scale population structure."
     maf_threshold: 0.05
     ld_pruning: true
     pruning: [50, 5, 0.2]
@@ -128,7 +174,7 @@ population_structure:
 
   roh:
     method: "PLINK --homozyg"
-    purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity"
+    purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
     maf_threshold: 0.05
     ld_pruning: true
     pruning: [50, 5, 0.5]
@@ -145,23 +191,23 @@ population_structure:
 # ============================================================
 
 selection:
-  description: "Branch for haplotype-based selection scan using LASSI"
+  description: "Haplotype-based selection scan focused on the Cinque Terre population."
 
   target_dataset: "Cinque Terre"
+  scan_target_only: true
 
-  reference_panel:
-    source: "1KG_EUR"
-    populations: ["CEU", "TSI", "IBS"]
-    assumed_phased: true
-
-  keep_target_and_reference_separate: true
+  external_populations:
+    role: "comparison_or_reference_interpretation_only"
+    not_scanned_as_primary_target: true
+    italian_wgs_reference_cohorts: "under_evaluation"
+    onekg_eur_candidate_populations: ["TSI", "FIN", "IBS"]
 
   preprocessing:
     maf_threshold: 0.05
     ld_pruning: false
 
   ld_decay:
-    purpose: "Estimate LD decay and derive the LASSI window size"
+    purpose: "Estimate LD decay and derive LASSI window-size parameters."
     baseline_distance_kb: 1
     decay_fraction: 0.3333333333
 
@@ -172,7 +218,11 @@ selection:
 
   phasing:
     method: "SHAPEIT2"
-    purpose: "Phase the Cinque Terre target dataset using phased 1KG EUR populations as reference panel"
+    purpose: "Phase the Cinque Terre target dataset using suitable phased reference haplotypes."
+    reference_support:
+      primary: "1000 Genomes Project EUR"
+      additional_italian_wgs_cohorts: "under_evaluation"
+    independent_from_ld_decay: true
     genetic_map: null
 
     parameters_to_refine:
@@ -183,8 +233,9 @@ selection:
 
   lassi:
     method: "LASSI"
-    purpose: "Likelihood-based inference of candidate selective sweep regions"
+    purpose: "Likelihood-based identification of candidate genomic regions deviating from neutral expectations."
     window_definition: "derived_from_ld_decay"
+    scan_mode: "sliding_likelihood_window"
 
     likelihood_window_snps: null
     likelihood_shift_snps: null
@@ -195,52 +246,61 @@ selection:
 
 
 # ============================================================
-# Post-LASSI processing
+# Post-LASSI processing and candidate region definition
 # ============================================================
 
 lassi_postprocessing:
-  description: "Interpretation and annotation of candidate sweep regions"
+  description: "Post-processing, ranking, and annotation of candidate genomic regions."
 
-  classify_hard_soft_sweeps: true
+  primary_output: "candidate_regions_deviating_from_neutrality"
 
-  m_parameter_interpretation:
-    hard_sweep: "m = 1"
-    soft_sweep: "m > 1"
-
-  annotate_windows: true
-
-  region_classes:
-    - "genic"
-    - "intergenic"
-
-  gene_types:
-    - "protein_coding"
-    - "non_coding"
-    - "RNA"
+  candidate_region_definition:
+    allow_single_high_scoring_windows: true
+    allow_merged_nearby_windows: true
+    maximum_distance_kb_for_merging: null
+    compute_genomic_span_post_hoc: true
+    notes: "LASSI does not directly provide candidate-region span in kb; genomic span must be computed from window coordinates."
 
   ranking:
     enabled: true
     criteria:
-      - "LASSI score"
-      - "window overlap"
-      - "gene annotation"
-      - "biological relevance"
+      - "maximum LASSI score"
+      - "mean LASSI score"
+      - "local signal coherence"
+      - "genomic span"
+      - "functional genomic context"
+
+  m_parameter_interpretation:
+    enabled: true
+    role: "secondary_interpretation_only"
+    hard_sweep: "m = 1"
+    soft_sweep: "m > 1"
+
+  mappability_filtering:
+    enabled: false
+    status: "secondary_or_sensitivity_filter_if_used"
+    candidate_metric: "mean CRG100 score"
+    candidate_threshold: 0.9
 
 
 # ============================================================
 # Functional interpretation
 # ============================================================
 
-enrichment:
-  description: "Functional interpretation of genes overlapping candidate sweep regions"
+functional_interpretation:
+  description: "Exploratory biological contextualization of candidate genomic regions."
 
-  methods:
-    - "gProfiler"
-    - "STRING"
+  functional_genomic_context:
+    - "coding regions"
+    - "regulatory regions"
+    - "intergenic regions"
 
-  purpose:
-    - "Pathway over-representation analysis"
-    - "Protein-protein interaction network exploration"
+  exploratory_methods_under_evaluation:
+    - "ORA"
+    - "GSEA"
+
+  interpretation_role: "hypothesis_generation_only"
+  not_independent_validation_of_selection: true
 
 
 # ============================================================
@@ -249,7 +309,7 @@ enrichment:
 
 demography:
   enabled: false
-  description: "Optional branch for recent demographic history inference"
+  description: "Optional branch for recent demographic history inference."
 
   generation_time:
     years: 29
@@ -261,19 +321,19 @@ demography:
 
   ibd_detection:
     enabled: false
-    purpose: "Detect IBD segments between individuals"
+    purpose: "Detect IBD segments between individuals."
     tool: null
     candidate_tools:
-      - "Refined IBD"
       - "hap-IBD"
+      - "Refined IBD"
 
   ibdne:
     enabled: false
     tool: "IBDNe"
-    purpose: "Estimate recent effective population size over time from IBD segments"
+    purpose: "Estimate recent effective population size over time from IBD segments."
 
     input:
-      phased_data: "from_phasing_branch"
+      phased_data: "from_phasing_branch_if_available"
       ibd_segments: "from_ibd_detection"
 
     output:
