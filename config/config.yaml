@@ -191,16 +191,20 @@ population_structure:
 # ============================================================
 
 selection:
-  description: "Haplotype-based selection scan focused on the Cinque Terre population."
+  description: "Haplotype-based selection scan focused on the Cinque Terre population, with selected comparison populations under evaluation."
 
-  target_dataset: "Cinque Terre"
-  scan_target_only: true
+  primary_focus_dataset: "Cinque Terre"
+
+  scan_design:
+    primary_focus: "Cinque Terre"
+    comparative_lassi_scans_allowed: true
+    notes: "Cinque Terre remains the primary biological focus, but selected external populations may also be scanned or used for comparative interpretation depending on the final analytical design."
 
   external_populations:
-    role: "comparison_or_reference_interpretation_only"
-    not_scanned_as_primary_target: true
+    role: "comparative_scan_or_reference_interpretation"
     italian_wgs_reference_cohorts: "under_evaluation"
     onekg_eur_candidate_populations: ["TSI", "FIN", "IBS"]
+    final_comparison_set: "to_be_defined"
 
   preprocessing:
     maf_threshold: 0.05
@@ -218,7 +222,7 @@ selection:
 
   phasing:
     method: "SHAPEIT2"
-    purpose: "Phase the Cinque Terre target dataset using suitable phased reference haplotypes."
+    purpose: "Phase target and selected comparison datasets using suitable phased reference haplotypes."
     reference_support:
       primary: "1000 Genomes Project EUR"
       additional_italian_wgs_cohorts: "under_evaluation"
