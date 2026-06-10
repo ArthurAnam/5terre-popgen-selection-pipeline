@@ -151,3 +151,4 @@ Current working assumptions:
 * HWE filtering: chromosome-wise Bonferroni correction
 * Selection results are interpreted as candidate genomic regions deviating from neutral expectations, not as definitive proof of adaptive loci or causal variants
 * Functional interpretation is treated as exploratory biological contextualization
+
