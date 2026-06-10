@@ -1,0 +1,28 @@
+name: cinque_terre_pipeline
+
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.11
+  - snakemake
+  - mamba
+
+  # Variant handling and genomic file utilities
+  - bcftools
+  - samtools
+  - htslib
+
+  # Population genomics
+  - plink
+  - plink2
+  - king
+  - eigensoft
+
+  # General utilities
+  - coreutils
+  - grep
+  - sed
+  - gawk
