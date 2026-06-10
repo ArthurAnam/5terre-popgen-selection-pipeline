@@ -1,104 +1,517 @@
-# Methods
+# Methods overview
 
-## Study design
+## Overview
 
-This study investigates population structure and signatures of natural selection in the 5Terre population using genome-wide SNP data. All analyses are performed on SNP-only, biallelic, autosomal variants mapped to the GRCh37.p13 (hg19) reference genome.
+This document summarizes the methodological design of the Cinque Terre population genomics and selection pipeline.
 
-All analyses were implemented in a reproducible workflow using Snakemake, with parameterization controlled via configuration files to ensure transparency and reproducibility.
+The workflow is designed to support two main analytical components:
 
+* population structure and genomic diversity analyses
+* haplotype-based selection scan using LASSI
 
-## Variant-level quality control
+An optional demographic component based on IBD segment detection and IBDNe may also be performed, depending on data suitability and final analytical priorities.
 
-A common variant-level quality control (QC) procedure was applied to all datasets prior to downstream analyses. Only autosomal, SNP-only, biallelic variants were retained, while monomorphic, multiallelic, and palindromic SNPs (A/T and C/G) were removed.
+The selection branch is framed conservatively. Its aim is not to claim definitive adaptive loci or causal variants, but to identify candidate genomic regions showing deviations from neutral expectations and therefore suitable for downstream biological interpretation.
 
-Missingness filters were applied at both variant and sample levels (geno ≤ 0.05; mind ≤ 0.05).
+---
 
-Hardy–Weinberg equilibrium (HWE) filtering was performed separately for each chromosome using a Bonferroni-corrected significance threshold (α = 0.05).
+## Target population
 
+The target population of the study is the Cinque Terre population.
 
-## Relatedness and sample filtering
+The expected target dataset consists of:
 
-Sample-level quality control was performed to identify duplicates and related individuals.
+* whole-genome sequencing data
+* 46 WGS samples
+* mean depth approximately 30x
+* variants already called upstream
+* variants already VQSR-filtered upstream
 
-Two complementary approaches were used:
+Variant calling and VQSR are considered part of the upstream generation of the Cinque Terre dataset and are not repeated within this workflow.
 
-- KING, applied without LD pruning and without MAF filtering  
-- PLINK IBS estimation (--genome), applied on LD-pruned variants (window = 50 SNPs, step = 5 SNPs, r² = 0.2) with MAF ≥ 0.05  
+For this reason, this pipeline does not repeat variant calling, VQSR, depth-based filtering, or genotype-quality-based filtering by default, unless future inspection of the input data suggests that additional filtering is required.
 
-Based on these analyses, a filtered dataset of unrelated individuals (MASTER_UNRELATED) was defined and used for downstream analyses.
+---
 
+## Reference and comparison datasets
+
+The main comparative framework is expected to involve Italian WGS reference cohorts, ideally representing:
+
+* North Italy
+* South Italy
+
+These Italian WGS cohorts are currently under evaluation and may be based on previously published Italian genome data, including Sazzini et al. (2020), if available and suitable for integration.
+
+The 1000 Genomes Project EUR panel is also used as a reference resource, mainly for:
+
+* European genetic context
+* phasing support
+* comparison with selected European populations
+
+The full 1000 Genomes EUR panel includes:
+
+* CEU
+* FIN
+* GBR
+* IBS
+* TSI
+
+For selection-related comparison or reference interpretation, the final subset of external populations remains under evaluation.
+
+Candidate 1000 Genomes EUR populations currently include:
+
+* TSI
+* FIN
+* IBS
+
+The selection scan itself is performed on the Cinque Terre dataset.
+
+External populations are not treated as primary scan targets unless explicitly stated in a future analysis version.
+
+---
+
+## Genome build and coordinate system
+
+All analyses are based on:
+
+* GRCh37.p13 / hg19 coordinates
+* VCF 1-based coordinates
+* numeric autosomal chromosome naming
+* chromosomes 1-22 only
+
+The preferred variant identifier format is:
+
+```text
+CHR:POS:REF:ALT
+```
+
+This representation is used to reduce ambiguity during dataset harmonization and cross-dataset comparisons.
+
+---
+
+## Dataset harmonization
+
+Before downstream analyses, datasets must be harmonized to ensure that variants are represented consistently across target and reference cohorts.
+
+The harmonization strategy includes:
+
+* using the same genome build
+* restricting analyses to autosomal chromosomes
+* retaining SNPs only
+* excluding multiallelic variants
+* excluding monomorphic SNPs
+* excluding strand-ambiguous SNPs
+* using a consistent variant ID format
+* checking allele representation across datasets
+
+This harmonization step is especially important when combining the Cinque Terre dataset with external Italian WGS cohorts and 1000 Genomes EUR reference populations.
+
+---
+
+## Variant and sample filtering strategy
+
+The pipeline applies population-genomics-oriented filtering to the input variant datasets.
+
+The filtering strategy is expressed in terms of removed data:
+
+* remove non-autosomal variants
+* remove non-SNP variants
+* remove multiallelic variants
+* remove monomorphic SNPs
+* remove strand-ambiguous SNPs (A/T and C/G)
+* remove variants with more than 5% missing genotypes
+* remove individuals with more than 5% missing genotypes
+* remove variants showing significant deviation from Hardy-Weinberg equilibrium after correction for multiple testing
+
+The current missingness thresholds are:
+
+```text
+Variant missingness: 5%
+Individual missingness: 5%
+```
+
+These thresholds are intended to remove variants and samples with excessive missingness while avoiding overly aggressive filtering in a small WGS dataset.
+
+---
+
+## Hardy-Weinberg equilibrium filtering
+
+Hardy-Weinberg equilibrium filtering is applied chromosome-wise using Bonferroni correction.
+
+For each chromosome, the HWE significance threshold is defined as:
+
+```text
+0.05 / number of tested variants on that chromosome
+```
+
+This means that the HWE threshold is not a fixed genome-wide value.
+
+Instead, the threshold is computed separately for each chromosome according to the number of variants tested on that chromosome.
+
+This strategy avoids using a single arbitrary HWE threshold across the whole genome and makes the correction explicitly dependent on the number of tests performed within each chromosome.
+
+---
+
+## Relatedness and IBS analyses
+
+Pairwise relatedness and IBS analyses are used mainly for population structure and relatedness exploration.
+
+They also provide a secondary QC role by checking for unexpected duplicates or close relatives.
+
+The current strategy includes:
+
+* KING
+* PLINK IBS / `--genome`
+
+The datasets are expected to be composed of unrelated individuals, but this assumption will be checked during the analysis.
+
+KING is used for relatedness estimation without LD pruning and without MAF filtering.
+
+PLINK `--genome` may be used as an additional pairwise IBS check on LD-pruned common variants.
+
+In this workflow, relatedness analyses are not treated as the main QC backbone. Their primary role is exploratory, with a secondary role in confirming that no unexpected close relationships or duplicate samples are present.
+
+---
 
 ## Population structure analyses
 
-Population structure was investigated using the MASTER_UNRELATED dataset.
+Population structure analyses are used to place the Cinque Terre population within a broader Italian and European genetic context.
 
-### Principal Component Analysis (PCA)
+The main comparison is expected to involve:
 
-PCA was performed using smartpca (EIGENSOFT) after LD pruning (50 SNP window, 5 SNP step, r² = 0.2) and MAF filtering (MAF ≥ 0.05).
+* Cinque Terre
+* North Italy WGS reference cohort
+* South Italy WGS reference cohort
 
-Principal components were used to identify population clustering patterns and assess genetic affinity between the 5Terre population and European reference populations from the 1000 Genomes Project.
+The 1000 Genomes EUR panel may provide additional European reference context.
 
+Main analyses include:
 
-### Runs of Homozygosity (ROH)
+* PCA
+* runs of homozygosity
+* fROH
+* total ROH burden
+* ROH length distribution
+* IBS / pairwise relatedness exploration
 
-ROH were computed using PLINK on SNP-only data with MAF ≥ 0.05 and LD pruning optimized for ROH detection (50 SNP window, 5 SNP step, r² = 0.5).
+These analyses are intended to describe genetic structure, autozygosity, and relationships between Cinque Terre and comparison populations.
 
-ROH segments were used to infer individual autozygosity burden and were classified based on their length distribution to distinguish between recent and ancient inbreeding signals.
+The following analyses are not part of the current workflow unless explicitly added in a future version:
 
+* ADMIXTURE
+* FST
+* ancestry proportion inference
+* formal population grouping inference
 
-## Linkage disequilibrium decay
+---
 
-LD decay was estimated using combined datasets (5Terre and 1000 Genomes EUR) to determine the genomic scale of correlation between variants.
+## PCA
 
-The decay of LD was evaluated as a function of physical distance, and the characteristic distance at which LD reached one-third of its initial value was estimated. This value was used to define the window size for downstream selection analyses.
+Principal component analysis is used to describe genetic structure and to place Cinque Terre individuals relative to Italian and European reference populations.
 
+The current PCA strategy includes:
 
-## Phasing
+* SNP-level QC
+* MAF filtering
+* LD pruning
+* PCA using smartpca / EIGENSOFT
 
-Haplotype phasing was performed on the 5Terre dataset using SHAPEIT2. Reference haplotypes from selected European populations (CEU, TSI, IBS) from the 1000 Genomes Project were used as a reference panel.
+Current working parameters:
 
-Only SNPs with MAF ≥ 0.05 were retained for phasing.
+```text
+MAF threshold: 0.05
+LD pruning: enabled
+Pruning window: 50 SNPs
+Pruning step: 5 SNPs
+r2 threshold: 0.2
+Number of components: 20
+```
 
+The PCA is intended as a population structure analysis, not as a formal test of ancestry proportions.
 
-## Detection of selection signals (LASSI)
+---
 
-Selection scans were performed using LASSI, a likelihood-based method for detecting selective sweeps from haplotype data.
+## Runs of homozygosity
 
-Input data consisted of phased haplotypes from the 5Terre population. The likelihood window size was defined based on LD decay estimates, and a sliding window approach was applied across the genome.
+Runs of homozygosity analyses are used to describe autozygosity and genomic patterns of homozygosity in the Cinque Terre population.
 
-The method identifies candidate regions under selection and assigns a likelihood-based score to each genomic window. It distinguishes between hard and soft selective sweeps based on the inferred m parameter.
+Main outputs include:
 
+* ROH segments
+* fROH
+* total ROH burden
+* ROH length distribution
 
-## Post-processing and annotation
+ROH analyses are useful for comparing the distribution and burden of homozygous segments between Cinque Terre and external reference populations.
 
-Candidate regions identified by LASSI were further processed and annotated through aggregation of overlapping windows, ranking of signals based on likelihood scores, and classification of regions as genic or intergenic.
+The current working strategy includes:
 
-Selective sweeps were classified as:
+* MAF filtering
+* LD pruning
+* PLINK `--homozyg`
 
-- Hard sweeps: m = 1  
-- Soft sweeps: m > 1  
+Current working parameters:
 
-Genes overlapping candidate regions were annotated for downstream interpretation.
+```text
+MAF threshold: 0.05
+LD pruning: enabled
+Pruning window: 50 SNPs
+Pruning step: 5 SNPs
+r2 threshold: 0.5
+```
 
+Final PLINK `--homozyg` parameters remain to be refined based on SNP density, WGS data characteristics, and comparison dataset harmonization.
 
-## Functional enrichment analysis
-
-Genes overlapping candidate regions were analyzed using g:Profiler and STRING to perform pathway enrichment and protein–protein interaction network analysis, providing biological interpretation of the detected signals.
-
+---
 
 ## Optional demographic analysis
 
-An optional analysis of recent demographic history can be performed using IBDNe.
+Recent demographic history may be explored using IBD-based approaches.
 
-This requires phased genotype data and detection of IBD segments between individuals. Longer IBD segments reflect recent shared ancestry, whereas shorter segments capture more ancient demographic events.
+This branch is optional and depends on data suitability.
 
-IBDNe estimates effective population size (Ne) over time based on the distribution of IBD segment lengths.
+Potential workflow:
 
+* phased haplotypes
+* hap-IBD or similar IBD segment detection
+* IBDNe for recent effective population size inference
 
+IBDNe estimates are interpreted in generations and may be converted into calendar years using a generation time of 29 years.
 
+This conversion affects only the temporal interpretation of the results, not the genetic inference itself.
 
+The optional demographic branch is not required for the main population structure and selection analyses.
 
-## Reproducibility
+---
 
-All analyses are implemented within a Snakemake workflow to ensure full reproducibility.  
-Software environments are managed using Conda, and all parameters are centrally defined in a configuration file.
+## Selection scan
+
+The selection branch is focused on the Cinque Terre population.
+
+The main selection method is:
+
+* LASSI
+
+The selection scan is based on phased haplotype data and is used to identify candidate genomic regions showing deviations from neutral expectations.
+
+Main steps include:
+
+* MAF filtering
+* LD decay estimation
+* phasing with SHAPEIT2
+* LASSI genome-wide scan using a sliding likelihood window
+* candidate region definition
+* candidate region ranking
+* functional genomic annotation
+
+External populations may be used for comparison, reference interpretation, or phasing support, but the primary LASSI scan target is the Cinque Terre dataset.
+
+Candidate external populations for selection-related comparison currently include:
+
+* TSI
+* FIN
+* IBS
+
+The final comparison set remains under evaluation.
+
+---
+
+## LD decay and LASSI window definition
+
+LD decay is used to derive suitable LASSI window-size parameters.
+
+The current working strategy estimates LD decay and uses the decay pattern to define the SNP-based window length for LASSI.
+
+Current working parameters:
+
+```text
+Baseline distance: 1 kb
+Decay fraction: one third of baseline LD
+Shift fraction: approximately 10% of the LASSI window
+```
+
+The derived parameters are:
+
+* LASSI window size in SNPs
+* LASSI shift size in SNPs
+
+These values are dataset-dependent and therefore remain to be finalized after LD decay estimation.
+
+LD decay and phasing are both preparatory steps for the selection branch.
+
+Phasing is not considered a downstream consequence of LD decay.
+
+---
+
+## Phasing
+
+The Cinque Terre dataset is phased before LASSI analysis.
+
+The current phasing method is:
+
+* SHAPEIT2
+
+The 1000 Genomes Project EUR panel is expected to provide primary phasing/reference support.
+
+Additional Italian WGS reference cohorts may also be evaluated as potential support, depending on data availability, compatibility, and final analytical design.
+
+Phasing parameters remain to be refined, including:
+
+* effective population size
+* burn-in iterations
+* pruning iterations
+* main iterations
+* genetic map
+
+---
+
+## LASSI
+
+LASSI is used as a likelihood-based method to scan phased haplotype data for candidate genomic regions showing deviations from neutral expectations.
+
+The LASSI scan is interpreted as a genome-wide sliding-window likelihood scan.
+
+The primary output is not a definitive list of causal adaptive loci, but a set of candidate regions requiring downstream interpretation.
+
+Current working outputs include:
+
+* LASSI score profiles
+* high-scoring windows
+* candidate genomic regions
+* region-level summaries
+* functional genomic annotations
+
+The LASSI window size and shift size are derived from LD decay analysis and remain to be finalized.
+
+---
+
+## Candidate region definition
+
+Candidate regions may consist of:
+
+* a single high-scoring window
+* multiple nearby high-scoring windows merged into a candidate region
+
+Candidate region merging must consider:
+
+* LASSI score magnitude
+* local signal coherence
+* maximum distance in kb allowed between neighboring windows
+* genomic span
+* functional genomic context
+
+The genomic span of LASSI windows and candidate regions is not directly provided by LASSI.
+
+It must be computed post hoc from genomic coordinates.
+
+Candidate regions are interpreted as genomic regions compatible with possible selective processes, not as definitive proof of adaptive loci or causal variants.
+
+---
+
+## Candidate region ranking
+
+Candidate regions should be ranked using region-level summaries rather than individual windows alone.
+
+Possible ranking criteria include:
+
+* maximum LASSI score
+* mean LASSI score
+* local signal coherence
+* genomic span
+* overlap with functional genomic elements
+* biological interpretability
+
+The final ranking strategy remains to be refined once real LASSI outputs are available.
+
+---
+
+## Functional genomic annotation
+
+Candidate regions may be annotated according to their functional genomic context.
+
+The main functional classes are:
+
+* coding regions
+* regulatory regions
+* intergenic regions
+
+This annotation is used to contextualize candidate regions and support biological interpretation.
+
+Functional genomic context should not be interpreted as independent evidence of selection.
+
+---
+
+## Exploratory biological contextualization
+
+Functional interpretation is treated as exploratory biological contextualization.
+
+ORA and/or GSEA-like approaches may be used to provide biological context for genes overlapping or near candidate regions.
+
+These analyses are not considered independent validation of selection.
+
+They are used to support interpretation and hypothesis generation.
+
+The main result of the selection branch remains the definition and prioritization of candidate genomic regions deviating from neutral expectations.
+
+---
+
+## Reproducibility principles
+
+The workflow is designed to be modular and reproducible.
+
+The main reproducibility principles are:
+
+* central configuration in `config/config.yaml`
+* explicit documentation of parameters and assumptions
+* separation between raw data, processed data, and results
+* use of Snakemake for workflow execution
+* use of Conda environments for software dependencies
+* preservation of logs and benchmark outputs
+* avoidance of manual, undocumented intermediate file editing
+
+Raw data should not be modified directly.
+
+Generated outputs should be reproducible from input data, configuration files, environment files, and workflow rules.
+
+---
+
+## Output organization
+
+The expected output structure is:
+
+```text
+results/
+logs/
+benchmarks/
+```
+
+The `results/` directory stores generated outputs.
+
+The `logs/` directory stores command-level logs.
+
+The `benchmarks/` directory stores runtime and resource usage information when available.
+
+Raw input data should remain outside generated output directories and should not be overwritten by the workflow.
+
+---
+
+## Notes on interpretation
+
+The pipeline is designed to support careful population-genetic interpretation.
+
+Population structure analyses are descriptive and comparative.
+
+Selection scans identify candidate genomic regions deviating from neutral expectations.
+
+Functional interpretation provides exploratory biological context.
+
+No single downstream analysis is treated as definitive proof of adaptation or causality.
+
+Interpretation should therefore integrate:
+
+* statistical signal strength
+* genomic context
+* comparison with reference populations
+* local signal coherence
+* biological plausibility
+* technical reliability of the region
