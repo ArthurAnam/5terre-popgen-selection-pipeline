@@ -1,19 +1,21 @@
 # ============================================================
-# 5Terre Population Genomics Pipeline
-# Main Snakefile (skeleton)
+# Cinque Terre Population Genomics and Selection Pipeline
+# Main Snakefile skeleton
 # ============================================================
 
 configfile: "config/config.yaml"
 
 
 # ============================================================
-# Rule: all (final targets)
+# Rule: all
+# Final targets for the non-optional core workflow
 # ============================================================
 
 rule all:
     input:
+        "results/harmonization/harmonization_done.txt",
         "results/qc/qc_done.txt",
-        "results/relatedness/master_unrelated.txt",
+        "results/relatedness/relatedness_done.txt",
         "results/pca/pca_done.txt",
         "results/roh/roh_done.txt",
         "results/ld_decay/ld_done.txt",
@@ -22,30 +24,45 @@ rule all:
 
 
 # ============================================================
-# QC
+# Dataset harmonization
+# ============================================================
+
+rule harmonization:
+    output:
+        "results/harmonization/harmonization_done.txt"
+    shell:
+        """
+        echo "Dataset harmonization completed" > {output}
+        """
+
+
+# ============================================================
+# Population-genomics QC
 # ============================================================
 
 rule qc:
+    input:
+        "results/harmonization/harmonization_done.txt"
     output:
         "results/qc/qc_done.txt"
     shell:
         """
-        echo "QC completed" > {output}
+        echo "Population-genomics QC completed" > {output}
         """
 
 
 # ============================================================
-# Relatedness
+# IBS / relatedness exploration
 # ============================================================
 
 rule relatedness:
     input:
         "results/qc/qc_done.txt"
     output:
-        "results/relatedness/master_unrelated.txt"
+        "results/relatedness/relatedness_done.txt"
     shell:
         """
-        echo "Relatedness filtering completed" > {output}
+        echo "IBS and relatedness exploration completed" > {output}
         """
 
 
@@ -55,7 +72,8 @@ rule relatedness:
 
 rule pca:
     input:
-        "results/relatedness/master_unrelated.txt"
+        qc="results/qc/qc_done.txt",
+        relatedness="results/relatedness/relatedness_done.txt"
     output:
         "results/pca/pca_done.txt"
     shell:
@@ -65,17 +83,18 @@ rule pca:
 
 
 # ============================================================
-# ROH
+# Runs of Homozygosity
 # ============================================================
 
 rule roh:
     input:
-        "results/relatedness/master_unrelated.txt"
+        qc="results/qc/qc_done.txt",
+        relatedness="results/relatedness/relatedness_done.txt"
     output:
         "results/roh/roh_done.txt"
     shell:
         """
-        echo "ROH completed" > {output}
+        echo "ROH analyses completed" > {output}
         """
 
 
@@ -90,7 +109,7 @@ rule ld_decay:
         "results/ld_decay/ld_done.txt"
     shell:
         """
-        echo "LD decay completed" > {output}
+        echo "LD decay estimation completed" > {output}
         """
 
 
@@ -100,7 +119,7 @@ rule ld_decay:
 
 rule phasing:
     input:
-        "results/ld_decay/ld_done.txt"
+        "results/qc/qc_done.txt"
     output:
         "results/phasing/phasing_done.txt"
     shell:
@@ -110,15 +129,16 @@ rule phasing:
 
 
 # ============================================================
-# LASSI
+# LASSI selection scan
 # ============================================================
 
 rule lassi:
     input:
-        "results/phasing/phasing_done.txt"
+        ld_decay="results/ld_decay/ld_done.txt",
+        phasing="results/phasing/phasing_done.txt"
     output:
         "results/lassi/lassi_done.txt"
     shell:
         """
-        echo "LASSI completed" > {output}
+        echo "LASSI scan completed" > {output}
         """
