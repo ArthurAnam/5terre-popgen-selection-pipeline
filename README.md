@@ -26,16 +26,16 @@ The workflow is designed for reproducible execution using Snakemake and centrali
 
 The pipeline is organized around four main components:
 
-* **Input datasets and harmonization**
+* **Input datasets and harmonization**<br>
   Cinque Terre WGS data, Italian WGS reference cohorts under evaluation, and 1000 Genomes Project EUR reference data.
 
-* **Population-genomics QC**
+* **Population-genomics QC**<br>
   Autosomal biallelic SNP filtering, missingness filtering, strand-ambiguous SNP removal, and chromosome-wise HWE filtering using Bonferroni correction.
 
-* **Population structure analyses**
+* **Population structure analyses**<br>
   PCA, runs of homozygosity, fROH, ROH burden, ROH length distribution, and IBS / pairwise relatedness exploration.
 
-* **Selection scan and candidate region interpretation**
+* **Selection scan and candidate region interpretation**<br>
   LD decay estimation, phasing, LASSI scan, candidate region definition, ranking, and functional genomic contextualization.
 
 An optional demographic branch based on IBD segment detection and IBDNe may be added depending on data suitability and final analytical priorities.
