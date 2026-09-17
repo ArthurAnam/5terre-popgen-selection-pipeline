@@ -19,7 +19,7 @@ rule preqc_target_vcf:
     log:
         "logs/preqc/preqc_target_vcf.log"
     params:
-        expected_samples=config["datasets"]["target"]["sample_count"]
+        expected_samples=config["datasets"]["target"]["input_sample_count"]
     conda:
         "../../envs/pipeline.yaml"
     shell:
@@ -50,7 +50,7 @@ rule preqc_target_vcf:
         bcftools stats {input.vcf} > {output.stats} 2>> {log}
 
         # 5. Assert the two upstream facts currently expected for this dataset:
-        #    46 samples and only VQSR-passing records (FILTER=PASS).
+        #    50 input samples and only VQSR-passing records (FILTER=PASS).
         n_samples=$(wc -l < {output.samples})
         n_variants=$(bcftools view -H {input.vcf} 2>> {log} | wc -l)
         n_nonpass=$(bcftools query -f '%FILTER\n' {input.vcf} 2>> {log} \
@@ -58,14 +58,14 @@ rule preqc_target_vcf:
 
         {{
             printf 'metric\tvalue\n'
-            printf 'expected_samples\t%s\n' '{params.expected_samples}'
-            printf 'observed_samples\t%s\n' "$n_samples"
+            printf 'expected_input_samples\t%s\n' '{params.expected_samples}'
+            printf 'observed_input_samples\t%s\n' "$n_samples"
             printf 'total_variants\t%s\n' "$n_variants"
             printf 'non_PASS_variants\t%s\n' "$n_nonpass"
         }} > {output.summary}
 
         if [ "$n_samples" -ne {params.expected_samples} ]; then
-            echo "ERROR: expected {params.expected_samples} samples, found $n_samples" >&2
+            echo "ERROR: expected {params.expected_samples} input samples, found $n_samples" >&2
             exit 1
         fi
 
@@ -74,6 +74,6 @@ rule preqc_target_vcf:
             exit 1
         fi
 
-        printf 'Pre-QC passed: %s samples; %s variants; all FILTER=PASS.\n' \
+        printf 'Pre-QC passed: %s input samples; %s variants; all FILTER=PASS.\n' \
             "$n_samples" "$n_variants" > {output.done}
         """

@@ -33,13 +33,16 @@ datasets:
     role: "target_population"
     description: "Target population under study"
     data_type: "WGS"
-    sample_count: 46
+    input_sample_count: 50
+    expected_post_qc_sample_count: null
+    historical_post_qc_sample_count_to_verify: 46
     mean_depth: "approximately 30x"
     vcf: null
     upstream_processing:
       variants_called: true
       vqsr_filtered: true
-      notes: "Variant calling and VQSR were performed upstream and are not repeated in this workflow."
+      non_passing_vqsr_variants_removed: true
+      notes: "Variant calling and VQSR were performed upstream. The delivered VCF is reported to contain only variants that passed Variant Recalibration; this is verified during pre-QC and is not repeated as a filtering step."
 
   italian_wgs_reference_cohorts:
     enabled: true
