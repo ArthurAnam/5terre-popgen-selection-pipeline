@@ -1,0 +1,7 @@
+# Machine-specific input paths.
+# Copy this file to config/config.local.yaml and replace the example paths.
+# config/config.local.yaml is intentionally not version-controlled.
+
+local_paths:
+  target_vcf: "/absolute/path/to/all_samples_snp.vcf.gz"
+  target_vcf_index: "/absolute/path/to/all_samples_snp.vcf.gz.tbi"
