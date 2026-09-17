@@ -8,7 +8,7 @@ import yaml
 # Version-controlled analytical configuration.
 configfile: "config/config.yaml"
 
-# Machine-specific paths are kept outside Git.  When present, this file is
+# Machine-specific paths are kept outside Git. When present, this file is
 # merged on top of config/config.yaml so that rules never hard-code local paths.
 LOCAL_CONFIG = "config/config.local.yaml"
 if os.path.exists(LOCAL_CONFIG):
@@ -22,13 +22,15 @@ if os.path.exists(LOCAL_CONFIG):
 # ============================================================
 
 include: "workflow/rules/00_preqc.smk"
+include: "workflow/rules/01_sample_qc.smk"
 
 
 # ============================================================
 # Current reproducible target
 # ============================================================
-# Downstream modules will be added incrementally after each stage is checked.
+# Sample QC is diagnostic at this stage: no sample is removed automatically.
 
 rule all:
     input:
-        "results/preqc/preqc_done.txt"
+        "results/preqc/preqc_done.txt",
+        "results/sample_qc/sample_qc_summary.tsv"
