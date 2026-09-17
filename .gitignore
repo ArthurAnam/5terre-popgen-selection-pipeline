@@ -34,6 +34,9 @@ tempCodeRunnerFile.py
 snakemake_tmp/
 *.snakemake.log
 
+# Machine-specific configuration
+config/config.local.yaml
+
 
 # ============================================================
 # Generated pipeline outputs

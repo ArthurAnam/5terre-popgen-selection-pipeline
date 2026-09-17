@@ -1,144 +1,34 @@
 # ============================================================
 # Cinque Terre Population Genomics and Selection Pipeline
-# Main Snakefile skeleton
 # ============================================================
 
+import os
+import yaml
+
+# Version-controlled analytical configuration.
 configfile: "config/config.yaml"
 
+# Machine-specific paths are kept outside Git.  When present, this file is
+# merged on top of config/config.yaml so that rules never hard-code local paths.
+LOCAL_CONFIG = "config/config.local.yaml"
+if os.path.exists(LOCAL_CONFIG):
+    with open(LOCAL_CONFIG, "r") as handle:
+        local_config = yaml.safe_load(handle) or {}
+    config.update(local_config)
+
 
 # ============================================================
-# Rule: all
-# Final targets for the non-optional core workflow
+# Workflow modules
 # ============================================================
+
+include: "workflow/rules/00_preqc.smk"
+
+
+# ============================================================
+# Current reproducible target
+# ============================================================
+# Downstream modules will be added incrementally after each stage is checked.
 
 rule all:
     input:
-        "results/harmonization/harmonization_done.txt",
-        "results/qc/qc_done.txt",
-        "results/relatedness/relatedness_done.txt",
-        "results/pca/pca_done.txt",
-        "results/roh/roh_done.txt",
-        "results/ld_decay/ld_done.txt",
-        "results/phasing/phasing_done.txt",
-        "results/lassi/lassi_done.txt"
-
-
-# ============================================================
-# Dataset harmonization
-# ============================================================
-
-rule harmonization:
-    output:
-        "results/harmonization/harmonization_done.txt"
-    shell:
-        """
-        echo "Dataset harmonization completed" > {output}
-        """
-
-
-# ============================================================
-# Population-genomics QC
-# ============================================================
-
-rule qc:
-    input:
-        "results/harmonization/harmonization_done.txt"
-    output:
-        "results/qc/qc_done.txt"
-    shell:
-        """
-        echo "Population-genomics QC completed" > {output}
-        """
-
-
-# ============================================================
-# IBS / relatedness exploration
-# ============================================================
-
-rule relatedness:
-    input:
-        "results/qc/qc_done.txt"
-    output:
-        "results/relatedness/relatedness_done.txt"
-    shell:
-        """
-        echo "IBS and relatedness exploration completed" > {output}
-        """
-
-
-# ============================================================
-# PCA
-# ============================================================
-
-rule pca:
-    input:
-        qc="results/qc/qc_done.txt",
-        relatedness="results/relatedness/relatedness_done.txt"
-    output:
-        "results/pca/pca_done.txt"
-    shell:
-        """
-        echo "PCA completed" > {output}
-        """
-
-
-# ============================================================
-# Runs of Homozygosity
-# ============================================================
-
-rule roh:
-    input:
-        qc="results/qc/qc_done.txt",
-        relatedness="results/relatedness/relatedness_done.txt"
-    output:
-        "results/roh/roh_done.txt"
-    shell:
-        """
-        echo "ROH analyses completed" > {output}
-        """
-
-
-# ============================================================
-# LD decay
-# ============================================================
-
-rule ld_decay:
-    input:
-        "results/qc/qc_done.txt"
-    output:
-        "results/ld_decay/ld_done.txt"
-    shell:
-        """
-        echo "LD decay estimation completed" > {output}
-        """
-
-
-# ============================================================
-# Phasing
-# ============================================================
-
-rule phasing:
-    input:
-        "results/qc/qc_done.txt"
-    output:
-        "results/phasing/phasing_done.txt"
-    shell:
-        """
-        echo "Phasing completed" > {output}
-        """
-
-
-# ============================================================
-# LASSI selection scan
-# ============================================================
-
-rule lassi:
-    input:
-        ld_decay="results/ld_decay/ld_done.txt",
-        phasing="results/phasing/phasing_done.txt"
-    output:
-        "results/lassi/lassi_done.txt"
-    shell:
-        """
-        echo "LASSI scan completed" > {output}
-        """
+        "results/preqc/preqc_done.txt"
