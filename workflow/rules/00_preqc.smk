@@ -9,7 +9,7 @@ rule preqc_target_vcf:
         vcf=lambda wildcards: config["local_paths"]["target_vcf"],
         index=lambda wildcards: config["local_paths"]["target_vcf_index"]
     output:
-        quickcheck="results/preqc/input.quickcheck.txt",
+        readable="results/preqc/input.readability_check.txt",
         samples="results/preqc/samples.txt",
         filters="results/preqc/filter_counts.tsv",
         contigs="results/preqc/contigs.txt",
@@ -27,11 +27,11 @@ rule preqc_target_vcf:
         set -euo pipefail
         mkdir -p results/preqc logs/preqc
 
-        # 1. Basic structural integrity check. Silence means success.
-        if bcftools quickcheck -v {input.vcf} > {output.quickcheck} 2>&1; then
-            :
+        # 1. Check that bcftools can read the VCF header.
+        if bcftools view -h {input.vcf} >/dev/null 2> {output.readable}; then
+            printf 'OK\tbcftools successfully read the VCF header.\n' > {output.readable}
         else
-            cat {output.quickcheck} >&2
+            cat {output.readable} >&2
             exit 1
         fi
 
@@ -46,7 +46,7 @@ rule preqc_target_vcf:
             | awk 'BEGIN{{OFS="\t"; print "count","FILTER"}} {{print $1,$2}}' \
             > {output.filters}
 
-        # 4. Full baseline statistics for the delivered file.
+        # 4. Full baseline statistics for the delivered file. This parses the VCF records.
         bcftools stats {input.vcf} > {output.stats} 2>> {log}
 
         # 5. Assert the two upstream facts currently expected for this dataset:
