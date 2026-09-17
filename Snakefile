@@ -28,9 +28,10 @@ include: "workflow/rules/01_sample_qc.smk"
 # ============================================================
 # Current reproducible target
 # ============================================================
-# Sample QC is diagnostic at this stage: no sample is removed automatically.
+# Individual pre-QC is diagnostic at this stage: no sample is removed
+# automatically from the delivered 50-sample dataset.
 
 rule all:
     input:
         "results/preqc/preqc_done.txt",
-        "results/sample_qc/sample_qc_summary.tsv"
+        "results/sample_preqc/sample_preqc_summary.tsv"
