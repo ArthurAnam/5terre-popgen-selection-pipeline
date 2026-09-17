@@ -8,7 +8,8 @@ Reproducible workflow for population structure analyses and haplotype-based sele
 
 This repository contains a modular and reproducible population genomics pipeline designed to support:
 
-* dataset harmonization and population-genomics QC
+* input verification and population-genomics QC
+* dataset harmonization
 * population structure analyses
 * relatedness and IBS exploration
 * runs of homozygosity analyses
@@ -26,16 +27,16 @@ The workflow is designed for reproducible execution using Snakemake and centrali
 
 The pipeline is organized around four main components:
 
-* **Input datasets and harmonization**<br>
-  Cinque Terre WGS data, Italian WGS reference cohorts under evaluation, and 1000 Genomes Project EUR reference data.
+* **Input verification and population-genomics QC**  
+  Validate the delivered Cinque Terre WGS VCF, then apply downstream sample/variant QC without repeating upstream variant calling or VQSR.
 
-* **Population-genomics QC**<br>
-  Autosomal biallelic SNP filtering, missingness filtering, strand-ambiguous SNP removal, and chromosome-wise HWE filtering using Bonferroni correction.
+* **Dataset harmonization**  
+  Harmonize the QCed Cinque Terre target dataset with Italian WGS reference cohorts and 1000 Genomes Project EUR reference data where required.
 
-* **Population structure analyses**<br>
+* **Population structure analyses**  
   PCA, runs of homozygosity, fROH, ROH burden, ROH length distribution, and IBS / pairwise relatedness exploration.
 
-* **Selection scan and candidate region interpretation**<br>
+* **Selection scan and candidate region interpretation**  
   LD decay estimation, phasing, LASSI scan, candidate region definition, ranking, and functional genomic contextualization.
 
 An optional demographic branch based on IBD segment detection and IBDNe may be added depending on data suitability and final analytical priorities.
@@ -46,15 +47,20 @@ An optional demographic branch based on IBD segment detection and IBDNe may be a
 
 The target dataset is the Cinque Terre WGS cohort.
 
-Expected characteristics:
+**Verified starting dataset (`all_samples_snp.vcf.gz`):**
 
-* 46 WGS samples
-* mean depth approximately 30×
-* GRCh37.p13 / hg19 coordinates
-* variants already called upstream
-* variants already VQSR-filtered upstream
+* 50 WGS samples
+* 11,490,646 variant records
+* 11,490,646 SNPs
+* 0 INDELs
+* 0 multiallelic sites
+* all records `FILTER=PASS`
+* indexed contigs `1-22`, `X`, `Y`
+* GRCh37.p13 / hs37d5 provenance upstream
 
-Variant calling and VQSR are not repeated within this workflow.
+The value **46 samples** refers to a historical post-QC dataset and is not imposed as an input assumption. The current workflow starts from all 50 delivered individuals and will reconstruct, from reproducible QC evidence, whether four samples should indeed be excluded.
+
+Variant calling, joint genotyping, SNP/biallelic selection, and VQSR were performed upstream and are not repeated within this workflow. Their provenance is documented in `docs/upstream_variant_calling_provenance.md`.
 
 ---
 
@@ -101,7 +107,7 @@ The main Conda environment is defined in `envs/pipeline.yaml`.
 
 ```text
 config/         → central pipeline configuration
-docs/           → methods, workflow design, selection strategy, and software framework
+docs/           → methods, provenance, workflow design, and software framework
 workflow/       → Snakemake rules
 envs/           → Conda environment definition
 data/           → input and processed data placeholders
@@ -118,6 +124,7 @@ Generated outputs are not intended to be manually edited.
 
 Current documentation:
 
+* Upstream variant-calling provenance: `docs/upstream_variant_calling_provenance.md`
 * Methods overview: `docs/methods_overview.md`
 * Pipeline diagram: `docs/pipeline_diagram.md`
 * Selection strategy: `docs/selection_strategy.md`
@@ -127,6 +134,10 @@ Central configuration:
 
 * `config/config.yaml`
 
+Machine-specific input paths:
+
+* `config/config.local.yaml` (local only; intentionally not version-controlled)
+
 Main Conda environment:
 
 * `envs/pipeline.yaml`
@@ -135,20 +146,19 @@ Main Conda environment:
 
 ## 🚧 Status
 
-This repository currently focuses on pipeline design, documentation, and reproducibility structure.
-
-Execution rules, finalized datasets, and analysis-specific scripts will be integrated progressively.
+The reproducible pre-QC stage is implemented and has validated the current 50-sample PASS-only SNP input dataset. Downstream QC and analysis modules will be integrated incrementally and checked at each stage.
 
 ---
 
 ## 📌 Notes
 
-Current working assumptions:
+Current working assumptions and principles:
 
-* Genome build: GRCh37.p13 / hg19
+* Genome build: GRCh37.p13 / hg19 coordinates, with hs37d5 upstream provenance
 * Coordinate system: VCF 1-based
-* Main variant class: autosomal biallelic SNPs
-* HWE filtering: chromosome-wise Bonferroni correction
+* Downstream population-genomics analyses: autosomal chromosomes 1-22 unless otherwise specified
+* Delivered variant class: biallelic PASS SNPs, independently verified by pre-QC
+* Historical 46-sample result: to be reproduced rather than assumed
+* HWE filtering strategy is under methodological review before being applied to this small target population
 * Selection results are interpreted as candidate genomic regions deviating from neutral expectations, not as definitive proof of adaptive loci or causal variants
 * Functional interpretation is treated as exploratory biological contextualization
-
