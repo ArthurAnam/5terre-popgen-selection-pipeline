@@ -4,7 +4,6 @@ channels:
   - conda-forge
   - bioconda
   - defaults
-
 dependencies:
   - python=3.11
   - snakemake
@@ -21,7 +20,10 @@ dependencies:
   - king
   - eigensoft
 
-  # Plotting\n  - matplotlib\n\n  # General utilities
+  # Plotting
+  - matplotlib
+
+  # General utilities
   - coreutils
   - grep
   - sed

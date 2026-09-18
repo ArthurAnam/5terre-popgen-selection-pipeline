@@ -24,7 +24,8 @@ if os.path.exists(LOCAL_CONFIG):
 include: "workflow/rules/00_preqc.smk"
 include: "workflow/rules/01_sample_qc.smk"
 include: "workflow/rules/02_sample_preqc_chromosome.smk"
-include: "workflow/rules/03_sample_preqc_genotype_fields.smk"\ninclude: "workflow/rules/04_sample_preqc_plots.smk"
+include: "workflow/rules/03_sample_preqc_genotype_fields.smk"
+include: "workflow/rules/04_sample_preqc_plots.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
@@ -39,5 +40,7 @@ rule all:
         "results/preqc/preqc_done.txt",
         "results/sample_preqc/sample_preqc_summary.tsv",
         "results/sample_preqc/sample_chromosome_consistency.tsv",
-        "results/sample_preqc/sample_genotype_field_diagnostics.tsv",\n        "results/sample_preqc/plots/depth_vs_missingness.png",\n        "results/sample_preqc/plots/heterozygosity_vs_allelic_imbalance.png",
+        "results/sample_preqc/sample_genotype_field_diagnostics.tsv",
+        "results/sample_preqc/plots/depth_vs_missingness.png",
+        "results/sample_preqc/plots/heterozygosity_vs_allelic_imbalance.png",
         "results/provenance/software_versions.tsv"
