@@ -21,7 +21,7 @@ dependencies:
   - king
   - eigensoft
 
-  # General utilities
+  # Plotting\n  - matplotlib\n\n  # General utilities
   - coreutils
   - grep
   - sed
