@@ -93,6 +93,7 @@ qc:
     remove_monomorphic: true
     remove_strand_ambiguous: true
     strand_ambiguous_classes: ["A/T", "C/G"]
+    strand_ambiguous_role: "core_target_qc_and_harmonization_control"
 
   missingness:
     remove_variants_with_missingness_gt: 0.05
