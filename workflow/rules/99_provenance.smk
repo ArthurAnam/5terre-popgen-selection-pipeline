@@ -12,7 +12,7 @@ rule record_software_versions:
         set -euo pipefail
         mkdir -p results/provenance
 
-        {
+        (
             printf "software\tversion\n"
             printf "snakemake\t%s\n" "$(snakemake --version | head -n 1)"
             printf "python\t%s\n" "$(python --version 2>&1 | cut -d ' ' -f 2)"
@@ -21,5 +21,5 @@ rule record_software_versions:
             printf "tabix\t%s\n" "$(tabix --version 2>&1 | head -n 1 | grep -oE '[0-9]+([.][0-9]+)+' | head -n 1)"
             printf "git\t%s\n" "$(git --version | cut -d ' ' -f 3)"
             printf "conda\t%s\n" "$(conda --version | cut -d ' ' -f 2)"
-        } > {output}
+        ) > {output}
         """
