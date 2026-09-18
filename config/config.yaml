@@ -360,3 +360,24 @@ output:
   results_dir: "results"
   logs_dir: "logs"
   benchmark_dir: "benchmarks"
+
+
+# ============================================================
+# Individual pre-QC
+# ============================================================
+
+sample_preqc:
+  description: "Diagnostic sample-level QC on the delivered 50-sample post-VQSR VCF; flags require review and never trigger automatic exclusion."
+  scope: "autosomes_1_22"
+  automatic_sample_exclusion: false
+  robust_z_threshold: 3.5
+  heterozygosity_confirmation:
+    tool: "PLINK2"
+    purpose: "Confirm unusual per-sample heterozygosity on a common, LD-pruned autosomal marker set."
+    maf_threshold: 0.05
+    variant_missingness_threshold: 0.05
+    ld_pruning:
+      window_variants: 50
+      step_variants: 5
+      r2_threshold: 0.2
+    notes: "Diagnostic marker set only. No HWE filter is applied here, and heterozygosity results do not automatically exclude samples."

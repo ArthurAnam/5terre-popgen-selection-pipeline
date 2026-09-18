@@ -22,7 +22,7 @@ if os.path.exists(LOCAL_CONFIG):
 # ============================================================
 
 include: "workflow/rules/00_preqc.smk"
-include: "workflow/rules/01_sample_qc.smk"
+include: "workflow/rules/01_sample_qc.smk"\ninclude: "workflow/rules/02_sample_qc_heterozygosity.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
@@ -35,5 +35,5 @@ include: "workflow/rules/99_provenance.smk"
 rule all:
     input:
         "results/preqc/preqc_done.txt",
-        "results/sample_preqc/sample_preqc_summary.tsv",
+        "results/sample_preqc/sample_preqc_summary.tsv",\n        "results/sample_preqc/plink2/heterozygosity.het",
         "results/provenance/software_versions.tsv"
