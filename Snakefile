@@ -43,4 +43,5 @@ rule all:
         "results/sample_preqc/sample_genotype_field_diagnostics.tsv",
         "results/sample_preqc/plots/depth_vs_missingness.png",
         "results/sample_preqc/plots/heterozygosity_vs_allelic_imbalance.png",
+        "results/sample_preqc/plots/README.txt",
         "results/provenance/software_versions.tsv"
