@@ -1,0 +1,5 @@
+sample	decision	reason
+TSBC6060	exclude	Genome-wide excess heterozygosity (22/22 autosomes) with strongly abnormal heterozygous allele balance; sample-level technical artefact suspected.
+TSBC6389	exclude	Genome-wide excess heterozygosity (22/22 autosomes) with strongly abnormal heterozygous allele balance, plus reduced depth/genotype quality relative to cohort; sample-level technical artefact suspected.
+TSBD8047	exclude	Genome-wide excess heterozygosity (22/22 autosomes) with strongly abnormal heterozygous allele balance; sample-level technical artefact suspected.
+TSBD8199	exclude	Severe genome-wide low depth, elevated missingness and reduced genotype quality, with abnormal heterozygosity profile.
