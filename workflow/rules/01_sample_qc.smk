@@ -49,7 +49,7 @@ rule sample_preqc_review_flags:
         flags="results/sample_preqc/sample_review_flags.tsv",
         summary="results/sample_preqc/sample_preqc_summary.tsv"
     params:
-        robust_z_threshold=3.5
+        robust_z_threshold=config["sample_preqc"]["robust_z_threshold"]
     conda:
         "../../envs/pipeline.yaml"
     shell:
