@@ -26,6 +26,7 @@ include: "workflow/rules/01_sample_qc.smk"
 include: "workflow/rules/02_sample_preqc_chromosome.smk"
 include: "workflow/rules/03_sample_preqc_genotype_fields.smk"
 include: "workflow/rules/04_sample_preqc_plots.smk"
+include: "workflow/rules/05_target_qc_start.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
@@ -44,4 +45,9 @@ rule all:
         "results/sample_preqc/plots/depth_vs_missingness.png",
         "results/sample_preqc/plots/heterozygosity_vs_allelic_imbalance.png",
         "results/sample_preqc/plots/README.txt",
+        "results/qc/00_start/start_summary.tsv",
+        "results/qc/01_exploration/site_annotation_summary.tsv",
+        "results/qc/01_exploration/site_inventory.tsv",
+        "results/qc/01_exploration/vqsr_culprit_counts.tsv",
+        "results/qc/01_exploration/site_annotation_distributions.png",
         "results/provenance/software_versions.tsv"
