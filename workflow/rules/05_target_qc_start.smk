@@ -124,7 +124,8 @@ EOF
 rule explore_variant_qc_metrics_without_filtering:
     input:
         vcf="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz",
-        index="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz.tbi"
+        index="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz.tbi",
+        script="workflow/scripts/explore_variant_qc_metrics.py"
     output:
         summary="results/qc/01_variant_qc_exploration/variant_qc_metric_descriptive_statistics.tsv",
         inventory="results/qc/01_variant_qc_exploration/variant_category_counts_before_filtering.tsv",
@@ -147,7 +148,7 @@ rule explore_variant_qc_metrics_without_filtering:
                 -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%INFO/MAF\t%INFO/F_MISSING\n' \
                 2>> {log}
         }} \
-        | python workflow/scripts/explore_variant_qc_metrics.py \
+        | python {input.script} \
             --summary-out {output.summary} \
             --inventory-out {output.inventory} \
             --plot-out {output.plot}
