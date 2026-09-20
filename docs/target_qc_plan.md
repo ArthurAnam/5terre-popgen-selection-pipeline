@@ -6,13 +6,13 @@ The delivered Cinque Terre VCF contains 50 WGS samples and has already undergone
 
 Diagnostic exploration and hard filtering are kept distinct. Classical site/genotype quality annotations are first described and plotted. They do not automatically become additional hard filters because the input has already passed GATK VQSR, which uses a multivariate quality model. A new hard threshold is added only if the post-VQSR data show a specific residual problem that justifies it.
 
-## Available site-level annotations to explore
+## Variant-level quantities explored in this pipeline
 
-QUAL, VQSLOD, QD, FS, SOR, MQ, BaseQRankSum, MQRankSum, ReadPosRankSum, INFO/DP, ExcessHet, InbreedingCoeff, culprit, POSITIVE_TRAIN_SITE and NEGATIVE_TRAIN_SITE.
+QUAL is inspected descriptively. MAF and genotype missingness are recalculated on the retained post-sample-QC cohort. Variant category counts include monomorphic sites, palindromic A/T and C/G SNPs, multiallelic/non-SNP records, and sites above the planned 5% missingness threshold.
 
-AC, AF, AN, MLEAC and MLEAF are also available for allele-count and frequency summaries.
+VQSR-specific bookkeeping fields (VQSLOD, culprit, POSITIVE_TRAIN_SITE and NEGATIVE_TRAIN_SITE) are not used for downstream QC because VQSR was completed upstream. The pipeline does not attempt to reproduce or second-guess the upstream VQSR model.
 
-ExcessHet and InbreedingCoeff are upstream annotations and are not substitutes for a fresh HWE calculation after sample removal.
+Upstream annotations such as QD, FS, SOR, MQ and rank-sum metrics remain available in the delivered VCF but are not turned into new hard filters by default.
 
 ## Available genotype-level annotations to explore
 
@@ -34,9 +34,7 @@ These will be summarized descriptively before any decision about genotype-level 
 
 ## Exploration before any additional hard filter
 
-Before adding DP/GQ/QUAL/QD/FS/SOR/MQ or rank-sum thresholds, quantify their post-VQSR distributions in the reviewed 46-sample dataset. At minimum report non-missing counts, median and selected quantiles, extreme tails, distributions/plots, and VQSLOD/training-flag/culprit summaries.
-
-No external threshold will be copied automatically.
+QUAL and current cohort-level missingness/frequency summaries are explored first without filtering. FORMAT-level DP, GQ and AD are explored separately because they describe genotype calls. No VQSR-specific field is used as a new downstream filter, and no external threshold is copied automatically.
 
 ## HWE
 
