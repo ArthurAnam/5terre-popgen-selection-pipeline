@@ -9,15 +9,14 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 NUMERIC_FIELDS = ["QUAL", "MAF", "F_MISSING"]
-PLOT_FIELDS = ["QUAL", "MAF", "F_MISSING"]
 
 
 def parse_args():
     p = argparse.ArgumentParser(
         description=(
             "Describe current variant-QC metrics without applying filters. "
-            "This stage deliberately excludes VQSR bookkeeping fields such as "
-            "VQSLOD, culprit and training-site flags because VQSR was completed upstream."
+            "VQSR bookkeeping fields are deliberately excluded because VQSR "
+            "was completed upstream."
         )
     )
     p.add_argument("--summary-out", required=True)
@@ -102,6 +101,15 @@ def is_biallelic_snp(ref, alt):
 def is_palindromic(ref, alt):
     pair = {ref.upper(), alt.upper()}
     return pair == {"A", "T"} or pair == {"C", "G"}
+
+
+def log_edges(lo, hi, n_bins):
+    lo = max(lo, 1e-9)
+    if hi <= lo:
+        hi = lo * 1.01
+    a = math.log10(lo)
+    b = math.log10(hi)
+    return [10 ** (a + (b - a) * i / n_bins) for i in range(n_bins + 1)]
 
 
 def main():
@@ -191,20 +199,61 @@ def main():
         for key, value in counts.items():
             handle.write(f"{key}\t{value}\n")
 
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4))
-    for ax, metric in zip(axes, PLOT_FIELDS):
-        vals = sorted(acc[metric].sample)
-        if not vals:
-            ax.set_title(metric + " (no data)")
-            ax.axis("off")
-            continue
-        lo = quantile(vals, 0.01)
-        hi = quantile(vals, 0.99)
-        central = [v for v in vals if lo <= v <= hi] or vals
-        ax.hist(central, bins=60)
-        ax.set_title(metric)
-        ax.set_xlabel("value (1st-99th percentile shown)")
-        ax.set_ylabel("sampled sites")
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
+
+    # QUAL: log-scaled x axis so the long right tail does not hide the
+    # informative low-to-middle range. Tick values remain QUAL values.
+    qual = sorted(acc["QUAL"].sample)
+    q01 = quantile(qual, 0.01)
+    q50 = quantile(qual, 0.50)
+    q99 = quantile(qual, 0.99)
+    qual_central = [v for v in qual if q01 <= v <= q99 and v > 0]
+    axes[0].hist(qual_central, bins=log_edges(q01, q99, 60))
+    axes[0].set_xscale("log")
+    axes[0].axvline(q50, linestyle="--")
+    axes[0].set_title("QUAL (1st-99th percentile)")
+    axes[0].set_xlabel("QUAL, log-scaled axis")
+    axes[0].set_ylabel("sampled sites")
+    axes[0].text(
+        0.98, 0.96,
+        f"min={fmt(acc['QUAL'].min)}\nmedian={fmt(q50)}\nq99={fmt(q99)}\nmax={fmt(acc['QUAL'].max)}",
+        transform=axes[0].transAxes,
+        ha="right", va="top",
+    )
+
+    # MAF: QC-relevant zoom on the rare/low-frequency end. MAF is descriptive
+    # here; no global MAF hard filter is part of core QC.
+    maf = acc["MAF"].sample
+    maf_zoom = [v for v in maf if 0 <= v <= 0.10]
+    axes[1].hist(maf_zoom, bins=40, range=(0, 0.10))
+    axes[1].set_xlim(0, 0.10)
+    axes[1].set_title("MAF (zoom: 0-0.10)")
+    axes[1].set_xlabel("minor allele frequency")
+    axes[1].set_ylabel("sampled sites")
+    axes[1].text(
+        0.98, 0.96,
+        "descriptive only\nno MAF hard filter",
+        transform=axes[1].transAxes,
+        ha="right", va="top",
+    )
+
+    # Missingness: show the range around the planned 5% threshold rather than
+    # truncating at q99, which hid the QC-relevant tail in the previous plot.
+    miss = acc["F_MISSING"].sample
+    miss_zoom = [v for v in miss if 0 <= v <= 0.10]
+    axes[2].hist(miss_zoom, bins=46, range=(0, 0.10))
+    axes[2].set_yscale("log")
+    axes[2].axvline(0.05, linestyle="--")
+    axes[2].set_xlim(0, 0.10)
+    axes[2].set_title("Variant missingness (0-10%)")
+    axes[2].set_xlabel("fraction of missing genotypes")
+    axes[2].set_ylabel("sampled sites, log scale")
+    axes[2].text(
+        0.98, 0.96,
+        f"planned cutoff: >5%\nexact sites >5%: {counts['site_missingness_gt_0.05']}",
+        transform=axes[2].transAxes,
+        ha="right", va="top",
+    )
 
     fig.suptitle("Variant-QC exploration: descriptive only, no filter applied")
     fig.tight_layout()
