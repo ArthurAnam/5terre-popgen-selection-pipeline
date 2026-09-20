@@ -45,15 +45,15 @@ rule explore_genotype_qc_and_individual_missingness:
         n_sites=$(bcftools index -n {input.vcf})
 
         bcftools stats -s - {input.vcf} 2>> {log}         | awk -v n_sites="$n_sites" -v cutoff="0.05" -F '\t' '
-            BEGIN {
+            BEGIN {{
                 OFS="\t";
                 print "sample","n_sites","n_missing","missing_rate","above_0.05"
-            }
-            $1=="PSC" {
+            }}
+            $1=="PSC" {{
                 rate=$14/n_sites;
                 flag=(rate>cutoff ? "YES" : "NO");
                 printf "%s\t%d\t%d\t%.8f\t%s\n", $3,n_sites,$14,rate,flag
-            }
+            }}
         ' > {output.sample_missingness}
 
         n_over=$(awk -F '\t' 'NR>1 && $5=="YES" {{n++}} END {{print n+0}}' {output.sample_missingness})
