@@ -27,6 +27,7 @@ include: "workflow/rules/02_sample_preqc_chromosome.smk"
 include: "workflow/rules/03_sample_preqc_genotype_fields.smk"
 include: "workflow/rules/04_sample_preqc_plots.smk"
 include: "workflow/rules/05_target_qc_start.smk"
+include: "workflow/rules/06_genotype_qc_exploration.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
@@ -51,4 +52,8 @@ rule all:
         "results/qc/01_variant_qc_exploration/variant_category_counts_before_filtering.tsv",
         "results/qc/01_variant_qc_exploration/variant_qc_metric_distributions.png",
         "results/qc/01_variant_qc_exploration/README.txt",
+        "results/qc/02_genotype_qc_exploration/genotype_qc_metric_descriptive_statistics.tsv",
+        "results/qc/02_genotype_qc_exploration/genotype_qc_metric_distributions.png",
+        "results/qc/02_genotype_qc_exploration/individual_missingness_before_variant_filtering.tsv",
+        "results/qc/02_genotype_qc_exploration/README.txt",
         "results/provenance/software_versions.tsv"
