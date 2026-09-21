@@ -93,7 +93,9 @@ datasets:
         monomorphic_in_eur: 55685456
         sites_with_any_missingness: 0
         sites_with_missingness_gt_0_05: 0
-        retained_polymorphic_biallelic_snps: 22132890
+        retained_polymorphic_biallelic_snps_pre_palindromic_filter: 22132890
+        palindromic_snps_removed: 3381797
+        harmonization_ready_nonpalindromic_snps: 18751093
       notes: "HWE is exploratory only for 1000G EUR and is evaluated separately by population; it is not used as a filtering criterion."
 
 

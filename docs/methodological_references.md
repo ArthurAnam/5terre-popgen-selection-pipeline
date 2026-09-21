@@ -319,13 +319,16 @@ Genome-wide EUR-subset QC audit across chromosomes 1-22:
 - variants monomorphic after restriction to EUR: 55,685,456
 - sites with any missing genotype: 0
 - sites with missingness > 5%: 0
-- polymorphic biallelic SNPs retained after site QC: 22,132,890
+- polymorphic biallelic SNPs before strand-ambiguity removal: 22,132,890
+- palindromic A/T or C/G SNPs removed: 3,381,797
+- polymorphic non-palindromic SNPs retained for harmonization: 18,751,093
 
 Because no missing genotype was observed at any inspected biallelic SNP, the
 site-missingness filter removes zero variants and individual missingness is
-necessarily zero in this EUR subset. The effective reduction at this stage is
-therefore entirely due to variants becoming monomorphic after restriction from
-the global Phase 3 cohort to the 503 EUR individuals.
+necessarily zero in this EUR subset. The main reductions at this stage are
+therefore caused by variants becoming monomorphic after restriction from the
+global Phase 3 cohort to the 503 EUR individuals and by the planned removal of
+strand-ambiguous palindromic SNPs.
 
 
 ### Howrigan et al. 2011: specific ROH parameter implications
