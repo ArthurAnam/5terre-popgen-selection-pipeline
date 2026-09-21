@@ -36,6 +36,70 @@ Role in this project:
 - interpretation that `--kinship` is strongest for close relationships,
   with third-degree inference treated more cautiously.
 
+### Additional reference for interpretation and limitations
+
+Conomos MP, Reiner AP, Weir BS, Thornton TA. 2016.
+**Model-free Estimation of Recent Genetic Relatedness.**
+*American Journal of Human Genetics* 98(1):127-148.
+doi:10.1016/j.ajhg.2015.11.022.
+
+Role in this project:
+- provides an important qualification to a simplistic interpretation of
+  KING-Robust values in structured or inbred samples;
+- shows that KING-Robust estimates can be negatively biased when at least one
+  individual in a pair is inbred, with stronger bias at higher inbreeding;
+- shows that ancestry/admixture differences can also bias KING-Robust estimates;
+- therefore supports treating negative KING-Robust estimates as properties of
+  the estimator/data context rather than as "negative biological relatedness".
+
+### Interpretation notes for manuscript and reviewer responses
+
+The following statements should be kept explicit when KING results are
+reported:
+
+- A negative KING-Robust estimate does **not** mean negative biological
+  relatedness. The theoretical pedigree kinship coefficient is not interpreted
+  as negative; the empirical KING-Robust estimator can nevertheless return
+  negative values.
+- KING-Robust performs pairwise inference from the two individuals under
+  comparison and was designed to reduce confounding by population structure
+  relative to estimators that require a single homogeneous set of allele
+  frequencies (Manichaikul et al. 2010).
+- Negative estimates must not be truncated to zero. They should be retained and
+  interpreted cautiously, because population structure, ancestry differences
+  and inbreeding can affect the estimator (Conomos et al. 2016).
+- IBS0 is the proportion of loci at which two individuals carry opposite
+  homozygous genotypes and therefore share zero alleles identical-by-state at
+  those loci. The kinship-versus-IBS0 plot is a diagnostic recommended by the
+  KING documentation for relationship assessment.
+- The conventional KING boundaries used here are >0.354 for duplicate/MZ,
+  [0.177,0.354] for first degree, [0.0884,0.177] for second degree, and
+  [0.0442,0.0884] for third-degree screening. Third-degree classification is
+  treated as exploratory in this project.
+- Absence of pairs above 0.0442 should be described as absence of evidence for
+  close relatives at the conventional KING third-degree-or-closer threshold,
+  not as proof that all individuals are genealogically unrelated at arbitrary
+  depth.
+
+### Current Cinque Terre KING result
+
+Using KING 2.3.2 with `--kinship` on the stable pre-HWE 46-sample target
+dataset, all 46 choose 2 = 1,035 pairwise comparisons were obtained.
+
+Observed summary:
+- maximum KING-Robust kinship estimate: 0.0342;
+- minimum estimate: -0.0501;
+- no pair reached the exploratory 0.0442 third-degree threshold;
+- no duplicate/MZ, first-degree or second-degree candidate pair was detected.
+
+Current QC interpretation:
+- no additional sample exclusion is supported by the KING relatedness screen;
+- because the retained sample set remains unchanged at 46 individuals, no
+  HWE recalculation is required as a consequence of relatedness QC;
+- `--related` or `--ibdseg` are not required as routine follow-up in the
+  absence of a close or ambiguous candidate pair. They remain available for a
+  future IBD-specific scientific question.
+
 ## Project-specific KING decisions
 
 The following choices are explicit workflow-design decisions rather than direct
