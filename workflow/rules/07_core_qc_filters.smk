@@ -309,7 +309,11 @@ number removed and number retained for each chromosome.
 
 hwe_failed_variants.tsv records the exact variants removed by the HWE rule.
 
-cinque_terre.qc_filtered.vcf.gz is the final target-only QC dataset before
-downstream relatedness/population-structure/selection-specific processing.
+cinque_terre.qc_filtered.vcf.gz is the final target-only QC dataset for
+downstream population-structure and selection-specific processing.
+
+The KING relatedness QC branch is intentionally evaluated on the stable
+pre-HWE cohort so that any relatedness-driven sample decision can be made
+before final HWE filtering is considered definitive.
 EOF
         """
