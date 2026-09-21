@@ -228,10 +228,13 @@ The current PCA strategy includes:
 * LD pruning
 * PCA using smartpca / EIGENSOFT
 
-Candidate parameters such as MAF filtering, LD pruning and the number of
-principal components are not yet frozen. They will be finalized only after
-reviewing the EIGENSOFT/smartpca documentation and the relevant population-
-genetics literature for the harmonized Cinque Terre + reference dataset.
+For the harmonized Cinque Terre + reference PCA dataset, the primary marker
+filter is fixed at MAF >= 0.05 followed by LD pruning with 50-SNP windows,
+5-SNP steps and an r^2 threshold of 0.2. This matches the PCA preprocessing
+used by Sazzini et al. (2020) in a closely related Italian population-genomics
+study. The number and genomic distribution of retained markers will be recorded
+after pruning. The number of PCs and the final joint-PCA versus projection
+strategy remain to be finalized after inspecting the harmonized dataset.
 
 The PCA is intended as a population structure analysis, not as a formal test of ancestry proportions.
 

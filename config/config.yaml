@@ -175,10 +175,15 @@ population_structure:
   pca:
     method: "smartpca"
     purpose: "Ancestry placement and fine-scale population structure."
-    parameter_status: "pending_documentation_review"
-    maf_threshold: null
-    ld_pruning: null
-    pruning: null
+    parameter_status: "literature_supported_primary_parameters_fixed"
+    maf_threshold: 0.05
+    ld_pruning: true
+    pruning:
+      tool: "PLINK2 --indep-pairwise"
+      window_snps: 50
+      step_snps: 5
+      r2_threshold: 0.2
+      rationale: "Match the LD-pruning strategy used by Sazzini et al. 2020 for a closely related Italian population-structure PCA design."
     n_components: null
 
   roh:

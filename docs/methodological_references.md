@@ -168,6 +168,24 @@ Role in this project:
 - does not justify importing a fixed project-specific MAF or LD threshold
   without checking the current dataset and software documentation.
 
+Sazzini M, Abondio P, Sarno S, et al. 2020.
+**Genomic history of the Italian population recapitulates key evolutionary
+dynamics of both Continental and Southern Europeans.**
+*BMC Biology* 18:51.
+doi:10.1186/s12915-020-00778-4. PMID:32438927. PMCID:PMC7243322.
+
+Role in this project:
+- especially close methodological precedent because it analyzes high-coverage
+  Italian WGS together with external population-reference data;
+- used smartpca/EIGENSOFT for population-structure analyses;
+- for its PCA-oriented merged dataset, removed one variant from pairs with
+  r^2 > 0.2 in windows of 50 SNVs advanced by five SNVs;
+- therefore provides a study-specific rationale for adopting
+  `--indep-pairwise 50 5 0.2` as the primary PCA LD-pruning strategy here;
+- the published PCA dataset was lower density than the original WGS callset, so
+  the number and genomic distribution of retained markers must still be audited
+  after harmonization in the present project.
+
 ### EIGENSOFT / smartpca documentation reviewed
 
 The EIGENSOFT POPGEN documentation records an internal LD-filtering option
@@ -176,13 +194,52 @@ The EIGENSOFT POPGEN documentation records an internal LD-filtering option
 projection and outlier-handling options.
 
 Project implication:
-- LD handling must be an explicit PCA-branch decision, not inherited from KING
-  and not assumed from a generic recipe;
-- no MAF threshold, LD-pruning threshold, number of PCs, projection strategy,
-  or automatic outlier-removal setting is frozen yet;
-- because the planned analysis combines Cinque Terre with 1000 Genomes EUR,
-  marker harmonization and the choice between joint PCA and reference-defined
-  axes with projection must be decided before implementation.
+- LD handling is an explicit PCA-branch decision and is not inherited from KING;
+- the primary PCA marker filter is now fixed at MAF >= 0.05 followed by
+  PLINK-style LD pruning with 50-SNP windows, 5-SNP steps and r^2 > 0.2,
+  following the closely related Sazzini et al. 2020 Italian population study;
+- the number and genomic distribution of markers retained after pruning will
+  be recorded as an audit rather than assumed to be adequate;
+- number of PCs, joint-PCA versus projection strategy, and automatic
+  outlier-removal settings remain open until the harmonized Cinque Terre +
+  1000 Genomes EUR dataset is inspected.
+
+## ROH / autozygosity references under review
+
+Howrigan DP, Simonson MA, Keller MC. 2011.
+**Detecting autozygosity through runs of homozygosity: a comparison of three
+autozygosity detection algorithms.**
+*BMC Genomics* 12:460.
+doi:10.1186/1471-2164-12-460.
+
+Relevant points for this project:
+- PLINK's sliding-window ROH approach was sensitive to marker LD;
+- in the study's SNP-array-like data, the authors removed variants with
+  MAF < 0.05 before LD pruning and found that LD-pruned data improved
+  autozygosity detection;
+- these results are important but were developed using SNP-chip-like marker
+  densities rather than modern high-density WGS, so they do not yet freeze our
+  ROH MAF/pruning settings.
+
+Pemberton TJ, Absher D, Feldman MW, Myers RM, Rosenberg NA, Li JZ. 2012.
+**Genomic Patterns of Homozygosity in Worldwide Human Populations.**
+*American Journal of Human Genetics* 91(2):275-292.
+doi:10.1016/j.ajhg.2012.06.014. PMID:22883143. PMCID:PMC3415543.
+
+Relevant points for this project:
+- demonstrates that short, intermediate and long ROH can reflect different
+  timescales/processes, from background LD to population history and recent
+  parental relatedness;
+- used a likelihood-based ROH method on a common intersected SNP panel rather
+  than PLINK `--homozyg`, so it informs interpretation but does not directly
+  prescribe PLINK-WGS parameters.
+
+Project implication:
+- MAF >= 0.05 is now fixed for the PCA branch and already planned for the
+  selection/LASSI branch, but it is **not** promoted to a destructive global
+  filter on the harmonized master dataset;
+- ROH input filtering remains branch-specific and will be finalized after
+  reviewing PLINK ROH documentation and WGS-specific marker-density effects.
 
 ## References to add before implementing downstream branches
 
