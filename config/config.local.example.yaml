@@ -5,3 +5,10 @@
 local_paths:
   target_vcf: "/absolute/path/to/all_samples_snp.vcf.gz"
   target_vcf_index: "/absolute/path/to/all_samples_snp.vcf.gz.tbi"
+
+
+  # 1000 Genomes Phase 3 resources used for the EUR reference branch.
+  # Set these only in config/config.local.yaml; the real local paths are not
+  # version-controlled.
+  onekg_phase3_vcf_dir: "/absolute/path/to/phase3_all_vcfs"
+  onekg_phase3_sample_metadata: "/absolute/path/to/1000GP_Phase3.sample"

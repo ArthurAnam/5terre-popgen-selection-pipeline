@@ -281,3 +281,52 @@ and current software documentation before final parameters are frozen:
 For each branch, the final workflow should only promote a working parameter to
 a fixed analytical parameter after its supporting documentation has been
 reviewed.
+
+
+### 1000 Genomes EUR downstream QC design
+
+The EUR reference branch is derived from the original 1000 Genomes Phase 3
+chromosome VCFs rather than from previously filtered local derivative files.
+
+Confirmed EUR sample inventory:
+- CEU: 99
+- FIN: 99
+- GBR: 91
+- IBS: 107
+- TSI: 107
+- total EUR samples: 503
+
+All 503 EUR sample IDs were verified to be present in the local Phase 3
+chromosome VCF collection. All autosomal VCFs are indexed.
+
+Downstream QC principles for the EUR subset:
+- retain autosomes only;
+- retain biallelic SNPs;
+- recalculate cohort-dependent AC, AN and missingness after restricting to the
+  503 EUR individuals;
+- remove variants that become monomorphic in the EUR subset;
+- remove sites with missingness > 5%;
+- evaluate individual missingness > 5% and repeat cohort-dependent site QC only
+  if an individual is removed;
+- do not use pooled-EUR HWE as a filtering criterion;
+- HWE may be inspected descriptively within CEU, FIN, GBR, IBS and TSI
+  separately, without removing variants on that basis;
+- strand-ambiguous SNPs are handled during harmonization with the Cinque Terre
+  dataset.
+
+The Phase 3 VCFs were observed to contain only records marked PASS, but this is
+not treated as an additional downstream analytical filter because it does not
+remove any record from the available reference callset.
+
+Pilot result on chromosome 1 after EUR subsetting and restriction to biallelic
+SNPs:
+- biallelic SNPs: 6,196,151
+- monomorphic in EUR: 4,433,440
+- sites with any missingness: 0
+- sites with missingness > 5%: 0
+- retained after site QC: 1,762,711
+
+This pilot demonstrates that the dominant chromosome-1 reduction is caused by
+variants becoming monomorphic after EUR subsetting, not by missingness.
+Genome-wide confirmation across chromosomes 1-22 is pending before the final
+Snakemake implementation is frozen.
