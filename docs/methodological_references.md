@@ -14,6 +14,8 @@ software documentation, and project-specific design decisions.
 Manichaikul A, Mychaleckyj JC, Rich SS, Daly K, Sale M, Chen WM. 2010.
 **Robust relationship inference in genome-wide association studies.**
 *Bioinformatics* 26(22):2867-2873.
+doi:10.1093/bioinformatics/btq559. PMID:20926424. PMCID:PMC3025716.
+Full text: https://pmc.ncbi.nlm.nih.gov/articles/PMC3025716/
 
 Role in this project:
 - primary methodological reference for the KING-Robust kinship estimator;
