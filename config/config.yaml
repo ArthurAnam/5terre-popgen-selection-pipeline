@@ -213,15 +213,22 @@ population_structure:
   pca:
     method: "smartpca"
     purpose: "Ancestry placement and fine-scale population structure."
-    parameter_status: "literature_supported_primary_parameters_fixed"
+    parameter_status: "joint_pca_preprocessing_fixed_smartpca_execution_pending"
+    analysis_mode: "joint"
+    expected_joint_samples: 549
+    expected_harmonized_variants: 7548844
     maf_threshold: 0.05
+    maf_scope: "joint_harmonized_ct_plus_1kg_eur"
+    filter_order: ["maf", "ld_pruning"]
     ld_pruning: true
+    ld_pruning_scope: "joint_harmonized_ct_plus_1kg_eur"
     pruning:
       tool: "PLINK2 --indep-pairwise"
       window_snps: 50
       step_snps: 5
       r2_threshold: 0.2
-      rationale: "Match the LD-pruning strategy used by Sazzini et al. 2020 for a closely related Italian population-structure PCA design."
+      indep_order: 1
+      rationale: "Match the 50-SNV, 5-SNV-step, r2>0.2 strategy used by Sazzini et al. 2020; PLINK2 --indep-order 1 is set explicitly to reproduce PLINK 1.x pruning order rather than the newer PLINK2 default."
     n_components: null
 
   roh:

@@ -31,6 +31,7 @@ include: "workflow/rules/06_genotype_qc_exploration.smk"
 include: "workflow/rules/07_core_qc_filters.smk"
 include: "workflow/rules/08_king_relatedness.smk"
 include: "workflow/rules/09_1kg_eur_harmonization.smk"
+include: "workflow/rules/10_pca_preprocessing.smk"
 include: "workflow/rules/99_provenance.smk"
 
 

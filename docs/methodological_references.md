@@ -195,14 +195,19 @@ projection and outlier-handling options.
 
 Project implication:
 - LD handling is an explicit PCA-branch decision and is not inherited from KING;
-- the primary PCA marker filter is now fixed at MAF >= 0.05 followed by
-  PLINK-style LD pruning with 50-SNP windows, 5-SNP steps and r^2 > 0.2,
-  following the closely related Sazzini et al. 2020 Italian population study;
-- the number and genomic distribution of markers retained after pruning will
-  be recorded as an audit rather than assumed to be adequate;
-- number of PCs, joint-PCA versus projection strategy, and automatic
-  outlier-removal settings remain open until the harmonized Cinque Terre +
-  1000 Genomes EUR dataset is inspected.
+- the PCA design is now fixed as a joint PCA of the harmonized 46 Cinque Terre
+  and 503 1000 Genomes EUR individuals (549 individuals total);
+- MAF >= 0.05 is calculated on this joint harmonized dataset before LD pruning;
+- LD pruning is then calculated once on the same joint dataset, using 50-SNP
+  windows, 5-SNP steps and r^2 > 0.2; there are not separate Cinque Terre and
+  1000G pruning lists and no intersection of independently pruned marker sets;
+- PLINK2 `--indep-order 1` is specified explicitly so that the pruning order
+  follows PLINK 1.x behavior, rather than the newer PLINK2 default order;
+- the number and genomic distribution of markers retained after MAF filtering
+  and pruning will be recorded as an audit rather than assumed to be adequate;
+- number of PCs, explicit long-range-LD-region masking, and automatic
+  smartpca outlier-removal settings remain open until this pruned marker set is
+  inspected.
 
 ### 1000 Genomes EUR panel inventory confirmed locally
 
@@ -215,9 +220,8 @@ header line. Selecting `GROUP == EUR` yields 503 individuals distributed as:
 - IBS: 107
 - TSI: 107
 
-All 503 EUR sample IDs were confirmed to be present in the chromosome 1 Phase 3
-VCF. Before constructing the reproducible EUR subset, the same identity check
-will be extended across chromosomes 1-22.
+All 503 EUR sample IDs were confirmed to be present in every autosomal Phase 3
+VCF from chromosomes 1-22.
 
 The previously generated local PGEN named
 `1KG_EUR.QCcore_mind0.05_geno0.05_alpha0.05.pgen` will not be used as the
