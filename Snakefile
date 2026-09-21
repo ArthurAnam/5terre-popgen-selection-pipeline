@@ -29,6 +29,7 @@ include: "workflow/rules/04_sample_preqc_plots.smk"
 include: "workflow/rules/05_target_qc_start.smk"
 include: "workflow/rules/06_genotype_qc_exploration.smk"
 include: "workflow/rules/07_core_qc_filters.smk"
+include: "workflow/rules/08_king_relatedness.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
@@ -71,4 +72,15 @@ rule all:
         "results/qc/04_hwe/hwe_failed_variants.tsv",
         "results/qc/04_hwe/final_qc_summary.tsv",
         "results/qc/04_hwe/README.txt",
+        "results/relatedness/king/king_input_dataset_summary.tsv",
+        "results/relatedness/king/king.kin0",
+        "results/relatedness/king/king_pairwise_kinship.tsv",
+        "results/relatedness/king/king_candidate_relatives.tsv",
+        "results/relatedness/king/king_relationship_counts.tsv",
+        "results/relatedness/king/king_relatedness_summary.tsv",
+        "results/relatedness/king/king_kinship_distribution.png",
+        "results/relatedness/king/king_kinship_vs_ibs0.png",
+        "results/relatedness/king/king_kinship_heatmap.png",
+        "results/relatedness/king/INPUT_README.txt",
+        "results/relatedness/king/README.txt",
         "results/provenance/software_versions.tsv"
