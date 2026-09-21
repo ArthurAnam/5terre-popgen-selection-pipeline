@@ -259,7 +259,24 @@ population_structure:
     smartpca:
       run_both_preprocessing_panels: true
       panels: ["unmasked", "highld_masked"]
-      n_components: 10
+      observed_joint_smartpca:
+      samples: 549
+      unmasked:
+        PC1_eigenvalue: 4.173998
+        PC1_variance_percent: 0.7616784588
+        PC2_eigenvalue: 2.085995
+        PC2_variance_percent: 0.3806560177
+        PC3_eigenvalue: 1.692304
+        PC3_variance_percent: 0.3088145952
+      highld_masked:
+        PC1_eigenvalue: 4.142286
+        PC1_variance_percent: 0.7558916031
+        PC2_eigenvalue: 2.072798
+        PC2_variance_percent: 0.3782478088
+        PC3_eigenvalue: 1.680901
+        PC3_variance_percent: 0.3067337580
+      comparison_status: "coordinate_comparison_pending"
+    n_components: 10
       numoutlieriter: 0
       usenorm: "YES"
       altnormstyle: "NO"

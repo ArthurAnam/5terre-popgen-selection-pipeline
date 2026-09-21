@@ -197,3 +197,75 @@ rule run_joint_smartpca_both_panels:
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc1_pc2.pdf", pca_panel=["unmasked", "highld_masked"]),
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc2_pc3.png", pca_panel=["unmasked", "highld_masked"]),
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc2_pc3.pdf", pca_panel=["unmasked", "highld_masked"])
+
+
+
+# ============================================================
+# Quantitative comparison of masked vs unmasked joint PCA
+# ============================================================
+
+PCA_COMPARISON_DIR = PCA_SMARTPCA_DIR + "/comparison"
+
+
+rule compare_joint_smartpca_panels:
+    input:
+        unmasked_coordinates=PCA_SMARTPCA_DIR + "/unmasked/pca_coordinates.tsv",
+        masked_coordinates=PCA_SMARTPCA_DIR + "/highld_masked/pca_coordinates.tsv",
+        unmasked_eigenvalues=PCA_SMARTPCA_DIR + "/unmasked/pca_eigenvalues.tsv",
+        masked_eigenvalues=PCA_SMARTPCA_DIR + "/highld_masked/pca_eigenvalues.tsv",
+        script="workflow/scripts/compare_smartpca_panels.py"
+    output:
+        correlations=PCA_COMPARISON_DIR + "/pc_correlations.tsv",
+        correlation_matrix=PCA_COMPARISON_DIR + "/pc_correlation_matrix.tsv",
+        centroid_shifts=PCA_COMPARISON_DIR + "/population_centroid_shifts.tsv",
+        ct_reference_distances=PCA_COMPARISON_DIR + "/ct_reference_centroid_distances.tsv",
+        summary=PCA_COMPARISON_DIR + "/comparison_summary.tsv",
+        pc1_png=PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.png",
+        pc1_pdf=PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.pdf",
+        pc2_png=PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.png",
+        pc2_pdf=PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.pdf",
+        pc3_png=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
+        pc3_pdf=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf"
+    params:
+        expected_samples=lambda wildcards: config["population_structure"]["pca"]["expected_joint_samples"],
+        n_components=lambda wildcards: config["population_structure"]["pca"]["smartpca"]["n_components"]
+    conda:
+        "../../envs/pipeline.yaml"
+    shell:
+        r"""
+        set -euo pipefail
+        mkdir -p {PCA_COMPARISON_DIR}
+        python {input.script} \
+            --unmasked-coordinates {input.unmasked_coordinates} \
+            --masked-coordinates {input.masked_coordinates} \
+            --unmasked-eigenvalues {input.unmasked_eigenvalues} \
+            --masked-eigenvalues {input.masked_eigenvalues} \
+            --expected-samples {params.expected_samples} \
+            --n-components {params.n_components} \
+            --correlations-out {output.correlations} \
+            --correlation-matrix-out {output.correlation_matrix} \
+            --centroid-shifts-out {output.centroid_shifts} \
+            --ct-reference-distances-out {output.ct_reference_distances} \
+            --summary-out {output.summary} \
+            --pc1-png {output.pc1_png} \
+            --pc1-pdf {output.pc1_pdf} \
+            --pc2-png {output.pc2_png} \
+            --pc2-pdf {output.pc2_pdf} \
+            --pc3-png {output.pc3_png} \
+            --pc3-pdf {output.pc3_pdf}
+        """
+
+
+rule compare_joint_pca_panels:
+    input:
+        PCA_COMPARISON_DIR + "/pc_correlations.tsv",
+        PCA_COMPARISON_DIR + "/pc_correlation_matrix.tsv",
+        PCA_COMPARISON_DIR + "/population_centroid_shifts.tsv",
+        PCA_COMPARISON_DIR + "/ct_reference_centroid_distances.tsv",
+        PCA_COMPARISON_DIR + "/comparison_summary.tsv",
+        PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.png",
+        PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.pdf",
+        PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.png",
+        PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.pdf",
+        PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
+        PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf"

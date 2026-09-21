@@ -279,6 +279,33 @@ No `poplistname` is supplied: this is a joint PCA, not a reference-axis
 projection. The masked and unmasked smartpca runs differ only in their SNP
 panels.
 
+#### Completed joint smartpca run and planned robustness comparison
+
+Both smartpca runs completed with the expected 549 individuals:
+CT 46, CEU 99, FIN 99, GBR 91, IBS 107 and TSI 107.
+
+The leading eigenvalues were very similar between preprocessing panels:
+- unmasked PC1/PC2/PC3: 4.173998, 2.085995, 1.692304;
+- high-LD-masked PC1/PC2/PC3: 4.142286, 2.072798, 1.680901.
+
+The corresponding variance percentages were also similar:
+- unmasked: 0.761678%, 0.380656%, 0.308815%;
+- high-LD-masked: 0.755892%, 0.378248%, 0.306734%.
+
+These eigenvalue similarities are descriptive only. They do not by themselves
+establish that individual coordinates or population placement are unchanged.
+The workflow therefore performs a sample-matched quantitative comparison of the
+two PCA coordinate sets. For each of the first ten PCs it records the Pearson
+correlation, absolute correlation, sign needed for alignment, and aligned RMSE.
+It also computes the full 10-by-10 cross-panel correlation matrix to detect
+possible component swaps or rotations, population-centroid shifts for PC1-PC3,
+and CT-to-reference centroid distances. PC signs are explicitly aligned before
+coordinate differences are interpreted because eigenvector sign is arbitrary.
+
+The masked-versus-unmasked interpretation will be based on these quantitative
+comparisons and the corresponding plots, rather than on visual preference for
+one PCA figure.
+
 ### 1000 Genomes EUR panel inventory confirmed locally
 
 The local Phase 3 sample metadata file contains 2,504 individuals plus one
