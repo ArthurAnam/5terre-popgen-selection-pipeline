@@ -259,7 +259,15 @@ population_structure:
     smartpca:
       run_both_preprocessing_panels: true
       panels: ["unmasked", "highld_masked"]
-      observed_joint_smartpca:
+      n_components: 10
+      numoutlieriter: 0
+      usenorm: "YES"
+      altnormstyle: "NO"
+      familynames: "NO"
+      fastmode: "NO"
+      numchrom: 22
+      rationale: "Joint PCA on all 549 individuals. Automatic outlier removal is disabled so biologically real population extremes are not silently excluded. Ten PCs are retained for inspection; the publication panels will be selected after reviewing the full output."
+    observed_joint_smartpca:
       samples: 549
       unmasked:
         PC1_eigenvalue: 4.173998
@@ -276,14 +284,6 @@ population_structure:
         PC3_eigenvalue: 1.680901
         PC3_variance_percent: 0.3067337580
       comparison_status: "coordinate_comparison_pending"
-    n_components: 10
-      numoutlieriter: 0
-      usenorm: "YES"
-      altnormstyle: "NO"
-      familynames: "NO"
-      fastmode: "NO"
-      numchrom: 22
-      rationale: "Joint PCA on all 549 individuals. Automatic outlier removal is disabled so biologically real population extremes are not silently excluded. Ten PCs are retained for inspection; the publication panels will be selected after reviewing the full output."
     n_components: 10
 
   roh:
