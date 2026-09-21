@@ -16,8 +16,7 @@ rule apply_core_variant_and_individual_missingness_filters:
         individual_missingness="results/qc/03_core_filtering/individual_missingness_after_site_filters.tsv",
         excluded_missingness="results/qc/03_core_filtering/individuals_excluded_missingness_gt_0.05.txt",
         retained_samples="results/qc/03_core_filtering/retained_samples_before_hwe.txt",
-        summary="results/qc/03_core_filtering/core_qc_pre_hwe_summary.tsv",
-        readme="results/qc/03_core_filtering/README.txt"
+        summary="results/qc/03_core_filtering/core_qc_pre_hwe_summary.tsv"
     log:
         "logs/qc/03_core_filtering/core_filters.log"
     params:
@@ -153,55 +152,6 @@ rule apply_core_variant_and_individual_missingness_filters:
             printf 'additional_qual_dp_gq_hard_filters\tNO\n'
         }} > {output.summary}
 
-        cat > {output.readme} <<'EOF'
-03_core_filtering
-=================
-
-Purpose
--------
-Apply the agreed core QC filters after the four reviewed sample exclusions.
-
-Static filter
--------------
-Palindromic A/T and C/G SNPs are removed first. This REF/ALT property does not
-change when samples or other variants are removed.
-
-Dynamic QC until stability
---------------------------
-The following cohort-dependent quantities are then recalculated on the current
-dataset:
-1. monomorphic status from AC/AN;
-2. variant missingness;
-3. individual missingness.
-
-Monomorphic sites and variants with >5% missing genotypes are removed, then
-individual missingness is calculated on the retained sites. Individuals with
->5% missingness are removed.
-
-If at least one individual is removed, AC/AN and variant missingness are
-recalculated on the new cohort and the dynamic block is repeated. The block
-stops when an iteration removes no additional individual. At that point,
-repeating the site filters on the unchanged cohort cannot remove additional
-sites, so the dataset is stable for these criteria.
-
-The procedure is monotonic: once a site or individual is removed, it is not
-reintroduced in a later iteration.
-
-Audit files
------------
-core_variant_filter_step_counts.tsv reports the exact sequential effect of the
-first pass: palindromic -> monomorphic -> variant missingness.
-
-iterative_missingness_qc_history.tsv records every dynamic iteration, including
-sample and variant counts and whether convergence was reached.
-
-individual_missingness_after_site_filters.tsv contains the exact individual
-missingness values from the converged iteration.
-
-No additional QUAL, DP, GQ or allele-balance hard filter is applied.
-
-The resulting VCF is the stable pre-HWE dataset. HWE is applied only afterward.
-EOF
         """
 
 
@@ -216,8 +166,7 @@ rule apply_hwe_bonferroni_by_chromosome:
         thresholds="results/qc/04_hwe/hwe_bonferroni_thresholds.tsv",
         failed="results/qc/04_hwe/hwe_failed_variants.tsv",
         by_chromosome="results/qc/04_hwe/hwe_bonferroni_by_chromosome.tsv",
-        summary="results/qc/04_hwe/final_qc_summary.tsv",
-        readme="results/qc/04_hwe/README.txt"
+        summary="results/qc/04_hwe/final_qc_summary.tsv"
     log:
         "logs/qc/04_hwe/hwe.log"
     params:
@@ -282,7 +231,80 @@ rule apply_hwe_bonferroni_by_chromosome:
             printf 'final_samples\t%s\n' "$n_samples"
         }} > {output.summary}
 
-        cat > {output.readme} <<'EOF'
+        """
+
+
+# Documentation-only rules are deliberately separated from the expensive
+# computational rules above. Editing explanatory text must not trigger a
+# full re-run of core QC or HWE.
+
+rule write_core_qc_readme:
+    input:
+        summary="results/qc/03_core_filtering/core_qc_pre_hwe_summary.tsv"
+    output:
+        "results/qc/03_core_filtering/README.txt"
+    shell:
+        r"""
+        cat > {output} <<'EOF'
+03_core_filtering
+=================
+
+Purpose
+-------
+Apply the agreed core QC filters after the four reviewed sample exclusions.
+
+Static filter
+-------------
+Palindromic A/T and C/G SNPs are removed first. This REF/ALT property does not
+change when samples or other variants are removed.
+
+Dynamic QC until stability
+--------------------------
+The following cohort-dependent quantities are then recalculated on the current
+dataset:
+1. monomorphic status from AC/AN;
+2. variant missingness;
+3. individual missingness.
+
+Monomorphic sites and variants with >5% missing genotypes are removed, then
+individual missingness is calculated on the retained sites. Individuals with
+>5% missingness are removed.
+
+If at least one individual is removed, AC/AN and variant missingness are
+recalculated on the new cohort and the dynamic block is repeated. The block
+stops when an iteration removes no additional individual. At that point,
+repeating the site filters on the unchanged cohort cannot remove additional
+sites, so the dataset is stable for these criteria.
+
+The procedure is monotonic: once a site or individual is removed, it is not
+reintroduced in a later iteration.
+
+Audit files
+-----------
+core_variant_filter_step_counts.tsv reports the exact sequential effect of the
+first pass: palindromic -> monomorphic -> variant missingness.
+
+iterative_missingness_qc_history.tsv records every dynamic iteration, including
+sample and variant counts and whether convergence was reached.
+
+individual_missingness_after_site_filters.tsv contains the exact individual
+missingness values from the stable iteration.
+
+No additional QUAL, DP, GQ or allele-balance hard filter is applied.
+
+The resulting VCF is the stable pre-HWE dataset. HWE is applied only afterward.
+EOF
+        """
+
+
+rule write_hwe_readme:
+    input:
+        summary="results/qc/04_hwe/final_qc_summary.tsv"
+    output:
+        "results/qc/04_hwe/README.txt"
+    shell:
+        r"""
+        cat > {output} <<'EOF'
 04_hwe
 ======
 
