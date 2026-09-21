@@ -102,6 +102,7 @@ rule harmonize_ct_1kg_eur_chromosome:
     shell:
         r"""
         set -euo pipefail
+        export LC_ALL=C
         mkdir -p             results/population_structure/harmonization/per_chromosome             results/population_structure/harmonization/audit             logs/population_structure/harmonization
 
         : > {log}
@@ -140,8 +141,10 @@ rule harmonize_ct_1kg_eur_chromosome:
             exit 1
         fi
 
-        bcftools query -f '%CHROM\t%POS\n' "$ct_chr" 2>> {log}             | sort -k1,1 -k2,2n -u > "$tmpdir/ct.pos"
-        bcftools query -f '%CHROM\t%POS\n' "$eur_chr" 2>> {log}             | sort -k1,1 -k2,2n -u > "$tmpdir/eur.pos"
+        # comm requires lexically sorted inputs under the same locale.
+        # Numeric sorting of POS is invalid input for comm.
+        bcftools query -f '%CHROM\t%POS\n' "$ct_chr" 2>> {log}             | sort -u > "$tmpdir/ct.pos"
+        bcftools query -f '%CHROM\t%POS\n' "$eur_chr" 2>> {log}             | sort -u > "$tmpdir/eur.pos"
 
         same_position=$(comm -12 "$tmpdir/ct.pos" "$tmpdir/eur.pos" | wc -l)
 
