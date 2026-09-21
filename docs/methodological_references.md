@@ -245,6 +245,40 @@ be retained and compared before deciding how the sensitivity analysis should be
 presented in the paper; the choice will not be based on which plot appears more
 favorable.
 
+The high-LD sensitivity preprocessing completed with 4,878,327 MAF-passing
+SNPs. The 18 predefined GRCh37 intervals removed 147,894 SNPs before pruning,
+leaving 4,730,433 markers for the masked pruning step. The identical
+`--indep-pairwise 50 5 0.2 --indep-order 1` procedure then retained 287,815
+masked SNPs, compared with 295,375 SNPs in the unmasked branch. Thus the masked
+panel contains 7,560 fewer final PCA markers, while both panels retain the same
+549 individuals.
+
+#### smartpca execution settings
+
+Both preprocessed marker panels are carried forward to joint smartpca runs on
+the same 549 individuals. Population labels are CT, CEU, FIN, GBR, IBS and TSI.
+
+The smartpca parameterization is explicit:
+- `numoutevec: 10`, so the first ten PCs are retained for inspection;
+- `numoutlieriter: 0`, disabling automatic iterative sample removal;
+- `usenorm: YES`;
+- `altnormstyle: NO`, matching EIGENSTRAT-style normalization and the
+  EIGENSOFT smartpca example/wrapper behavior;
+- `familynames: NO`, preserving the original sample IDs when PACKEDPED/PLINK
+  input is read;
+- `fastmode: NO`, so the production run uses the exact PCA calculation;
+- `numchrom: 22`.
+
+The EIGENSOFT POPGEN documentation states that the default number of output
+eigenvectors is ten and that setting `numoutlieriter` to zero disables
+outlier removal. Automatic outlier removal is disabled here because the
+analysis is explicitly intended to inspect population structure and potential
+extreme individuals rather than silently remove them before review.
+
+No `poplistname` is supplied: this is a joint PCA, not a reference-axis
+projection. The masked and unmasked smartpca runs differ only in their SNP
+panels.
+
 ### 1000 Genomes EUR panel inventory confirmed locally
 
 The local Phase 3 sample metadata file contains 2,504 individuals plus one

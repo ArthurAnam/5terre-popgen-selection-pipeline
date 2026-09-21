@@ -213,7 +213,7 @@ population_structure:
   pca:
     method: "smartpca"
     purpose: "Ancestry placement and fine-scale population structure."
-    parameter_status: "joint_pca_preprocessing_fixed_smartpca_execution_pending"
+    parameter_status: "joint_pca_preprocessing_and_smartpca_execution_fixed"
     analysis_mode: "joint"
     expected_joint_samples: 549
     expected_harmonized_variants: 7548844
@@ -248,7 +248,26 @@ population_structure:
       region_catalog_source: "Grinde et al. 2024 literature-review catalog, build-37 file"
       masked_filter_order: ["maf", "predefined_high_ld_mask", "ld_pruning"]
       rationale: "Run an otherwise identical PCA-preprocessing sensitivity branch with a predefined GRCh37 high-LD mask; do not select regions from the observed Cinque Terre PCA."
-    n_components: null
+    observed_high_ld_preprocessing:
+      high_ld_region_count: 18
+      variants_removed_by_high_ld_mask: 147894
+      variants_entering_masked_ld_pruning: 4730433
+      variants_removed_by_masked_ld_pruning: 4442618
+      variants_after_ld_pruning: 287815
+      difference_vs_unmasked_final_variants: -7560
+      pca_preprocessed_samples: 549
+    smartpca:
+      run_both_preprocessing_panels: true
+      panels: ["unmasked", "highld_masked"]
+      n_components: 10
+      numoutlieriter: 0
+      usenorm: "YES"
+      altnormstyle: "NO"
+      familynames: "NO"
+      fastmode: "NO"
+      numchrom: 22
+      rationale: "Joint PCA on all 549 individuals. Automatic outlier removal is disabled so biologically real population extremes are not silently excluded. Ten PCs are retained for inspection; the publication panels will be selected after reviewing the full output."
+    n_components: 10
 
   roh:
     method: "PLINK --homozyg"
