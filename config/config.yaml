@@ -229,6 +229,25 @@ population_structure:
       r2_threshold: 0.2
       indep_order: 1
       rationale: "Match the 50-SNV, 5-SNV-step, r2>0.2 strategy used by Sazzini et al. 2020; PLINK2 --indep-order 1 is set explicitly to reproduce PLINK 1.x pruning order rather than the newer PLINK2 default."
+    observed_unmasked_preprocessing:
+      harmonized_input_variants: 7548844
+      harmonized_input_samples: 549
+      variants_after_maf: 4878327
+      variants_removed_by_maf: 2670517
+      variants_removed_by_ld_pruning: 4582952
+      variants_after_ld_pruning: 295375
+      pca_preprocessed_samples: 549
+      pca_preprocessed_variants: 295375
+    high_ld_sensitivity:
+      enabled: true
+      run_both_masked_and_unmasked: true
+      presentation_status: "pending_comparison"
+      region_file: "config/pca_high_ld_regions_grch37.bed1"
+      region_build: "GRCh37"
+      region_count: 18
+      region_catalog_source: "Grinde et al. 2024 literature-review catalog, build-37 file"
+      masked_filter_order: ["maf", "predefined_high_ld_mask", "ld_pruning"]
+      rationale: "Run an otherwise identical PCA-preprocessing sensitivity branch with a predefined GRCh37 high-LD mask; do not select regions from the observed Cinque Terre PCA."
     n_components: null
 
   roh:

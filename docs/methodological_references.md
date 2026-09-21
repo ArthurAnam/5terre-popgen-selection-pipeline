@@ -209,6 +209,42 @@ Project implication:
   smartpca outlier-removal settings remain open until this pruned marker set is
   inspected.
 
+#### High/long-range-LD sensitivity design
+
+Price et al. (2008) identified 24 extended-LD regions in European-ancestry
+datasets, and the EIGENSOFT documentation recommends excluding the long-range
+LD regions from that work before PCA.  Because the Price intervals were
+reported as coarse Mb-scale regions in an older genome-build context, this
+project does not directly transplant those coordinates onto GRCh37.
+
+Instead, the sensitivity branch uses the explicit GRCh37 catalog distributed
+by:
+
+Grinde KE, Browning BL, Reiner AP, Thornton TA, Browning SR. 2024.
+**Adjusting for principal components can induce collider bias in genome-wide
+association studies.**
+*PLoS Genetics* 20(12):e1011242.
+doi:10.1371/journal.pgen.1011242. PMID:39680601. PMCID:PMC11684764.
+
+Grinde et al. assembled high, long-range, or otherwise unusual LD regions from
+an extensive literature review and distribute coordinate files for genome
+builds 36, 37 and 38.  The project's
+`config/pca_high_ld_regions_grch37.bed1` is the build-37 interval list from
+that resource.
+
+The primary preprocessing already generated without a region mask is retained:
+7,548,844 harmonized SNPs -> 4,878,327 SNPs after joint MAF >= 0.05 ->
+295,375 SNPs after `--indep-pairwise 50 5 0.2 --indep-order 1`, with all
+549 individuals retained.
+
+A second sensitivity branch now starts from the exact same MAF-passing marker
+set, excludes the predefined GRCh37 high-LD intervals, and then reruns the
+identical LD-pruning parameters.  No region is added or removed in response to
+the observed Cinque Terre PCA.  The masked and unmasked PCA results will both
+be retained and compared before deciding how the sensitivity analysis should be
+presented in the paper; the choice will not be based on which plot appears more
+favorable.
+
 ### 1000 Genomes EUR panel inventory confirmed locally
 
 The local Phase 3 sample metadata file contains 2,504 individuals plus one
