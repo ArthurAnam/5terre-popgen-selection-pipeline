@@ -14,6 +14,7 @@ rule prepare_king_relatedness_dataset:
         readme="results/relatedness/king/INPUT_README.txt"
     log:
         "logs/relatedness/king/prepare_king_input.log"
+    threads: 1
     conda:
         "../../envs/pipeline.yaml"
     shell:
@@ -22,6 +23,7 @@ rule prepare_king_relatedness_dataset:
         mkdir -p results/relatedness/king/input logs/relatedness/king
 
         plink2 \
+            --threads {threads} \
             --vcf {input.vcf} \
             --double-id \
             --set-all-var-ids '@:#:$r:$a' \
@@ -87,6 +89,7 @@ rule run_king_relatedness:
         readme="results/relatedness/king/README.txt"
     log:
         "logs/relatedness/king/king.log"
+    threads: 1
     conda:
         "../../envs/pipeline.yaml"
     shell:
@@ -97,6 +100,7 @@ rule run_king_relatedness:
         king \
             -b {input.bed} \
             --kinship \
+            --cpus {threads} \
             --prefix results/relatedness/king/king \
             > {log} 2>&1
 
@@ -123,7 +127,10 @@ Estimate pairwise relatedness among the 46 retained Cinque Terre individuals
 using the native KING robust kinship estimator.
 
 KING is run with:
-    king -b <PLINK BED> --kinship
+    king -b <PLINK BED> --kinship --cpus 1
+
+The workflow explicitly constrains KING to one CPU for conservative laptop
+execution. This is a computational setting and does not change the estimator.
 
 No MAF filter and no LD pruning are applied specifically for KING.
 
