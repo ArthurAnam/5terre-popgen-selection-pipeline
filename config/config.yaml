@@ -241,7 +241,7 @@ population_structure:
     high_ld_sensitivity:
       enabled: true
       run_both_masked_and_unmasked: true
-      presentation_status: "pending_comparison"
+      presentation_status: "primary_PC1_PC3_robust_to_mask_pending_visual_review"
       region_file: "config/pca_high_ld_regions_grch37.bed1"
       region_build: "GRCh37"
       region_count: 18
@@ -283,7 +283,19 @@ population_structure:
         PC2_variance_percent: 0.3782478088
         PC3_eigenvalue: 1.680901
         PC3_variance_percent: 0.3067337580
-      comparison_status: "coordinate_comparison_pending"
+      comparison_status: "completed_first3_robust_higher_pcs_less_stable"
+      coordinate_comparison:
+        matched_samples: 549
+        mean_abs_same_pc_correlation_first3: 0.9983407551
+        minimum_abs_same_pc_correlation_first3: 0.9970738512
+        PC1_abs_correlation: 0.9997245995
+        PC2_abs_correlation: 0.9982238148
+        PC3_abs_correlation: 0.9970738512
+        mean_abs_same_pc_correlation_first10: 0.7016479270
+        minimum_abs_same_pc_correlation_first10: 0.1256357205
+        same_index_is_best_match_count_first10: 6
+        max_population_centroid_shift_PC1_PC3: 0.0052179180
+        interpretation: "PC1-PC3 are highly concordant between masked and unmasked analyses; higher PCs show reordering/rotation and should not be treated as one-to-one stable components without further inspection."
     n_components: 10
 
   roh:

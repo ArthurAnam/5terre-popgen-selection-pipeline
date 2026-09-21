@@ -306,6 +306,28 @@ The masked-versus-unmasked interpretation will be based on these quantitative
 comparisons and the corresponding plots, rather than on visual preference for
 one PCA figure.
 
+The coordinate comparison has now completed. For PC1-PC3, absolute same-PC
+correlations were 0.999725, 0.998224 and 0.997074, respectively, with mean
+absolute correlation 0.998341. The first three components therefore show very
+high coordinate concordance between the masked and unmasked marker panels.
+The maximum population-centroid shift across PC1-PC3 was 0.005218.
+
+CT-to-reference centroid distances across PC1-PC3 were also nearly unchanged:
+CEU 0.157634 -> 0.157442; FIN 0.175689 -> 0.175663; GBR 0.161689 -> 0.162084;
+IBS 0.160217 -> 0.160247; TSI 0.160447 -> 0.160297. These differences are
+small relative to the corresponding centroid distances.
+
+The higher PCs are less stable one-to-one. PC4-PC6 remain strongly correlated
+with their same-index counterparts, but PCs 7-10 show lower same-index
+correlations and cross-match to neighboring PCs. This pattern is consistent
+with rotation/reordering among later components whose eigenvalues are close;
+it is not interpreted as a contradiction of the PC1-PC3 robustness result.
+
+Paper presentation remains pending visual review of the PC1-PC2 and PC2-PC3
+plots. Because the primary structure is quantitatively robust to the mask, the
+choice of which panel is shown as the main figure can be based on a priori
+methodological framing rather than on which version gives a preferred result.
+
 ### 1000 Genomes EUR panel inventory confirmed locally
 
 The local Phase 3 sample metadata file contains 2,504 individuals plus one
