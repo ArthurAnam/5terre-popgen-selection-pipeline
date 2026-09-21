@@ -14,7 +14,7 @@ rule explore_genotype_qc_and_individual_missingness:
         vcf="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz",
         index="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz.tbi",
         samples="results/qc/00_post_sample_qc_input/retained_samples_after_sample_qc.txt",
-        script="workflow/scripts/explore_genotype_qc_metrics.py"
+        script="workflow/exploratory/explore_genotype_qc_metrics.py"
     output:
         genotype_summary="results/qc/02_genotype_qc_exploration/genotype_qc_metric_descriptive_statistics.tsv",
         genotype_plot="results/qc/02_genotype_qc_exploration/genotype_qc_metric_distributions.png",

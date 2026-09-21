@@ -45,7 +45,7 @@ rule sample_preqc_chr_consistency:
         r"""
         set -euo pipefail
 
-        python workflow/scripts/sample_preqc_by_chromosome.py \
+        python workflow/exploratory/sample_preqc_by_chromosome.py \
             --stats-dir {params.stats_dir} \
             --metrics-out {output.metrics} \
             --summary-out {output.summary} \

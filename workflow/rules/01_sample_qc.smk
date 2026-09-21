@@ -55,7 +55,7 @@ rule sample_preqc_review_flags:
     shell:
         r"""
         set -euo pipefail
-        python workflow/scripts/sample_preqc_autosomal.py \
+        python workflow/exploratory/sample_preqc_autosomal.py \
             --stats {input.stats} \
             --metrics-out {output.metrics} \
             --flags-out {output.flags} \

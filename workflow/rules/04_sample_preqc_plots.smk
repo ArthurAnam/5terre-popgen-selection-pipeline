@@ -11,5 +11,5 @@ rule sample_preqc_plots:
     shell:
         r"""
         set -euo pipefail
-        python workflow/scripts/plot_sample_preqc.py
+        python workflow/exploratory/plot_sample_preqc.py
         """

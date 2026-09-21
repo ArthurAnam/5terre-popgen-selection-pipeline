@@ -125,7 +125,7 @@ rule explore_variant_qc_metrics_without_filtering:
     input:
         vcf="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz",
         index="results/qc/00_post_sample_qc_input/cinque_terre.post_sample_qc.autosomes.vcf.gz.tbi",
-        script="workflow/scripts/explore_variant_qc_metrics.py"
+        script="workflow/exploratory/explore_variant_qc_metrics.py"
     output:
         summary="results/qc/01_variant_qc_exploration/variant_qc_metric_descriptive_statistics.tsv",
         inventory="results/qc/01_variant_qc_exploration/variant_category_counts_before_filtering.tsv",

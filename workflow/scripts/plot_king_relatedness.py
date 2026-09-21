@@ -201,12 +201,12 @@ def make_plots(rows, samples, hist_out, scatter_out, scatter_pdf_out, heatmap_ou
     label_x = x_max - 0.015 * (x_max - x_min)
     ax.text(
         label_x, THIRD_MIN + 0.002,
-        "third-degree threshold (0.0442)",
+        "third-degree screening threshold (0.0442)",
         ha="right", va="bottom", fontsize=9,
     )
     ax.text(
         label_x, SECOND_MIN + 0.002,
-        "second-degree threshold (0.0884)",
+        "second-degree lower bound (0.0884)",
         ha="right", va="bottom", fontsize=9,
     )
 

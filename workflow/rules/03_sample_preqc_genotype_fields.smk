@@ -33,7 +33,7 @@ rule sample_preqc_genotype_fields:
             -r {params.regions} \
             -f '%CHROM\t%POS[\t%GT\t%DP\t%GQ\t%AD]\n' \
             {input.vcf} 2> {log} \
-        | python workflow/scripts/sample_preqc_genotype_fields.py \
+        | python workflow/exploratory/sample_preqc_genotype_fields.py \
             --samples {input.samples} \
             --metrics-out {output.metrics}
         """
