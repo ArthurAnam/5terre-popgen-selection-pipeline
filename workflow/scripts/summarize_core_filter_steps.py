@@ -9,15 +9,21 @@ from collections import OrderedDict
 def parse_args():
     p = argparse.ArgumentParser(
         description=(
-            "Count the sequential effect of the agreed core site filters: "
-            "monomorphic sites, palindromic A/T or C/G SNPs, then site missingness >5%."
+            "Count the sequential effect of the first core QC pass: "
+            "palindromic A/T or C/G SNPs, monomorphic sites, then site missingness >5%."
         )
     )
     p.add_argument("--out", required=True)
     return p.parse_args()
 
 
-def num(text):
+def as_int(text):
+    if text in ("", ".", "NA", None):
+        return None
+    return int(float(text))
+
+
+def as_float(text):
     if text in ("", ".", "NA", None):
         return None
     return float(text)
@@ -31,47 +37,52 @@ def palindromic(ref, alt):
 def main():
     args = parse_args()
     reader = csv.DictReader(sys.stdin, delimiter="\t")
-    required = {"REF", "ALT", "MAF", "F_MISSING"}
+    required = {"REF", "ALT", "AC", "AN", "F_MISSING"}
     if reader.fieldnames is None or not required.issubset(set(reader.fieldnames)):
         raise ValueError("Missing required input fields")
 
     counts = OrderedDict([
         ("starting_autosomal_sites", 0),
-        ("removed_monomorphic", 0),
-        ("after_monomorphic", 0),
         ("removed_palindromic_AT_CG", 0),
         ("after_palindromic", 0),
+        ("removed_monomorphic_after_palindromic", 0),
+        ("after_monomorphic", 0),
         ("removed_variant_missingness_gt_0.05", 0),
-        ("after_variant_missingness", 0),
+        ("after_first_dynamic_site_pass", 0),
     ])
 
-    after_mono = 0
     after_pal = 0
-    after_miss = 0
+    after_mono = 0
+    after_missingness = 0
 
     for row in reader:
         counts["starting_autosomal_sites"] += 1
-        maf = num(row["MAF"])
-        f_missing = num(row["F_MISSING"])
-
-        if maf is not None and maf == 0:
-            counts["removed_monomorphic"] += 1
-            continue
-        after_mono += 1
 
         if palindromic(row["REF"], row["ALT"]):
             counts["removed_palindromic_AT_CG"] += 1
             continue
         after_pal += 1
 
+        ac = as_int(row["AC"])
+        an = as_int(row["AN"])
+        f_missing = as_float(row["F_MISSING"])
+
+        # A site is called monomorphic only when at least one allele was
+        # observed. AN=0 is handled by the missingness filter, not mislabeled
+        # as monomorphic.
+        if an is not None and an > 0 and ac is not None and (ac == 0 or ac == an):
+            counts["removed_monomorphic_after_palindromic"] += 1
+            continue
+        after_mono += 1
+
         if f_missing is not None and f_missing > 0.05:
             counts["removed_variant_missingness_gt_0.05"] += 1
             continue
-        after_miss += 1
+        after_missingness += 1
 
-    counts["after_monomorphic"] = after_mono
     counts["after_palindromic"] = after_pal
-    counts["after_variant_missingness"] = after_miss
+    counts["after_monomorphic"] = after_mono
+    counts["after_first_dynamic_site_pass"] = after_missingness
 
     with open(args.out, "w", encoding="utf-8") as handle:
         handle.write("step\tcount\n")

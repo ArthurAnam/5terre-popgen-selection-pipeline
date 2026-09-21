@@ -98,6 +98,8 @@ qc:
   missingness:
     remove_variants_with_missingness_gt: 0.05
     remove_individuals_with_missingness_gt: 0.05
+    iterate_until_stable: true
+    convergence_definition: "repeat cohort-dependent site QC after any sample removal; stop when no additional individual is removed"
 
   hwe:
     apply: true
