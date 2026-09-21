@@ -137,6 +137,53 @@ requirements of the KING documentation:
   reserved for follow-up if `--kinship` identifies a close or ambiguous pair
   that would benefit from IBD-segment-based refinement.
 
+## PCA / population structure
+
+### Published references reviewed
+
+Patterson N, Price AL, Reich D. 2006.
+**Population Structure and Eigenanalysis.**
+*PLoS Genetics* 2(12):e190.
+doi:10.1371/journal.pgen.0020190. PMCID:PMC1713260.
+
+Role in this project:
+- methodological basis for using PCA/eigenanalysis to describe genetic
+  population structure;
+- supports interpretation of principal components as axes of genome-wide
+  genetic variation rather than as predefined discrete population labels;
+- notes that the method can be adapted to markers in LD, but does not by itself
+  define a universal LD-pruning threshold for every dataset.
+
+Price AL, Patterson NJ, Plenge RM, Weinblatt ME, Shadick NA, Reich D. 2006.
+**Principal components analysis corrects for stratification in genome-wide
+association studies.**
+*Nature Genetics* 38(8):904-909.
+doi:10.1038/ng1847. PMID:16862161.
+
+Role in this project:
+- foundational reference for EIGENSTRAT/smartpca-style PCA on genome-wide SNP
+  data;
+- supports use of principal components to capture ancestry/population
+  structure;
+- does not justify importing a fixed project-specific MAF or LD threshold
+  without checking the current dataset and software documentation.
+
+### EIGENSOFT / smartpca documentation reviewed
+
+The EIGENSOFT POPGEN documentation records an internal LD-filtering option
+(`killr2`) whose default is NO; when enabled, `r2thresh`, `r2genlim` and
+`r2physlim` control the filter. The documentation also provides explicit
+projection and outlier-handling options.
+
+Project implication:
+- LD handling must be an explicit PCA-branch decision, not inherited from KING
+  and not assumed from a generic recipe;
+- no MAF threshold, LD-pruning threshold, number of PCs, projection strategy,
+  or automatic outlier-removal setting is frozen yet;
+- because the planned analysis combines Cinque Terre with 1000 Genomes EUR,
+  marker harmonization and the choice between joint PCA and reference-defined
+  axes with projection must be decided before implementation.
+
 ## References to add before implementing downstream branches
 
 The following branches must be checked against their original methods papers
