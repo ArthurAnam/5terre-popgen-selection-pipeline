@@ -28,6 +28,7 @@ include: "workflow/rules/03_sample_preqc_genotype_fields.smk"
 include: "workflow/rules/04_sample_preqc_plots.smk"
 include: "workflow/rules/05_target_qc_start.smk"
 include: "workflow/rules/06_genotype_qc_exploration.smk"
+include: "workflow/rules/07_core_qc_filters.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
@@ -56,4 +57,14 @@ rule all:
         "results/qc/02_genotype_qc_exploration/genotype_qc_metric_distributions.png",
         "results/qc/02_genotype_qc_exploration/individual_missingness_before_variant_filtering.tsv",
         "results/qc/02_genotype_qc_exploration/README.txt",
+        "results/qc/03_core_filtering/core_variant_filter_step_counts.tsv",
+        "results/qc/03_core_filtering/individual_missingness_after_site_filters.tsv",
+        "results/qc/03_core_filtering/core_qc_pre_hwe_summary.tsv",
+        "results/qc/03_core_filtering/README.txt",
+        "results/qc/04_hwe/cinque_terre.qc_filtered.vcf.gz",
+        "results/qc/04_hwe/cinque_terre.qc_filtered.vcf.gz.tbi",
+        "results/qc/04_hwe/hwe_bonferroni_by_chromosome.tsv",
+        "results/qc/04_hwe/hwe_failed_variants.tsv",
+        "results/qc/04_hwe/final_qc_summary.tsv",
+        "results/qc/04_hwe/README.txt",
         "results/provenance/software_versions.tsv"
