@@ -75,6 +75,7 @@ datasets:
       expected_total_eur_samples: 503
       selection_comparison_candidates: ["TSI", "FIN", "IBS"]
     assumed_phased: true
+    phase3_vcf_filename_template: "ALL.chr{chrom}.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"
     upstream_processing:
       original_published_qc: true
       notes: "The 1000 Genomes EUR panel is used as European reference context and phasing support; only selected populations may be retained for selection-related comparison."
@@ -97,6 +98,17 @@ datasets:
         palindromic_snps_removed: 3381797
         harmonization_ready_nonpalindromic_snps: 18751093
       notes: "HWE is exploratory only for 1000G EUR and is evaluated separately by population; it is not used as a filtering criterion."
+    harmonization:
+      exact_match_key: "CHR:POS:REF:ALT"
+      exact_allele_match_only: true
+      strand_flip_or_allele_rescue: false
+      observed_audit:
+        target_qc_snps: 9000246
+        eur_qc_records_nonpalindromic: 18751093
+        eur_qc_unique_exact_keys: 18751091
+        shared_positions: 7551493
+        exact_matches: 7548844
+        same_position_allele_mismatches: 2649
 
 
 # ============================================================

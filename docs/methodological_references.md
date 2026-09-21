@@ -391,3 +391,19 @@ harmonized intersection.
 Harmonization policy:
 retain only exact `CHR:POS:REF:ALT` matches and exclude same-position
 allele-discordant sites; no strand flipping or allele-rescue procedure is used.
+
+
+#### Reproducible implementation note
+
+The production harmonization branch derives the 503-person EUR sample list
+directly from the local `1000GP_Phase3.sample` metadata file rather than
+depending on the temporary manual list used during the audit. Each chromosome
+is processed independently to limit disk use. The reference chromosome is
+subset to EUR samples, restricted to polymorphic biallelic SNPs, checked for
+the verified zero-missingness condition after site QC, and stripped of
+palindromic A/T and C/G sites. Exact matches with the final Cinque Terre QC VCF
+are then identified with allele-exact `bcftools isec` logic and merged across
+samples. Same-position allele-discordant records are not rescued or flipped.
+Per-chromosome BCFs and the concatenated BCF are temporary workflow
+intermediates; the persistent harmonized master dataset is stored in PLINK2
+PGEN/PVAR/PSAM format for reuse by downstream branches.
