@@ -4,8 +4,8 @@
 
 rule prepare_king_relatedness_dataset:
     input:
-        vcf="results/qc/04_hwe/cinque_terre.qc_filtered.vcf.gz",
-        index="results/qc/04_hwe/cinque_terre.qc_filtered.vcf.gz.tbi"
+        vcf="results/qc/03_core_filtering/cinque_terre.core_qc.pre_hwe.vcf.gz",
+        index="results/qc/03_core_filtering/cinque_terre.core_qc.pre_hwe.vcf.gz.tbi"
     output:
         bed=temp("results/relatedness/king/input/cinque_terre.king.bed"),
         bim=temp("results/relatedness/king/input/cinque_terre.king.bim"),
@@ -34,7 +34,7 @@ rule prepare_king_relatedness_dataset:
 
         {{
             printf 'metric\tvalue\n'
-            printf 'source_dataset\tfinal_QC_Cinque_Terre\n'
+            printf 'source_dataset\tstable_pre_HWE_Cinque_Terre_QC\n'
             printf 'samples\t%s\n' "$n_samples"
             printf 'variants\t%s\n' "$n_variants"
             printf 'autosomes_only\tYES\n'
@@ -48,19 +48,24 @@ rule prepare_king_relatedness_dataset:
 KING input dataset
 ==================
 
-The KING dataset is derived from the final Cinque Terre QC VCF.
+The KING dataset is derived from the stable Cinque Terre QC dataset before HWE filtering.
 
 No extra population-genetic filter is added specifically for KING:
 - no MAF filter;
 - no LD pruning.
 
-PLINK2 converts the final QC VCF to PLINK BED/BIM/FAM format. Each individual
+HWE filtering is intentionally not used to define the KING input. Relatedness
+is being evaluated as a QC/property of the retained cohort, and KING recommends
+retaining genome-wide SNPs that already passed technical QC rather than pruning
+or filtering otherwise good SNPs.
+
+PLINK2 converts the stable pre-HWE QC VCF to PLINK BED/BIM/FAM format. Each individual
 is assigned a unique family ID (--double-id), so all 46 choose 2 pairwise
 comparisons are treated as between-family comparisons and are expected in
 KING's .kin0 output.
 
 The PLINK binary files are temporary workflow products and can be regenerated
-from the final QC VCF.
+from the stable pre-HWE QC VCF.
 EOF
         """
 
@@ -127,10 +132,14 @@ Interpretive thresholds
 Kinship > 0.354       duplicate / monozygotic twin
 0.177 to 0.354        first-degree
 0.0884 to <0.177      second-degree
-0.0442 to <0.0884     third-degree
-<0.0442               unrelated or more distant than third degree
+0.0442 to <0.0884     possible third-degree candidate
+<0.0442               unrelated or more distant
 
-These are screening categories. No individual is removed automatically.
+For --kinship, KING documents strongest relationship-inference accuracy through
+second-degree relatives. The 0.0442 third-degree boundary is therefore retained
+only as an exploratory screening threshold, not as a definitive classification.
+
+No individual is removed automatically.
 
 Outputs include the complete pair table, a table of pairs at third degree or
 closer, relationship-class counts, a kinship histogram, the classic

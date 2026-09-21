@@ -31,7 +31,7 @@ def classify(k):
     if k >= SECOND_MIN:
         return "second_degree"
     if k >= THIRD_MIN:
-        return "third_degree"
+        return "possible_third_degree_candidate"
     return "unrelated_or_more_distant"
 
 def read_samples(path):
@@ -88,12 +88,13 @@ def write_tables(rows, pairs_out, candidates_out, counts_out, summary_out, n_sam
         writer.writerows(rows_sorted)
 
     candidates = [r for r in rows_sorted if r["kinship"] >= THIRD_MIN]
+    robust_close = [r for r in rows_sorted if r["kinship"] >= SECOND_MIN]
     with open(candidates_out, "w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t")
         writer.writeheader()
         writer.writerows(candidates)
 
-    order = ["duplicate_or_MZ", "first_degree", "second_degree", "third_degree", "unrelated_or_more_distant"]
+    order = ["duplicate_or_MZ", "first_degree", "second_degree", "possible_third_degree_candidate", "unrelated_or_more_distant"]
     counts = Counter(r["relationship"] for r in rows)
     with open(counts_out, "w", encoding="utf-8") as handle:
         handle.write("relationship_class\tpair_count\n")
@@ -109,12 +110,14 @@ def write_tables(rows, pairs_out, candidates_out, counts_out, summary_out, n_sam
         handle.write("metric\tvalue\n")
         handle.write(f"n_samples\t{n_samples}\n")
         handle.write(f"n_pairwise_comparisons\t{len(rows)}\n")
-        handle.write(f"candidate_pairs_third_degree_or_closer\t{len(candidates)}\n")
+        handle.write(f"robust_candidate_pairs_second_degree_or_closer\t{len(robust_close)}\n")
+        handle.write(f"exploratory_pairs_at_third_degree_threshold_or_closer\t{len(candidates)}\n")
         handle.write(f"max_kinship\t{np.max(kinships):.8f}\n")
         handle.write(f"min_kinship\t{np.min(kinships):.8f}\n")
         handle.write(f"mean_kinship\t{np.mean(kinships):.8f}\n")
         handle.write(f"median_kinship\t{np.median(kinships):.8f}\n")
-        handle.write(f"third_degree_threshold\t{THIRD_MIN}\n")
+        handle.write(f"second_degree_threshold\t{SECOND_MIN}\n")
+        handle.write(f"exploratory_third_degree_threshold\t{THIRD_MIN}\n")
         handle.write("automatic_sample_exclusion\tNO\n")
 
 def make_plots(rows, samples, hist_out, scatter_out, heatmap_out):

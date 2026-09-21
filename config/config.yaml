@@ -129,7 +129,7 @@ relatedness:
     tool: "KING"
     estimator: "KING-robust"
     command_mode: "--kinship"
-    input_dataset: "final target QC autosomal biallelic SNP set"
+    input_dataset: "stable pre-HWE target QC autosomal biallelic SNP set"
     purpose: "Pairwise relatedness estimation within Cinque Terre."
     ld_pruning: false
     maf_filter: false
@@ -138,7 +138,7 @@ relatedness:
       first_degree_min: 0.177
       second_degree_min: 0.0884
       third_degree_min: 0.0442
-    notes: "No individual is removed automatically. Pairs at third degree or closer are reviewed before any downstream sample decision."
+    notes: "No individual is removed automatically. KING is run before HWE filtering, without MAF filtering or LD pruning. With --kinship, duplicate/first-/second-degree calls are the primary relationship screen; the 0.0442 third-degree threshold is exploratory only."
 
 # ============================================================
 # Population structure branch
