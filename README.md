@@ -116,6 +116,8 @@ logs/           → execution logs
 benchmarks/     → runtime benchmarks
 ```
 
+Exploratory QC rules remain available for targeted reruns, but their outputs are not part of the default `rule all`. The production target reproduces the final analysis from the reviewed, version-controlled QC decisions.
+
 Generated outputs are not intended to be manually edited.
 
 ---

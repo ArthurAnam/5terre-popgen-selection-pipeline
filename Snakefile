@@ -34,30 +34,17 @@ include: "workflow/rules/99_provenance.smk"
 
 
 # ============================================================
-# Current reproducible target
+# Current reproducible production target
 # ============================================================
-# Individual pre-QC is diagnostic at this stage: no sample is removed
-# automatically from the delivered 50-sample dataset.
+# Exploratory QC rules remain available as explicit targets, but are not part
+# of the default production DAG. Reviewed sample-level decisions are versioned
+# in config/sample_qc_decisions.tsv.
 
 rule all:
     input:
         "results/preqc/preqc_done.txt",
-        "results/sample_preqc/sample_preqc_summary.tsv",
-        "results/sample_preqc/sample_chromosome_consistency.tsv",
-        "results/sample_preqc/sample_genotype_field_diagnostics.tsv",
-        "results/sample_preqc/plots/depth_vs_missingness.png",
-        "results/sample_preqc/plots/heterozygosity_vs_allelic_imbalance.png",
-        "results/sample_preqc/plots/README.txt",
         "results/qc/00_post_sample_qc_input/post_sample_qc_input_summary.tsv",
         "results/qc/00_post_sample_qc_input/README.txt",
-        "results/qc/01_variant_qc_exploration/variant_qc_metric_descriptive_statistics.tsv",
-        "results/qc/01_variant_qc_exploration/variant_category_counts_before_filtering.tsv",
-        "results/qc/01_variant_qc_exploration/variant_qc_metric_distributions.png",
-        "results/qc/01_variant_qc_exploration/README.txt",
-        "results/qc/02_genotype_qc_exploration/genotype_qc_metric_descriptive_statistics.tsv",
-        "results/qc/02_genotype_qc_exploration/genotype_qc_metric_distributions.png",
-        "results/qc/02_genotype_qc_exploration/individual_missingness_before_variant_filtering.tsv",
-        "results/qc/02_genotype_qc_exploration/README.txt",
         "results/qc/03_core_filtering/core_variant_filter_step_counts.tsv",
         "results/qc/03_core_filtering/iterative_missingness_qc_history.tsv",
         "results/qc/03_core_filtering/individual_missingness_after_site_filters.tsv",
