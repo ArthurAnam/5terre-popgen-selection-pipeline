@@ -78,6 +78,23 @@ datasets:
     upstream_processing:
       original_published_qc: true
       notes: "The 1000 Genomes EUR panel is used as European reference context and phasing support; only selected populations may be retained for selection-related comparison."
+    downstream_qc:
+      scope: "503-sample EUR subset"
+      retain_biallelic_snps_only: true
+      remove_monomorphic_after_subset: true
+      remove_variants_with_missingness_gt: 0.05
+      remove_individuals_with_missingness_gt: 0.05
+      iterate_until_stable_if_sample_removed: true
+      pooled_eur_hwe_filter: false
+      hwe_exploration_by_population: true
+      hwe_exploration_populations: ["CEU", "FIN", "GBR", "IBS", "TSI"]
+      genomewide_audit:
+        biallelic_snps: 77818346
+        monomorphic_in_eur: 55685456
+        sites_with_any_missingness: 0
+        sites_with_missingness_gt_0_05: 0
+        retained_polymorphic_biallelic_snps: 22132890
+      notes: "HWE is exploratory only for 1000G EUR and is evaluated separately by population; it is not used as a filtering criterion."
 
 
 # ============================================================

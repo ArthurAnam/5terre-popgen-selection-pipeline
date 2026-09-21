@@ -314,22 +314,18 @@ Downstream QC principles for the EUR subset:
 - strand-ambiguous SNPs are handled during harmonization with the Cinque Terre
   dataset.
 
-The Phase 3 VCFs were observed to contain only records marked PASS, but this is
-not treated as an additional downstream analytical filter because it does not
-remove any record from the available reference callset.
-
-Pilot result on chromosome 1 after EUR subsetting and restriction to biallelic
-SNPs:
-- biallelic SNPs: 6,196,151
-- monomorphic in EUR: 4,433,440
-- sites with any missingness: 0
+Genome-wide EUR-subset QC audit across chromosomes 1-22:
+- biallelic SNPs inspected: 77,818,346
+- variants monomorphic after restriction to EUR: 55,685,456
+- sites with any missing genotype: 0
 - sites with missingness > 5%: 0
-- retained after site QC: 1,762,711
+- polymorphic biallelic SNPs retained after site QC: 22,132,890
 
-This pilot demonstrates that the dominant chromosome-1 reduction is caused by
-variants becoming monomorphic after EUR subsetting, not by missingness.
-Genome-wide confirmation across chromosomes 1-22 is pending before the final
-Snakemake implementation is frozen.
+Because no missing genotype was observed at any inspected biallelic SNP, the
+site-missingness filter removes zero variants and individual missingness is
+necessarily zero in this EUR subset. The effective reduction at this stage is
+therefore entirely due to variants becoming monomorphic after restriction from
+the global Phase 3 cohort to the 503 EUR individuals.
 
 
 ### Howrigan et al. 2011: specific ROH parameter implications
