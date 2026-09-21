@@ -65,13 +65,23 @@ reported:
   comparison and was designed to reduce confounding by population structure
   relative to estimators that require a single homogeneous set of allele
   frequencies (Manichaikul et al. 2010).
-- Negative estimates must not be truncated to zero. They should be retained and
-  interpreted cautiously, because population structure, ancestry differences
-  and inbreeding can affect the estimator (Conomos et al. 2016).
+- Negative estimates do not imply "negative biological relatedness". In this
+  project they are retained in the numerical outputs and figures because they
+  can carry information about pairwise heterogeneity and estimator behaviour.
+  This is a project-specific presentation choice, not a universal KING
+  requirement: Manichaikul et al. (2010) truncated negative estimates to zero
+  in one graphical display, while also showing analytically that unrelated
+  individuals from different populations can have a negative KING-Robust
+  expectation. Population structure, ancestry differences and inbreeding can
+  affect the estimator (Manichaikul et al. 2010; Conomos et al. 2016).
 - IBS0 is the proportion of loci at which two individuals carry opposite
   homozygous genotypes and therefore share zero alleles identical-by-state at
   those loci. The kinship-versus-IBS0 plot is a diagnostic recommended by the
-  KING documentation for relationship assessment.
+  KING documentation for relationship assessment. IBS0 and KING-Robust
+  kinship are not statistically independent: opposite-homozygote counts
+  contribute directly to the robust kinship estimator, so the descending
+  pattern seen in unrelated pairs should not be interpreted as an independent
+  biological correlation.
 - The conventional KING boundaries used here are >0.354 for duplicate/MZ,
   [0.177,0.354] for first degree, [0.0884,0.177] for second degree, and
   [0.0442,0.0884] for third-degree screening. Third-degree classification is
@@ -98,7 +108,11 @@ Current QC interpretation:
   HWE recalculation is required as a consequence of relatedness QC;
 - `--related` or `--ibdseg` are not required as routine follow-up in the
   absence of a close or ambiguous candidate pair. They remain available for a
-  future IBD-specific scientific question.
+  future IBD-specific scientific question;
+- LD pruning is not introduced for KING. This follows the KING documentation,
+  which advises retaining good QC-passed SNPs and does not recommend LD pruning
+  for relationship inference; the original KING paper likewise reports that
+  inference was not impacted by LD structure in the large-sample setting.
 
 ## Project-specific KING decisions
 

@@ -219,10 +219,14 @@ The negative visual trend between IBS0 and KING-Robust kinship should not be
 interpreted as an independent biological correlation: IBS0 is part of the
 relationship diagnostic and is mathematically related to the estimator.
 
-Negative KING-Robust estimates are retained as estimated. They do not represent
-"negative biological relatedness" and must not be truncated to zero. Population
-structure, ancestry differences and inbreeding can affect the estimator; these
-features are therefore interpreted jointly with later PCA and ROH analyses.
+Negative KING-Robust estimates are retained in this workflow. They do not
+represent "negative biological relatedness". Retaining them is our presentation
+choice because they can be informative about pairwise heterogeneity and
+estimator behaviour; KING's original paper also used a display in which
+negative estimates were truncated to zero, so truncation should not be treated
+as universally forbidden. Population structure, ancestry differences and
+inbreeding can affect the estimator; these features are therefore interpreted
+jointly with later PCA and ROH analyses.
 See docs/methodological_references.md for the supporting references.
 
 The heatmap omits the diagonal rather than assigning an artificial self-kinship
