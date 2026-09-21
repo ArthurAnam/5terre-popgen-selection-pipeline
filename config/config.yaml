@@ -66,6 +66,13 @@ datasets:
     vcf: null
     populations:
       all_eur: ["CEU", "FIN", "GBR", "IBS", "TSI"]
+      expected_counts:
+        CEU: 99
+        FIN: 99
+        GBR: 91
+        IBS: 107
+        TSI: 107
+      expected_total_eur_samples: 503
       selection_comparison_candidates: ["TSI", "FIN", "IBS"]
     assumed_phased: true
     upstream_processing:

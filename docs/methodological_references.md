@@ -204,6 +204,28 @@ Project implication:
   outlier-removal settings remain open until the harmonized Cinque Terre +
   1000 Genomes EUR dataset is inspected.
 
+### 1000 Genomes EUR panel inventory confirmed locally
+
+The local Phase 3 sample metadata file contains 2,504 individuals plus one
+header line. Selecting `GROUP == EUR` yields 503 individuals distributed as:
+
+- CEU: 99
+- FIN: 99
+- GBR: 91
+- IBS: 107
+- TSI: 107
+
+All 503 EUR sample IDs were confirmed to be present in the chromosome 1 Phase 3
+VCF. Before constructing the reproducible EUR subset, the same identity check
+will be extended across chromosomes 1-22.
+
+The previously generated local PGEN named
+`1KG_EUR.QCcore_mind0.05_geno0.05_alpha0.05.pgen` will not be used as the
+primary reference input because it already incorporates historical filtering
+choices. The new workflow will instead derive the EUR reference directly from
+the original Phase 3 chromosome VCFs and apply the project's documented
+harmonization and branch-specific filters explicitly.
+
 ## ROH / autozygosity references under review
 
 Howrigan DP, Simonson MA, Keller MC. 2011.
