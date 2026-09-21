@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 import argparse
 import csv
-from collections import Counter
+from collections import Counter, defaultdict
+
 import matplotlib.pyplot as plt
+from matplotlib.colors import TwoSlopeNorm
 import numpy as np
 
 DUPLICATE_MIN = 0.354
 FIRST_MIN = 0.177
 SECOND_MIN = 0.0884
 THIRD_MIN = 0.0442
+
 
 def parse_args():
     p = argparse.ArgumentParser(description="Summarize and plot KING pairwise kinship results.")
@@ -18,10 +21,12 @@ def parse_args():
     p.add_argument("--candidates-out", required=True)
     p.add_argument("--counts-out", required=True)
     p.add_argument("--summary-out", required=True)
+    p.add_argument("--individual-summary-out", required=True)
     p.add_argument("--hist-out", required=True)
     p.add_argument("--scatter-out", required=True)
     p.add_argument("--heatmap-out", required=True)
     return p.parse_args()
+
 
 def classify(k):
     if k > DUPLICATE_MIN:
@@ -33,6 +38,7 @@ def classify(k):
     if k >= THIRD_MIN:
         return "possible_third_degree_candidate"
     return "unrelated_or_more_distant"
+
 
 def read_samples(path):
     samples = []
@@ -47,6 +53,7 @@ def read_samples(path):
     if len(samples) != len(set(samples)):
         raise ValueError("Duplicate sample IDs in PLINK .fam")
     return samples
+
 
 def read_kin0(path):
     rows = []
@@ -76,9 +83,11 @@ def read_kin0(path):
         raise ValueError("Empty KING .kin0 file")
     return rows
 
+
 def write_tables(rows, pairs_out, candidates_out, counts_out, summary_out, n_samples):
     for row in rows:
         row["relationship"] = classify(row["kinship"])
+
     rows_sorted = sorted(rows, key=lambda r: r["kinship"], reverse=True)
     fields = ["sample1", "sample2", "n_snp", "hethet", "ibs0", "kinship", "relationship"]
 
@@ -94,7 +103,13 @@ def write_tables(rows, pairs_out, candidates_out, counts_out, summary_out, n_sam
         writer.writeheader()
         writer.writerows(candidates)
 
-    order = ["duplicate_or_MZ", "first_degree", "second_degree", "possible_third_degree_candidate", "unrelated_or_more_distant"]
+    order = [
+        "duplicate_or_MZ",
+        "first_degree",
+        "second_degree",
+        "possible_third_degree_candidate",
+        "unrelated_or_more_distant",
+    ]
     counts = Counter(r["relationship"] for r in rows)
     with open(counts_out, "w", encoding="utf-8") as handle:
         handle.write("relationship_class\tpair_count\n")
@@ -103,7 +118,10 @@ def write_tables(rows, pairs_out, candidates_out, counts_out, summary_out, n_sam
 
     expected_pairs = n_samples * (n_samples - 1) // 2
     if len(rows) != expected_pairs:
-        raise ValueError(f"Expected {expected_pairs} pairwise comparisons for {n_samples} samples, observed {len(rows)}")
+        raise ValueError(
+            f"Expected {expected_pairs} pairwise comparisons for {n_samples} samples, "
+            f"observed {len(rows)}"
+        )
 
     kinships = np.array([r["kinship"] for r in rows], dtype=float)
     with open(summary_out, "w", encoding="utf-8") as handle:
@@ -120,28 +138,52 @@ def write_tables(rows, pairs_out, candidates_out, counts_out, summary_out, n_sam
         handle.write(f"exploratory_third_degree_threshold\t{THIRD_MIN}\n")
         handle.write("automatic_sample_exclusion\tNO\n")
 
+
+def write_individual_summary(rows, samples, out_path):
+    values = defaultdict(list)
+    for row in rows:
+        values[row["sample1"]].append(row["kinship"])
+        values[row["sample2"]].append(row["kinship"])
+
+    expected_n = len(samples) - 1
+    with open(out_path, "w", encoding="utf-8") as handle:
+        handle.write("sample\tn_pairs\tmean_kinship\tmedian_kinship\tmin_kinship\tmax_kinship\n")
+        for sample in samples:
+            x = np.array(values[sample], dtype=float)
+            if len(x) != expected_n:
+                raise ValueError(
+                    f"Sample {sample}: expected {expected_n} pairwise values, observed {len(x)}"
+                )
+            handle.write(
+                f"{sample}\t{len(x)}\t{np.mean(x):.8f}\t{np.median(x):.8f}\t"
+                f"{np.min(x):.8f}\t{np.max(x):.8f}\n"
+            )
+
+
 def make_plots(rows, samples, hist_out, scatter_out, heatmap_out):
     kinship = np.array([r["kinship"] for r in rows], dtype=float)
     ibs0 = np.array([r["ibs0"] for r in rows], dtype=float)
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.hist(kinship, bins=50)
+    ax.axvline(0, linewidth=1)
     for threshold in [THIRD_MIN, SECOND_MIN, FIRST_MIN, DUPLICATE_MIN]:
         ax.axvline(threshold, linestyle="--", linewidth=1)
-    ax.set_xlabel("KING kinship coefficient")
+    ax.set_xlabel("KING-Robust kinship estimate")
     ax.set_ylabel("Pair count")
-    ax.set_title("Cinque Terre pairwise KING kinship")
+    ax.set_title("Cinque Terre pairwise KING-Robust kinship")
     fig.tight_layout()
     fig.savefig(hist_out, dpi=180)
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.scatter(ibs0, kinship, s=18, alpha=0.75)
+    ax.axhline(0, linewidth=1)
     for threshold in [THIRD_MIN, SECOND_MIN, FIRST_MIN, DUPLICATE_MIN]:
         ax.axhline(threshold, linestyle="--", linewidth=1)
     ax.set_xlabel("KING IBS0 proportion")
-    ax.set_ylabel("KING kinship coefficient")
-    ax.set_title("KING kinship versus IBS0")
+    ax.set_ylabel("KING-Robust kinship estimate")
+    ax.set_title("KING-Robust kinship versus IBS0")
     fig.tight_layout()
     fig.savefig(scatter_out, dpi=180)
     plt.close(fig)
@@ -149,31 +191,47 @@ def make_plots(rows, samples, hist_out, scatter_out, heatmap_out):
     n = len(samples)
     sample_index = {sample: i for i, sample in enumerate(samples)}
     matrix = np.full((n, n), np.nan, dtype=float)
-    np.fill_diagonal(matrix, 0.5)
+
     for row in rows:
         i = sample_index[row["sample1"]]
         j = sample_index[row["sample2"]]
         matrix[i, j] = row["kinship"]
         matrix[j, i] = row["kinship"]
 
+    pair_min = float(np.nanmin(matrix))
+    pair_max = float(np.nanmax(matrix))
+    norm = TwoSlopeNorm(vmin=pair_min, vcenter=0, vmax=pair_max) if pair_min < 0 < pair_max else None
+    cmap = plt.get_cmap("coolwarm").copy()
+    cmap.set_bad("white")
+
     fig, ax = plt.subplots(figsize=(13, 11))
-    image = ax.imshow(matrix, aspect="auto")
-    ax.set_title("Pairwise KING kinship matrix")
+    image = ax.imshow(np.ma.masked_invalid(matrix), aspect="auto", cmap=cmap, norm=norm)
+    ax.set_title("Pairwise KING-Robust kinship matrix (diagonal omitted)")
     ax.set_xticks(range(n))
     ax.set_yticks(range(n))
     ax.set_xticklabels(samples, rotation=90, fontsize=6)
     ax.set_yticklabels(samples, fontsize=6)
-    fig.colorbar(image, ax=ax, label="Kinship coefficient")
+    fig.colorbar(image, ax=ax, label="KING-Robust kinship estimate")
     fig.tight_layout()
     fig.savefig(heatmap_out, dpi=180)
     plt.close(fig)
+
 
 def main():
     args = parse_args()
     samples = read_samples(args.fam)
     rows = read_kin0(args.kin0)
-    write_tables(rows, args.pairs_out, args.candidates_out, args.counts_out, args.summary_out, len(samples))
+    write_tables(
+        rows,
+        args.pairs_out,
+        args.candidates_out,
+        args.counts_out,
+        args.summary_out,
+        len(samples),
+    )
+    write_individual_summary(rows, samples, args.individual_summary_out)
     make_plots(rows, samples, args.hist_out, args.scatter_out, args.heatmap_out)
+
 
 if __name__ == "__main__":
     main()

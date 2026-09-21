@@ -81,6 +81,7 @@ rule all:
         "results/relatedness/king/king_candidate_relatives.tsv",
         "results/relatedness/king/king_relationship_counts.tsv",
         "results/relatedness/king/king_relatedness_summary.tsv",
+        "results/relatedness/king/king_individual_kinship_summary.tsv",
         "results/relatedness/king/king_kinship_distribution.png",
         "results/relatedness/king/king_kinship_vs_ibs0.png",
         "results/relatedness/king/king_kinship_heatmap.png",

@@ -141,6 +141,7 @@ rule summarize_and_plot_king_relatedness:
         candidates="results/relatedness/king/king_candidate_relatives.tsv",
         counts="results/relatedness/king/king_relationship_counts.tsv",
         summary="results/relatedness/king/king_relatedness_summary.tsv",
+        individual_summary="results/relatedness/king/king_individual_kinship_summary.tsv",
         hist="results/relatedness/king/king_kinship_distribution.png",
         scatter="results/relatedness/king/king_kinship_vs_ibs0.png",
         heatmap="results/relatedness/king/king_kinship_heatmap.png"
@@ -157,6 +158,7 @@ rule summarize_and_plot_king_relatedness:
             --candidates-out {output.candidates} \
             --counts-out {output.counts} \
             --summary-out {output.summary} \
+            --individual-summary-out {output.individual_summary} \
             --hist-out {output.hist} \
             --scatter-out {output.scatter} \
             --heatmap-out {output.heatmap}
@@ -202,9 +204,20 @@ an exploratory screening threshold, not as a definitive classification.
 No individual is removed automatically.
 
 Outputs include the complete pair table, a table containing pairs crossing the
-exploratory third-degree threshold, relationship-class counts, a kinship
-histogram, the recommended kinship-versus-IBS0 diagnostic, and a pairwise
-kinship heatmap.
+exploratory third-degree threshold, relationship-class counts, a per-individual
+summary of pairwise kinship values, a kinship histogram, the recommended
+kinship-versus-IBS0 diagnostic, and a pairwise kinship heatmap.
+
+Negative KING-Robust estimates are retained as estimated. They do not represent
+"negative biological relatedness" and must not be truncated to zero. Population
+structure, ancestry differences and inbreeding can affect the estimator; these
+features are therefore interpreted jointly with later PCA and ROH analyses.
+See docs/methodological_references.md for the supporting references.
+
+The heatmap omits the diagonal rather than assigning an artificial self-kinship
+value. Its scale is therefore determined only by observed between-individual
+pairwise estimates and is centered on zero when both negative and positive
+estimates are present.
 
 If close relatives are detected, sample handling is reviewed before downstream
 analyses. A relatedness-driven sample change would require recalculation of
