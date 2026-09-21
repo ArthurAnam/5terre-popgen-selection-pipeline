@@ -407,3 +407,17 @@ samples. Same-position allele-discordant records are not rescued or flipped.
 Per-chromosome BCFs and the concatenated BCF are temporary workflow
 intermediates; the persistent harmonized master dataset is stored in PLINK2
 PGEN/PVAR/PSAM format for reuse by downstream branches.
+
+
+#### Reproducible run confirmation
+
+The production harmonization workflow reproduced the manual genome-wide audit
+exactly and completed with 46 Cinque Terre samples plus 503 1000G EUR samples
+(549 total). The persistent harmonized PGEN contains 7,548,844 variants.
+
+The workflow reports 18,751,093 EUR QC records before intersection. This is a
+record count, whereas the manual exact-key audit contained 18,751,091 unique
+`CHR:POS:REF:ALT` keys because the source callset contains the two duplicated
+keys documented above. Neither duplicate locus occurs in the Cinque Terre QC
+VCF, so the record-versus-unique-key distinction does not change the final
+7,548,844-site harmonized intersection.
