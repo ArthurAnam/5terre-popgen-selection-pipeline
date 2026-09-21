@@ -330,3 +330,36 @@ This pilot demonstrates that the dominant chromosome-1 reduction is caused by
 variants becoming monomorphic after EUR subsetting, not by missingness.
 Genome-wide confirmation across chromosomes 1-22 is pending before the final
 Snakemake implementation is frozen.
+
+
+### Howrigan et al. 2011: specific ROH parameter implications
+
+Howrigan et al. (2011) is a key parameter-tuning reference for PLINK ROH
+calling. Important details for this project:
+
+- before ROH calling, they removed SNPs with MAF < 0.05;
+- they used PLINK `--indep` (VIF-based pruning), not pairwise-r2 pruning;
+- their "light" LD pruning used a 50-SNP window with VIF > 10
+  (approximately r2 > 0.9 for a simple pair);
+- their "moderate" LD pruning used a 50-SNP window with VIF > 2
+  (approximately r2 > 0.5 for a simple pair);
+- stronger pruning (e.g. VIF ~1.33, approximately r2 > 0.25) performed worse
+  than light-to-moderate pruning in their simulations;
+- the best-performing analyses did not improve when one heterozygous genotype
+  was allowed inside called ROH; the authors therefore recommended allowing
+  zero heterozygotes in called ROH;
+- the optimal minimum SNP count depended on the target autozygosity timescale:
+  with moderate pruning, ~45-50 SNPs performed best for autozygosity within
+  ~20 generations, while ~35 SNPs performed best for ~50 generations;
+- with light pruning, ~65 SNPs was preferred for the ~50-generation scenario;
+- the corresponding best-performing minimum physical span was roughly
+  750 kb in the examples highlighted by the authors.
+
+Caution:
+- the study simulated sequence data but then subsampled common variants to
+  mimic dense SNP-array data, so these settings are strong guidance rather
+  than an automatic final prescription for present-day high-density WGS;
+- because the paper used `--indep`, translating its pruning settings into
+  `--indep-pairwise` would not be a methodologically exact reproduction.
+  If this paper is used as the main ROH-pruning precedent, a VIF-based
+  implementation should be considered directly.
