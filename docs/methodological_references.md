@@ -362,3 +362,32 @@ Caution:
   `--indep-pairwise` would not be a methodologically exact reproduction.
   If this paper is used as the main ROH-pruning precedent, a VIF-based
   implementation should be considered directly.
+
+
+### 1000 Genomes EUR harmonization audit
+
+A chromosome-by-chromosome exact-key audit was performed using
+`CHR:POS:REF:ALT` after EUR subsetting, restriction to polymorphic biallelic
+SNPs, the missingness checks defined above, and removal of palindromic A/T and
+C/G sites.
+
+Genome-wide counts:
+- Cinque Terre QC SNPs: 9,000,246
+- 1000G EUR non-palindromic QC records: 18,751,093
+- 1000G EUR unique `CHR:POS:REF:ALT` keys: 18,751,091
+- sites shared by chromosome and position: 7,551,493
+- exact `CHR:POS:REF:ALT` matches: 7,548,844
+- same-position allele mismatches: 2,649
+
+The two duplicated 1000G EUR exact keys were:
+- `12:8400000:T:G`
+- `17:1144632:C:T`
+
+For each duplicated key, the two 1000G records had identical EUR genotype
+vectors (verified by matching SHA256 hashes). Neither locus was present in the
+Cinque Terre QC VCF, so these duplicate records do not affect the exact
+harmonized intersection.
+
+Harmonization policy:
+retain only exact `CHR:POS:REF:ALT` matches and exclude same-position
+allele-discordant sites; no strand flipping or allele-rescue procedure is used.
