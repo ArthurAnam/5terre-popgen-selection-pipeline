@@ -24,6 +24,7 @@ def parse_args():
     p.add_argument("--individual-summary-out", required=True)
     p.add_argument("--hist-out", required=True)
     p.add_argument("--scatter-out", required=True)
+    p.add_argument("--scatter-pdf-out", required=True)
     p.add_argument("--heatmap-out", required=True)
     return p.parse_args()
 
@@ -160,7 +161,7 @@ def write_individual_summary(rows, samples, out_path):
             )
 
 
-def make_plots(rows, samples, hist_out, scatter_out, heatmap_out):
+def make_plots(rows, samples, hist_out, scatter_out, scatter_pdf_out, heatmap_out):
     kinship = np.array([r["kinship"] for r in rows], dtype=float)
     ibs0 = np.array([r["ibs0"] for r in rows], dtype=float)
 
@@ -176,16 +177,60 @@ def make_plots(rows, samples, hist_out, scatter_out, heatmap_out):
     fig.savefig(hist_out, dpi=180)
     plt.close(fig)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.scatter(ibs0, kinship, s=18, alpha=0.75)
-    ax.axhline(0, linewidth=1)
-    for threshold in [THIRD_MIN, SECOND_MIN, FIRST_MIN, DUPLICATE_MIN]:
-        ax.axhline(threshold, linestyle="--", linewidth=1)
-    ax.set_xlabel("KING IBS0 proportion")
+    # Publication-oriented KING diagnostic.  Only the third- and second-degree
+    # boundaries are drawn because all observed pairs are far below the
+    # first-degree and duplicate/MZ ranges.  Showing the much higher boundaries
+    # would compress the observed data into a narrow strip at the bottom.
+    fig, ax = plt.subplots(figsize=(7.2, 5.4))
+    ax.scatter(ibs0, kinship, s=20, alpha=0.55, linewidths=0)
+
+    x_span = float(np.max(ibs0) - np.min(ibs0))
+    x_pad = 0.04 * x_span if x_span > 0 else 0.001
+    x_min = float(np.min(ibs0) - x_pad)
+    x_max = float(np.max(ibs0) + x_pad)
+    ax.set_xlim(x_min, x_max)
+
+    y_min = min(-0.06, float(np.min(kinship) - 0.005))
+    y_max = max(0.105, SECOND_MIN + 0.012)
+    ax.set_ylim(y_min, y_max)
+
+    ax.axhline(0, linewidth=0.9, color="0.35")
+    for threshold in [THIRD_MIN, SECOND_MIN]:
+        ax.axhline(threshold, linestyle="--", linewidth=1.0, color="0.35")
+
+    label_x = x_max - 0.015 * (x_max - x_min)
+    ax.text(
+        label_x, THIRD_MIN + 0.002,
+        "third-degree threshold (0.0442)",
+        ha="right", va="bottom", fontsize=9,
+    )
+    ax.text(
+        label_x, SECOND_MIN + 0.002,
+        "second-degree threshold (0.0884)",
+        ha="right", va="bottom", fontsize=9,
+    )
+
+    max_idx = int(np.argmax(kinship))
+    ax.scatter(
+        [ibs0[max_idx]], [kinship[max_idx]],
+        s=58, facecolors="none", edgecolors="black", linewidths=1.0, zorder=3,
+    )
+    ax.annotate(
+        f"max observed = {kinship[max_idx]:.4f}",
+        xy=(ibs0[max_idx], kinship[max_idx]),
+        xytext=(12, 12),
+        textcoords="offset points",
+        fontsize=9,
+        arrowprops={"arrowstyle": "-", "linewidth": 0.8},
+    )
+
+    ax.set_xlabel("IBS0 proportion")
     ax.set_ylabel("KING-Robust kinship estimate")
-    ax.set_title("KING-Robust kinship versus IBS0")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
     fig.tight_layout()
-    fig.savefig(scatter_out, dpi=180)
+    fig.savefig(scatter_out, dpi=300, bbox_inches="tight")
+    fig.savefig(scatter_pdf_out, bbox_inches="tight")
     plt.close(fig)
 
     n = len(samples)
@@ -230,7 +275,14 @@ def main():
         len(samples),
     )
     write_individual_summary(rows, samples, args.individual_summary_out)
-    make_plots(rows, samples, args.hist_out, args.scatter_out, args.heatmap_out)
+    make_plots(
+        rows,
+        samples,
+        args.hist_out,
+        args.scatter_out,
+        args.scatter_pdf_out,
+        args.heatmap_out,
+    )
 
 
 if __name__ == "__main__":

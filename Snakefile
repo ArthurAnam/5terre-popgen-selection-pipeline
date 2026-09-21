@@ -84,6 +84,7 @@ rule all:
         "results/relatedness/king/king_individual_kinship_summary.tsv",
         "results/relatedness/king/king_kinship_distribution.png",
         "results/relatedness/king/king_kinship_vs_ibs0.png",
+        "results/relatedness/king/king_kinship_vs_ibs0.pdf",
         "results/relatedness/king/king_kinship_heatmap.png",
         "results/relatedness/king/INPUT_README.txt",
         "results/relatedness/king/README.txt",

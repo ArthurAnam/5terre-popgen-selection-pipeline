@@ -144,6 +144,7 @@ rule summarize_and_plot_king_relatedness:
         individual_summary="results/relatedness/king/king_individual_kinship_summary.tsv",
         hist="results/relatedness/king/king_kinship_distribution.png",
         scatter="results/relatedness/king/king_kinship_vs_ibs0.png",
+        scatter_pdf="results/relatedness/king/king_kinship_vs_ibs0.pdf",
         heatmap="results/relatedness/king/king_kinship_heatmap.png"
     conda:
         "../../envs/pipeline.yaml"
@@ -161,6 +162,7 @@ rule summarize_and_plot_king_relatedness:
             --individual-summary-out {output.individual_summary} \
             --hist-out {output.hist} \
             --scatter-out {output.scatter} \
+            --scatter-pdf-out {output.scatter_pdf} \
             --heatmap-out {output.heatmap}
         """
 
@@ -207,6 +209,15 @@ Outputs include the complete pair table, a table containing pairs crossing the
 exploratory third-degree threshold, relationship-class counts, a per-individual
 summary of pairwise kinship values, a kinship histogram, the recommended
 kinship-versus-IBS0 diagnostic, and a pairwise kinship heatmap.
+
+For the publication-oriented kinship-versus-IBS0 figure, only the conventional
+third- and second-degree boundaries are drawn. The first-degree and
+duplicate/MZ boundaries are much higher than every observed pair and would
+compress the informative part of the plot. The maximum observed pair is marked
+explicitly. The figure is written both as a 300-dpi PNG and as a vector PDF.
+The negative visual trend between IBS0 and KING-Robust kinship should not be
+interpreted as an independent biological correlation: IBS0 is part of the
+relationship diagnostic and is mathematically related to the estimator.
 
 Negative KING-Robust estimates are retained as estimated. They do not represent
 "negative biological relatedness" and must not be truncated to zero. Population
