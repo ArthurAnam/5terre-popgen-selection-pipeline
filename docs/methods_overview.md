@@ -152,24 +152,36 @@ This strategy avoids using a single arbitrary HWE threshold across the whole gen
 
 ---
 
-## Relatedness and IBS analyses
+## Relatedness analysis
 
-Pairwise relatedness and IBS analyses are used mainly for population structure and relatedness exploration.
+Pairwise relatedness is evaluated within the Cinque Terre cohort using KING.
+This analysis has a secondary QC role by checking for unexpected duplicates or
+close relatives before downstream population analyses.
 
-They also provide a secondary QC role by checking for unexpected duplicates or close relatives.
+The current strategy is:
 
-The current strategy includes:
+* KING-Robust pairwise kinship using `--kinship`
+* no KING-specific MAF filter
+* no LD pruning
+* inspection of the kinship coefficient together with IBS0
+* no automatic sample exclusion
 
-* KING
-* PLINK IBS / `--genome`
+KING is run on the stable target-QC dataset before final HWE filtering. This is
+a project-specific ordering choice rather than an explicit KING requirement:
+if relatedness leads to a sample exclusion, cohort-dependent site statistics
+and HWE can then be recalculated on the final retained cohort.
 
-The datasets are expected to be composed of unrelated individuals, but this assumption will be checked during the analysis.
+Duplicate/MZ, first-degree and second-degree relationships are the primary
+screening targets. The standard 0.0442 third-degree boundary is retained only
+as an exploratory flag because the KING documentation describes `--kinship`
+as most reliable for closer relationships.
 
-KING is used for relatedness estimation without LD pruning and without MAF filtering.
+`--related` and `--ibdseg` are reserved as follow-up analyses if the primary
+kinship screen identifies a close or ambiguous pair requiring IBD-based
+refinement.
 
-PLINK `--genome` may be used as an additional pairwise IBS check on LD-pruned common variants.
-
-In this workflow, relatedness analyses are not treated as the main QC backbone. Their primary role is exploratory, with a secondary role in confirming that no unexpected close relationships or duplicate samples are present.
+The supporting paper and software documentation are recorded in
+`docs/methodological_references.md`.
 
 ---
 
@@ -216,16 +228,10 @@ The current PCA strategy includes:
 * LD pruning
 * PCA using smartpca / EIGENSOFT
 
-Current working parameters:
-
-```text
-MAF threshold: 0.05
-LD pruning: enabled
-Pruning window: 50 SNPs
-Pruning step: 5 SNPs
-r2 threshold: 0.2
-Number of components: 20
-```
+Candidate parameters such as MAF filtering, LD pruning and the number of
+principal components are not yet frozen. They will be finalized only after
+reviewing the EIGENSOFT/smartpca documentation and the relevant population-
+genetics literature for the harmonized Cinque Terre + reference dataset.
 
 The PCA is intended as a population structure analysis, not as a formal test of ancestry proportions.
 
@@ -244,23 +250,14 @@ Main outputs include:
 
 ROH analyses are useful for comparing the distribution and burden of homozygous segments between Cinque Terre and external reference populations.
 
-The current working strategy includes:
+The working method is PLINK `--homozyg`, but MAF handling, LD pruning and
+ROH-calling parameters are not yet fixed. These choices will be made only
+after reviewing the PLINK ROH documentation and relevant WGS ROH literature,
+because marker density and marker selection directly affect ROH detection and
+cross-population comparability.
 
-* MAF filtering
-* LD pruning
-* PLINK `--homozyg`
-
-Current working parameters:
-
-```text
-MAF threshold: 0.05
-LD pruning: enabled
-Pruning window: 50 SNPs
-Pruning step: 5 SNPs
-r2 threshold: 0.5
-```
-
-Final PLINK `--homozyg` parameters remain to be refined based on SNP density, WGS data characteristics, and comparison dataset harmonization.
+Final PLINK `--homozyg` parameters will therefore be refined based on the
+documentation, WGS SNP density, and the harmonized comparison dataset.
 
 ---
 

@@ -164,7 +164,7 @@ population_structure:
     froh: true
     roh_sum: true
     roh_length_distribution: true
-    pairwise_ibs: true
+    king_kinship_and_ibs0: true
 
   excluded_analyses:
     admixture: true
@@ -175,17 +175,19 @@ population_structure:
   pca:
     method: "smartpca"
     purpose: "Ancestry placement and fine-scale population structure."
-    maf_threshold: 0.05
-    ld_pruning: true
-    pruning: [50, 5, 0.2]
-    n_components: 20
+    parameter_status: "pending_documentation_review"
+    maf_threshold: null
+    ld_pruning: null
+    pruning: null
+    n_components: null
 
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    maf_threshold: 0.05
-    ld_pruning: true
-    pruning: [50, 5, 0.5]
+    parameter_status: "pending_documentation_review"
+    maf_threshold: null
+    ld_pruning: null
+    pruning: null
 
     parameters_to_refine:
       homozyg_snp: null
