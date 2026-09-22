@@ -19,6 +19,10 @@ rule build_interactive_analysis_figures:
         ld_maf001_summary=SEL_LD_DIR + "/summary/maf001.ld_decay_summary.tsv",
         ld_ceu_bins=SELECTION_REF_LD_DIR + "/CEU/CEU.ld_decay_bins.tsv",
         ld_ceu_summary=SELECTION_REF_LD_DIR + "/CEU/CEU.ld_decay_summary.tsv",
+        ld_fin_bins=SELECTION_REF_LD_DIR + "/FIN/FIN.ld_decay_bins.tsv",
+        ld_fin_summary=SELECTION_REF_LD_DIR + "/FIN/FIN.ld_decay_summary.tsv",
+        ld_gbr_bins=SELECTION_REF_LD_DIR + "/GBR/GBR.ld_decay_bins.tsv",
+        ld_gbr_summary=SELECTION_REF_LD_DIR + "/GBR/GBR.ld_decay_summary.tsv",
         ld_tsi_bins=SELECTION_REF_LD_DIR + "/TSI/TSI.ld_decay_bins.tsv",
         ld_tsi_summary=SELECTION_REF_LD_DIR + "/TSI/TSI.ld_decay_summary.tsv",
         ld_ibs_bins=SELECTION_REF_LD_DIR + "/IBS/IBS.ld_decay_bins.tsv",
@@ -36,6 +40,8 @@ rule build_interactive_analysis_figures:
         ld_primary=FIG_DIR + "/ld_decay_maf005.html",
         ld_sensitivity=FIG_DIR + "/ld_decay_maf001.html",
         ld_ceu=FIG_DIR + "/ld_decay_ceu.html",
+        ld_fin=FIG_DIR + "/ld_decay_fin.html",
+        ld_gbr=FIG_DIR + "/ld_decay_gbr.html",
         ld_tsi=FIG_DIR + "/ld_decay_tsi.html",
         ld_ibs=FIG_DIR + "/ld_decay_ibs.html",
         ld_compare=FIG_DIR + "/ld_decay_population_comparison.html",
@@ -60,6 +66,10 @@ rule build_interactive_analysis_figures:
             --ld-maf001-summary {input.ld_maf001_summary} \
             --ld-ceu-bins {input.ld_ceu_bins} \
             --ld-ceu-summary {input.ld_ceu_summary} \
+            --ld-fin-bins {input.ld_fin_bins} \
+            --ld-fin-summary {input.ld_fin_summary} \
+            --ld-gbr-bins {input.ld_gbr_bins} \
+            --ld-gbr-summary {input.ld_gbr_summary} \
             --ld-tsi-bins {input.ld_tsi_bins} \
             --ld-tsi-summary {input.ld_tsi_summary} \
             --ld-ibs-bins {input.ld_ibs_bins} \

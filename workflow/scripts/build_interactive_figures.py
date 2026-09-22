@@ -259,7 +259,7 @@ def ld_compare_html(series, title, caption):
     xlo, xhi = 0.0, max(all_x)
     ylo, yhi = 0.0, max(all_y) * 1.08
     parts, sx, sy = axes_svg(width, height, ml, mr, mt, mb, xlo, xhi, ylo, yhi, "Physical distance between SNPs (kb)", "Mean pairwise r²")
-    for pop in ["CT", "CEU", "TSI", "IBS"]:
+    for pop in ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]:
         rows, sm = prepared[pop]
         color = POP_COLORS[pop]
         pts = " ".join(f"{sx(float(r['bin_center_kb'])):.2f},{sy(float(r['mean_r2'])):.2f}" for r in rows)
@@ -271,7 +271,7 @@ def ld_compare_html(series, title, caption):
             parts.append(f'<circle class="hoverpoint" data-tooltip="{esc(tip)}" cx="{sx(float(r["bin_center_kb"])):.2f}" cy="{sy(float(r["mean_r2"])):.2f}" r="2.6" fill="{color}" fill-opacity="0.65"/>')
     lx = width - mr + 18
     ly = mt + 18
-    for i, pop in enumerate(["CT", "CEU", "TSI", "IBS"]):
+    for i, pop in enumerate(["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]):
         y = ly + i * 24
         parts.append(f'<line x1="{lx}" y1="{y}" x2="{lx+24}" y2="{y}" stroke="{POP_COLORS[pop]}" stroke-width="3"/>')
         parts.append(f'<text x="{lx+32}" y="{y+4}" class="legend">{pop}</text>')
@@ -302,6 +302,10 @@ def main():
     p.add_argument("--ld-maf001-summary", required=True)
     p.add_argument("--ld-ceu-bins", required=True)
     p.add_argument("--ld-ceu-summary", required=True)
+    p.add_argument("--ld-fin-bins", required=True)
+    p.add_argument("--ld-fin-summary", required=True)
+    p.add_argument("--ld-gbr-bins", required=True)
+    p.add_argument("--ld-gbr-summary", required=True)
     p.add_argument("--ld-tsi-bins", required=True)
     p.add_argument("--ld-tsi-summary", required=True)
     p.add_argument("--ld-ibs-bins", required=True)
@@ -358,6 +362,8 @@ def main():
     ref_series = []
     for pop, bins_path, summary_path, fid, filename in [
         ("CEU", a.ld_ceu_bins, a.ld_ceu_summary, "ld_decay_ceu", "ld_decay_ceu.html"),
+        ("FIN", a.ld_fin_bins, a.ld_fin_summary, "ld_decay_fin", "ld_decay_fin.html"),
+        ("GBR", a.ld_gbr_bins, a.ld_gbr_summary, "ld_decay_gbr", "ld_decay_gbr.html"),
         ("TSI", a.ld_tsi_bins, a.ld_tsi_summary, "ld_decay_tsi", "ld_decay_tsi.html"),
         ("IBS", a.ld_ibs_bins, a.ld_ibs_summary, "ld_decay_ibs", "ld_decay_ibs.html"),
     ]:

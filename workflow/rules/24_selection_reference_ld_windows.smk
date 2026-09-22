@@ -1,9 +1,10 @@
 # ============================================================
-# Selection branch: population-specific LD decay and LASSI windows
-# for CEU, TSI and IBS
+# Selection branch: population-specific LD decay for all 1000G EUR
+# and LASSI-window calibration for CEU, TSI and IBS
 # ============================================================
 
-SELECTION_REF_POPS = ["CEU", "TSI", "IBS"]
+SELECTION_REF_POPS = ["CEU", "FIN", "GBR", "IBS", "TSI"]
+SELECTION_LASSI_REF_POPS = ["CEU", "TSI", "IBS"]
 SELECTION_REF_LD_DIR = "results/selection/ld_decay/reference"
 SELECTION_REF_WIN_DIR = "results/selection/lassi_window/reference"
 
@@ -30,7 +31,7 @@ rule selection_reference_sample_list:
     params:
         expected=lambda wc: config["datasets"]["reference_1kg_eur"]["populations"]["expected_counts"][wc.population]
     wildcard_constraints:
-        population="CEU|TSI|IBS"
+        population="CEU|FIN|GBR|IBS|TSI"
     shell:
         r"""
         set -euo pipefail
@@ -202,6 +203,8 @@ rule selection_reference_lassi_window:
         anchor_counts=SELECTION_REF_WIN_DIR + "/{population}/anchor_snp_counts.tsv",
         chrom_summary=SELECTION_REF_WIN_DIR + "/{population}/chromosome_snp_window_summary.tsv",
         summary=SELECTION_REF_WIN_DIR + "/{population}/lassi_window_summary.tsv"
+    wildcard_constraints:
+        population="CEU|TSI|IBS"
     params:
         step_fraction=lambda wc: config["selection"]["ld_decay"]["derived_parameters"]["shift_fraction_of_window"]
     conda:
@@ -232,5 +235,5 @@ rule audit_selection_reference_ld_windows:
         expand(SELECTION_REF_LD_DIR + "/{population}/{population}.ld_decay_summary.tsv", population=SELECTION_REF_POPS),
         expand(SELECTION_REF_LD_DIR + "/{population}/{population}.ld_decay.png", population=SELECTION_REF_POPS),
         expand(SELECTION_REF_LD_DIR + "/{population}/{population}.ld_decay.pdf", population=SELECTION_REF_POPS),
-        expand(SELECTION_REF_WIN_DIR + "/{population}/lassi_window_summary.tsv", population=SELECTION_REF_POPS),
-        expand(SELECTION_REF_WIN_DIR + "/{population}/chromosome_snp_window_summary.tsv", population=SELECTION_REF_POPS)
+        expand(SELECTION_REF_WIN_DIR + "/{population}/lassi_window_summary.tsv", population=SELECTION_LASSI_REF_POPS),
+        expand(SELECTION_REF_WIN_DIR + "/{population}/chromosome_snp_window_summary.tsv", population=SELECTION_LASSI_REF_POPS)

@@ -64,3 +64,23 @@ one-third-baseline crossings are 55.5, 53.5, 52.5 and 53.5 kb, respectively.
 Although the physical decay scales are similar, their empirical SNP-delimited
 LASSI windows differ (99, 116, 112 and 116 SNPs), reflecting population-specific
 marker density after within-population MAF filtering.
+
+
+## FIN LD decay, MAF >=0.05
+
+Population-specific FIN LD decay is retained as European LD context. FIN is not
+part of the primary LASSI scan, so its decay curve is descriptive and does not
+define a production LASSI winsize.
+
+## GBR LD decay, MAF >=0.05
+
+Population-specific GBR LD decay is retained as European LD context. GBR is not
+part of the primary LASSI scan, so its decay curve is descriptive and does not
+define a production LASSI winsize.
+
+## Full European LD-decay comparison
+
+The combined interactive panel includes CT, CEU, FIN, GBR, IBS and TSI under
+the same MAF>=0.05 LD-decay protocol. This gives a complete European reference
+context for the CT decay curve while preserving the narrower CT/CEU/TSI/IBS
+design for LASSI itself.

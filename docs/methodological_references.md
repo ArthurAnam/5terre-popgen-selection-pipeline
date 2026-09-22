@@ -1067,3 +1067,19 @@ source panel, so they do not require re-phasing for LASSI. The phasing branch is
 required for CT only. CEU benchmarking will be interpreted qualitatively and
 positionally against the published LASSI CEU scan rather than as an expectation
 of numerically identical T statistics.
+
+
+### Full 1000 Genomes EUR LD-decay context
+
+LD decay is additionally estimated in FIN and GBR with the same MAF>=0.05,
+100-anchor-per-autosome and one-third-baseline protocol used for CEU, TSI and
+IBS. This extension is descriptive rather than a change to the LASSI scan
+design. It allows the CT curve to be interpreted against the complete set of
+five 1000 Genomes EUR populations and avoids presenting only the populations
+selected for downstream LASSI.
+
+No LASSI window is derived or used for FIN or GBR in the primary analysis.
+The frozen selection scans remain CT, CEU, TSI and IBS with their existing
+population-specific windows. If FIN or GBR are later promoted to formal LASSI
+comparators, their SNP-window conversion must then be performed explicitly
+from their own LD decay rather than borrowing a window from another population.
