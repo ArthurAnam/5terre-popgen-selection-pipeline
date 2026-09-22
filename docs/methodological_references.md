@@ -628,10 +628,10 @@ definition of a long ROH. Physical length remains explicit.
 
 The next step is a prespecified two-framework sensitivity analysis. The
 population-history candidate uses the unpruned common panel and calls ROH
-directly at >=1.5 Mb with PLINK settings 50 SNP/window, 50 SNP/run, density
+directly at >=1.5 Mb with PLINK settings 50 SNP/window, minimum 50 SNP per called ROH, density
 50 kb/SNP, gap 1000 kb, 5 missing/window, 1 heterozygote/window, and window
 threshold 0.05. The light-VIF sensitivity uses `--indep 50 5 10`, then the
-Howrigan/UK-Biobank-style 65 SNP/window, 65 SNP/run, density 200 kb/SNP,
+Howrigan/UK-Biobank-style 65 SNP/window, minimum 65 SNP per called ROH, density 200 kb/SNP,
 gap 500 kb, 3 missing/window, 0 heterozygotes/window, threshold 0.05, and a
 minimal 10-kb calling floor. For comparability, only segments >=1.5 Mb from
 that sensitivity call are retained in downstream summaries.
@@ -696,7 +696,7 @@ it increases the retained ROH burden proportionally more in the reference
 populations than in CT.
 
 The resulting technical production candidate is: unpruned common panel,
-ROH >=1.5 Mb, 50 SNP/window, 50 SNP/run, density <=50 kb/SNP, gap <=500 kb,
+ROH >=1.5 Mb, 50 SNP/window, minimum 50 SNP per called ROH, density <=50 kb/SNP, gap <=500 kb,
 5 missing genotypes/window, 1 heterozygote/window and window threshold 0.05.
 
 One marker-ascertainment question remains before this definition is frozen:
@@ -718,17 +718,51 @@ mean inter-marker gap of 674 bp. Large-gap structure is nearly unchanged
 relative to the joint panel: 208 gaps exceed 100 kb, 37 exceed 500 kb and 22
 exceed 1 Mb, versus 201, 35 and 21 respectively in the joint-MAF panel.
 
-Consequently there is no physical-density reason to replace the joint-MAF
-panel automatically. Requiring MAF>=0.05 in every population is also a
-stricter ascertainment rule that can remove differentiated but biologically
-informative variants. The final decision will therefore use one direct ROH
-sensitivity call: the joint panel and the strict all-population intersection
-will be run with identical selected technical parameters (ROH>=1.5 Mb,
-50 SNP/window, 50 SNP/run, density<=50 kb/SNP, gap<=500 kb,
-5 missing/window, 1 heterozygote/window, window threshold 0.05). If burden and
-individual ranking are concordant, the joint-MAF panel will be frozen as the
-primary analysis and the stricter intersection retained as a sensitivity
-analysis.
+The direct MAF-scope call sensitivity is now complete. With otherwise
+identical ROH parameters, the strict all-population MAF intersection produced
+slightly higher absolute long-ROH burden than the joint-MAF panel (CT mean
+37.65 versus 36.58 Mb; FIN 20.81 versus 19.41 Mb; IBS 14.85 versus 13.63 Mb;
+GBR 13.44 versus 11.94 Mb; CEU 9.65 versus 8.62 Mb; TSI 9.16 versus 8.14 Mb).
+
+Within CT, total long-ROH burden has Pearson r=0.9990 and Spearman rho=0.9925
+between marker ascertainment schemes; N_ROH has Pearson r=0.9903 and Spearman
+rho=0.9810, and maximum ROH length has Pearson r=0.9909 and Spearman rho=0.9965.
+Joint MAF>=0.05 is therefore frozen as the primary marker panel because it is
+less restrictive and does not require every differentiated SNP to be common in
+every reference population. The all-population MAF>=0.05 intersection remains
+a prespecified sensitivity analysis.
+
+#### Frozen production ROH definition and FROH
+
+The production call uses the joint MAF>=0.05, unpruned marker panel with a
+50-SNP sliding window, a minimum of 50 SNP per called ROH, a minimum physical
+length of 1.5 Mb, density <=50 kb/SNP, gap <=500 kb, <=5 missing calls per
+window, <=1 heterozygous call per window, and window hit threshold 0.05.
+
+The distinction between the two SNP-count parameters is explicit:
+`--homozyg-window-snp 50` defines the size of the moving scan window, whereas
+`--homozyg-snp 50` requires each final called ROH to contain at least 50 SNPs.
+In this dense WGS-derived panel, the 1.5-Mb physical threshold is the dominant
+biological scale and the 50-SNP final-run minimum is mainly a technical floor.
+
+PLINK distinguishes the local scanning-window heterozygote limit
+(`--homozyg-window-het`) from the whole-run heterozygote cap
+(`--homozyg-het`). The production analysis leaves `--homozyg-het` unset:
+a fixed whole-run cap would become increasingly stringent as segment length
+increases, while one heterozygote per 50-SNP scanning window provides local
+tolerance for isolated genotype errors.
+
+Primary FROH is the summed physical length of all autosomal ROH >=1.5 Mb divided
+by 2.77e9 bp. This 2.77-Gb denominator is the total SNP-mappable autosomal
+distance used in prior human FROH studies. The project's ~2.794-Gb
+terminal-marker span is not used because it was defined for marker-density
+auditing and bridges marker-free intervals rather than estimating a callable
+autosomal denominator.
+
+Production summaries retain continuous ROH lengths and additionally report
+1.5-<5 Mb and >=5 Mb classes. These bins are descriptive: the primary phenotype
+remains FROH based on all ROH >=1.5 Mb.
+
 
 ### Howrigan et al. 2011: specific ROH parameter implications
 
