@@ -339,10 +339,10 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "roh_call_sensitivity_completed_gap_het_sensitivity_next"
+    parameter_status: "gap_het_sensitivity_completed_maf_scope_audit_next"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
-    maf_scope_status: "provisional_for_density_audit_before_final_cross_population_roh_call"
+    maf_scope_status: "joint_maf0.05_primary_candidate_all_population_maf0.05_intersection_audit_next"
     expected_joint_samples: 549
     expected_joint_maf0.05_variants: 4878327
     ld_pruning: "unpruned_primary_candidate_supported_by_light_vif_sensitivity"
@@ -437,17 +437,51 @@ population_structure:
           GBR: 0.30978683025081355
           TSI: 0.2745534677006917
           CEU: 0.25097475859020957
-      next_parameter_sensitivity:
-        panel: "joint_maf0.05_unpruned"
-        fixed_min_roh_kb: 1500
-        fixed_window_snp: 50
-        fixed_min_snp: 50
-        fixed_density_kb_per_snp: 50
-        fixed_window_missing: 5
-        fixed_window_threshold: 0.05
-        homozyg_gap_kb: [100, 500, 1000]
-        homozyg_window_het: [0, 1]
-        rationale: "Vary only maximum internal gap and heterozygote tolerance to isolate their effects before freezing the production definition."
+      observed_gap_het_sensitivity:
+        status: "completed"
+        interpretation: "Maximum gap has a modest effect when one heterozygote per window is allowed, whereas forcing zero heterozygotes strongly reduces long-ROH burden, especially in the 1000G reference populations."
+        selected_candidate_gap_kb: 500
+        selected_candidate_window_het: 1
+        selected_candidate_rationale: "gap=500 kb is a conservative compromise supported by human ROH precedent and remains nearly identical to gap=1000 kb in this dataset; allowing one heterozygote per window reduces sensitivity to isolated genotype errors and is conservative for CT-vs-1000G comparison because the zero-heterozygote setting reduces reference-population burden disproportionately."
+        ct_mean_total_roh_mb:
+          gap100_het0: 21.556273413043478
+          gap100_het1: 35.56596097826087
+          gap500_het0: 22.08977656521739
+          gap500_het1: 36.57970608695652
+          gap1000_het0: 22.44639045652174
+          gap1000_het1: 37.549617043478264
+        ct_gap500_het1_vs_gap1000_het1:
+          total_roh_mb_fraction: 0.9741685512773226
+          total_roh_mb_pearson: 0.9994757379455005
+          total_roh_mb_spearman: 0.9975331483194573
+          max_roh_pearson: 1.0
+          max_roh_spearman: 1.0
+        mean_total_roh_fraction_het0_vs_het1_at_gap500:
+          CT: 0.6038795460061562
+          CEU: 0.20484797609149628
+          FIN: 0.2956600689844446
+          GBR: 0.26922005805930584
+          IBS: 0.2886899196577508
+          TSI: 0.23523907867872426
+      selected_primary_candidate_parameters:
+        panel: "joint_maf0.05_unpruned_pending_maf_scope_audit"
+        homozyg_window_snp: 50
+        homozyg_snp: 50
+        homozyg_kb: 1500
+        homozyg_density: 50
+        homozyg_gap: 500
+        homozyg_window_missing: 5
+        homozyg_window_het: 1
+        homozyg_window_threshold: 0.05
+        status: "technical_parameters_selected_pending_maf_scope_and_froh_denominator"
+      maf_scope_sensitivity:
+        enabled: true
+        status: "all_population_maf0.05_intersection_density_audit_next"
+        populations: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
+        comparison:
+          primary_candidate: "joint_MAF>=0.05_common_marker_panel"
+          sensitivity: "intersection_of_variants_with_MAF>=0.05_within_each_population"
+        rationale: "Use the same marker set for every population while checking whether joint-MAF filtering silently retains many markers that are rare or nearly uninformative within particular populations. Audit marker count, density and gaps before any alternate ROH call."
     marker_density_audit:
       enabled: true
       status: "completed"
@@ -471,14 +505,15 @@ population_structure:
       interpretation: "The joint MAF>=0.05 WGS-derived panel is extremely dense (about one marker per 573 bp on average). Rare large gaps are localized exceptions; physical-length and LD-sensitivity criteria should therefore drive ROH tuning rather than copying SNP-array SNP-count defaults."
 
     parameters_to_refine:
-      homozyg_snp: null
-      homozyg_kb: null
-      homozyg_density: null
-      homozyg_gap: null
-      homozyg_window_snp: null
-      homozyg_window_het: 0
-      homozyg_window_missing: null
-      homozyg_window_threshold: null
+      homozyg_snp: 50
+      homozyg_kb: 1500
+      homozyg_density: 50
+      homozyg_gap: 500
+      homozyg_window_snp: 50
+      homozyg_window_het: 1
+      homozyg_window_missing: 5
+      homozyg_window_threshold: 0.05
+      maf_scope: "pending_all_population_maf0.05_intersection_audit"
       froh_denominator: null
 
 

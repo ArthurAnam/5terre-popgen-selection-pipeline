@@ -671,6 +671,44 @@ missingness and window threshold fixed. Only maximum internal gap
 3x2 design. This isolates the two remaining technical choices before the
 production ROH definition and FROH denominator are frozen.
 
+#### Completed gap x heterozygote sensitivity
+
+The 3x2 sensitivity completed successfully. With one heterozygote allowed per
+50-SNP window, changing the maximum gap from 1000 to 500 kb had only a small
+effect. In CT, mean total ROH burden changed from 37.55 to 36.58 Mb (97.4%
+retained), with Pearson r=0.9995 and Spearman rho=0.9975 at the individual
+level. Maximum ROH length in CT was perfectly correlated between these two
+gap settings. Gap=500 kb is therefore selected as the primary candidate: it
+is more conservative against bridging across long marker-free intervals than
+1 Mb while preserving essentially the same long-ROH signal.
+
+In contrast, setting the tolerated heterozygote count to zero had a large
+effect. At gap=500 kb, mean total burden with zero versus one heterozygote per
+window retained ~60.4% in CT but only ~20.5% in CEU, 29.6% in FIN, 26.9% in
+GBR, 28.9% in IBS and 23.5% in TSI. This population/dataset asymmetry makes a
+zero-heterozygote production rule undesirable for the present mixed-source
+CT+1000G comparison. Human WGS work has emphasized that isolated heterozygous
+calls can split true ROH because of sequencing/genotyping error, and PLINK's
+heterozygote tolerance exists to mitigate this problem. Allowing one
+heterozygote per window is therefore selected as the primary candidate. This
+choice is also conservative with respect to a CT-vs-reference contrast because
+it increases the retained ROH burden proportionally more in the reference
+populations than in CT.
+
+The resulting technical production candidate is: unpruned common panel,
+ROH >=1.5 Mb, 50 SNP/window, 50 SNP/run, density <=50 kb/SNP, gap <=500 kb,
+5 missing genotypes/window, 1 heterozygote/window and window threshold 0.05.
+
+One marker-ascertainment question remains before this definition is frozen:
+the current common panel uses MAF>=0.05 calculated jointly across all 549
+samples. A final audit will compare this with the intersection of SNPs having
+MAF>=0.05 within each of CT, CEU, FIN, GBR, IBS and TSI. This is an audit, not
+an automatic replacement: requiring common frequency in every population may
+itself become overly stringent and remove differentiated but informative
+markers. The first step is therefore to measure marker count, physical density
+and gap structure of that intersection before deciding whether an alternate
+ROH call is warranted.
+
 ### Howrigan et al. 2011: specific ROH parameter implications
 
 Howrigan et al. (2011) is a key parameter-tuning reference for PLINK ROH
