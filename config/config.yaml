@@ -298,6 +298,21 @@ population_structure:
         interpretation: "PC1-PC3 are highly concordant between masked and unmasked analyses; higher PCs show reordering/rotation and should not be treated as one-to-one stable components without further inspection."
     n_components: 10
 
+  exploratory_population_grouping:
+    enabled: true
+    status: "exploratory_not_for_automatic_population_merging"
+    populations: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
+    marker_panel: "joint_maf0.05_highld_masked_ldpruned"
+    marker_count: 287815
+    fst:
+      tool: "PLINK2 --fst"
+      method: "hudson"
+    clustering:
+      method: "average_linkage"
+      distance: "pairwise_hudson_fst"
+      negative_fst_for_clustering: "truncate_to_zero"
+    interpretation: "Quick diagnostic only. No population labels are merged automatically."
+
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."

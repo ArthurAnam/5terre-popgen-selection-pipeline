@@ -336,6 +336,37 @@ plots. Because the primary structure is quantitatively robust to the mask, the
 choice of which panel is shown as the main figure can be based on a priori
 methodological framing rather than on which version gives a preferred result.
 
+
+### Exploratory population grouping diagnostic
+
+A lightweight exploratory branch tests whether the current population labels
+(CT, CEU, FIN, GBR, IBS, TSI) show clear genome-wide similarity patterns.
+It is an explicit target and does not alter any population label elsewhere in
+the workflow.
+
+For speed and consistency, the diagnostic reuses the existing joint
+MAF >= 0.05, predefined high-LD-masked and LD-pruned PCA marker panel
+(287,815 SNPs; 549 individuals). Pairwise differentiation is estimated with
+PLINK2 using the Hudson FST estimator. PLINK2 documents Hudson as the default
+FST method and cites Bhatia et al. 2013 for this estimator.
+
+The pairwise FST values are reported directly and also used as distances for an
+average-linkage hierarchical dendrogram. Negative finite FST estimates, if any,
+are retained in the raw outputs but truncated to zero only when constructing
+the clustering distance, because a negative sampling estimate is not a
+biological negative distance.
+
+This branch is deliberately descriptive: it ranks the closest population pairs
+and visualizes their hierarchical similarity, but it does not define a
+threshold for declaring populations identical and does not automatically merge
+groups. If a proposed pooling becomes important to downstream inference, a
+separate uncertainty/stability analysis should be added before formal use.
+
+Primary estimator reference:
+Bhatia G, Patterson N, Sankararaman S, Price AL. 2013. Estimating and
+interpreting FST: The impact of rare variants. Genome Research 23:1514-1521.
+doi:10.1101/gr.154831.113.
+
 ### 1000 Genomes EUR panel inventory confirmed locally
 
 The local Phase 3 sample metadata file contains 2,504 individuals plus one

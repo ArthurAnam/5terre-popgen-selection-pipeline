@@ -3,8 +3,8 @@
 # ============================================================
 #
 # Explicit target only. This branch does not change any population label used
-# elsewhere in the workflow. It reuses the joint common-variant panel after
-# the predefined high-LD mask, before LD pruning.
+# elsewhere in the workflow. It reuses the existing high-LD-masked, MAF-filtered and LD-pruned joint PCA panel
+# for a fast common-marker comparison.
 
 GROUPING_DIR = "results/population_structure/exploratory_grouping"
 GROUPING_WITHIN = GROUPING_DIR + "/population_clusters.txt"
@@ -14,7 +14,7 @@ GROUPING_FST_SUMMARY = GROUPING_FST_PREFIX + ".fst.summary"
 
 rule make_exploratory_grouping_clusters:
     input:
-        psam=PCA_HARMONIZED_PREFIX + ".psam",
+        psam=PCA_HIGHLD_PRUNED_PREFIX + ".psam",
         annotations=PCA_SAMPLE_ANNOTATIONS,
         script="workflow/scripts/make_plink_within_from_annotations.py"
     output:
@@ -34,10 +34,9 @@ rule make_exploratory_grouping_clusters:
 
 rule exploratory_pairwise_hudson_fst:
     input:
-        pgen=PCA_HARMONIZED_PREFIX + ".pgen",
-        pvar=PCA_HARMONIZED_PREFIX + ".pvar",
-        psam=PCA_HARMONIZED_PREFIX + ".psam",
-        variants=PCA_HIGHLD_SNPLIST,
+        pgen=PCA_HIGHLD_PRUNED_PREFIX + ".pgen",
+        pvar=PCA_HIGHLD_PRUNED_PREFIX + ".pvar",
+        psam=PCA_HIGHLD_PRUNED_PREFIX + ".psam",
         clusters=GROUPING_WITHIN
     output:
         GROUPING_FST_SUMMARY
@@ -53,8 +52,7 @@ rule exploratory_pairwise_hudson_fst:
 
         plink2 \
             --threads {threads} \
-            --pfile {PCA_HARMONIZED_PREFIX} \
-            --extract {input.variants} \
+            --pfile {PCA_HIGHLD_PRUNED_PREFIX} \
             --within {input.clusters} PCA_POP \
             --fst PCA_POP method=hudson \
             --out {GROUPING_FST_PREFIX} \
