@@ -1106,37 +1106,32 @@ comparison, but no production LASSI winsize is derived because they are not
 part of the planned LASSI scan. CT/CEU/TSI/IBS winsize/winstep parameters
 remain frozen and unchanged.
 
+### CT phasing: SHAPEIT2 reference-assisted production design
 
-### CT phasing: move from SHAPEIT2 plan to SHAPEIT5 and reference-overlap preflight
+The CT production phasing method is SHAPEIT2 v2.r900 with the phased
+1000 Genomes Phase 3 EUR reference panel. This is a deliberate small-study
+reference-assisted design: the SHAPEIT2 documentation states that external
+reference haplotypes are particularly useful when phasing fewer than about
+100 study individuals, whereas CT contains 46.
 
-The historical project plan listed SHAPEIT2. This is replaced by SHAPEIT5
-`phase_common`, the maintained SHAPEIT lineage for common-variant phasing and
-the first step of WGS phasing. The environment is pinned to Bioconda
-SHAPEIT5 5.1.1 and production phasing will use GRCh37 genetic maps distributed
-with SHAPEIT5.
+The effective population size is fixed at Ne=11,418, the European/CEU value
+recommended by the SHAPEIT2 documentation. The common-variant conditioning
+window is fixed at 0.5 Mb because the documentation specifically advises this
+value for sequence-derived genotypes rather than the 2-Mb GWAS default.
+Other model/MCMC settings remain at the documented SHAPEIT2 defaults:
+100 conditioning states, 7 burn-in, 8 pruning and 20 main iterations.
+The --no-mcmc shortcut is not used because it is recommended only when the
+study contains typically fewer than 10 individuals.
 
-A reference-assisted run cannot be launched blindly. SHAPEIT5 documentation
-states that, with `--reference`, input sites absent from the reference panel
-are not considered. Because LASSI windows have already been calibrated in SNP
-units on the CT MAF>=0.05 panel, silently changing marker density during
-phasing would invalidate the direct connection between the frozen 99-SNP CT
-window and the actual scan panel.
+Reference alignment is checked formally with SHAPEIT2 -check. In
+reference-assisted mode, a study SNP must also occur in the reference with
+compatible alleles; study-only or incompatible positions are reported in the
+alignment exclusion file and are removed from the phasing command with
+--exclude-snp. The chromosome-wise bcftools overlap audit remains as an
+independent quantitative summary of marker retention, but the actual SHAPEIT2
+-check output is authoritative for the production exclusion list.
 
-The next workflow step therefore performs a chromosome-wise preflight. It
-constructs the CT biallelic-SNP MAF>=0.05 panel directly from the final CT QC
-VCF, checks its counts against the existing PLINK selection panel, and measures
-exact CHR:POS:REF:ALT overlap with both (i) the full phased 1000 Genomes Phase 3
-panel and (ii) the polymorphic 503-sample EUR subset. No phasing decision is
-made from assumed ancestry similarity alone.
-
-The provisional strategy, if marker overlap is adequate, is two-stage:
-reference-assisted SHAPEIT5 on the exact shared sites followed by a second
-`phase_common` run using the phased CT overlap as a scaffold for the complete
-CT MAF>=0.05 panel. SHAPEIT5 scaffolds may contain a subset of variants and
-samples, allowing non-scaffold target variants to be phased onto the trusted
-common scaffold. This design is intended to retain the LASSI marker panel while
-still benefiting from external reference haplotypes.
-
-The choice between full-1000G and EUR-only reference support remains open until
-the overlap audit is observed. Likewise, whole-chromosome versus chunked
-phasing is not frozen at this stage.
+The reference scope is not an open parameter: it is 1000 Genomes EUR. GRCh37
+genetic maps are supplied explicitly. A fixed seed and one SHAPEIT2 thread per
+chromosome are used for exact reproducibility, while Snakemake may parallelize
+different chromosomes.

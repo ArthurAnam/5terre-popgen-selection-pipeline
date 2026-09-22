@@ -14,6 +14,10 @@ local_paths:
   onekg_phase3_sample_metadata: "/absolute/path/to/1000GP_Phase3.sample"
 
 
-  # SHAPEIT5 GRCh37/b37 genetic maps, one chr*.b37.gmap.gz file per autosome.
-  # Required only when the production CT phasing step is run.
-  shapeit5_b37_map_dir: "/absolute/path/to/shapeit5_b37_maps"
+  # SHAPEIT2 v2.r900 resources for CT reference-assisted phasing.
+  shapeit2_binary: "/absolute/path/to/shapeit"
+  shapeit2_b37_map_dir: "/absolute/path/to/shapeit2_b37_maps"
+  # Templates must contain {chrom}, e.g. ".../1000GP_EUR.chr{chrom}.haplotypes.gz"
+  shapeit2_eur_reference_haps_template: "/absolute/path/to/1000GP_EUR.chr{chrom}.haplotypes.gz"
+  shapeit2_eur_reference_legend_template: "/absolute/path/to/1000GP_EUR.chr{chrom}.legend.gz"
+  shapeit2_eur_reference_sample: "/absolute/path/to/1000GP_EUR.sample"

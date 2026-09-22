@@ -1,5 +1,5 @@
 # ============================================================
-# Selection branch: CT SHAPEIT5 phasing preflight
+# Selection branch: CT SHAPEIT2 EUR-reference alignment preflight
 # ============================================================
 
 PHASING_PREFLIGHT_DIR = "results/selection/phasing/preflight"
@@ -32,9 +32,7 @@ rule selection_ct_phasing_overlap_audit_chromosome:
         trap 'rm -rf "$tmpdir"' EXIT
 
         ct="$tmpdir/ct.maf005.bcf"
-        ref_full="$tmpdir/ref.full.bcf"
         ref_eur="$tmpdir/ref.eur.poly.bcf"
-        shared_full="$tmpdir/shared.full.bcf"
         shared_eur="$tmpdir/shared.eur.bcf"
 
         bcftools view \
@@ -48,12 +46,6 @@ rule selection_ct_phasing_overlap_audit_chromosome:
         bcftools index -f "$ct" 2>> {log}
 
         bcftools view \
-            -m2 -M2 -v snps \
-            -Ob -o "$ref_full" \
-            {input.ref_vcf} 2>> {log}
-        bcftools index -f "$ref_full" 2>> {log}
-
-        bcftools view \
             -S {input.eur_samples} \
             -m2 -M2 -v snps \
             -Ou {input.ref_vcf} 2>> {log} \
@@ -62,10 +54,6 @@ rule selection_ct_phasing_overlap_audit_chromosome:
             -i 'INFO/AC>0 && INFO/AC<INFO/AN' \
             -Ob -o "$ref_eur" 2>> {log}
         bcftools index -f "$ref_eur" 2>> {log}
-
-        bcftools isec -c none -n=2 -w1 \
-            -Ob -o "$shared_full" "$ct" "$ref_full" 2>> {log}
-        bcftools index -f "$shared_full" 2>> {log}
 
         bcftools isec -c none -n=2 -w1 \
             -Ob -o "$shared_eur" "$ct" "$ref_eur" 2>> {log}
@@ -77,24 +65,19 @@ rule selection_ct_phasing_overlap_audit_chromosome:
 
         ct_n=$(bcftools index -n "$ct")
         ct_plink=$(awk -v c="{wildcards.chrom}" '$1==c {{n++}} END {{print n+0}}' {input.ct_maf005_bim})
-        full_n=$(bcftools index -n "$ref_full")
         eur_n=$(bcftools index -n "$ref_eur")
-        full_exact=$(bcftools index -n "$shared_full")
         eur_exact=$(bcftools index -n "$shared_eur")
-        full_same=$(comm -12 "$tmpdir/ct.pos" "$tmpdir/full.pos" | wc -l)
         eur_same=$(comm -12 "$tmpdir/ct.pos" "$tmpdir/eur.pos" | wc -l)
-        full_samples=$(bcftools query -l "$ref_full" | wc -l)
         eur_samples=$(bcftools query -l "$ref_eur" | wc -l)
 
         if [ "$ct_n" -eq "$ct_plink" ]; then panel_match="PASS"; else panel_match="FAIL"; fi
 
         {
-            printf 'chromosome\tct_maf005_bcftools\tct_maf005_plink\tct_panel_count_match\tfull_1kg_biallelic_snps\tfull_1kg_samples\texact_full_1kg\tfraction_ct_exact_full_1kg\tsame_position_full_1kg\tallele_mismatch_full_1kg\teur_polymorphic_biallelic_snps\teur_samples\texact_eur_polymorphic\tfraction_ct_exact_eur_polymorphic\tsame_position_eur_polymorphic\tallele_mismatch_eur_polymorphic\n'
+            printf 'chromosome\tct_maf005_bcftools\tct_maf005_plink\tct_panel_count_match\teur_polymorphic_biallelic_snps\teur_samples\texact_eur_polymorphic\tfraction_ct_exact_eur_polymorphic\tsame_position_eur_polymorphic\tallele_mismatch_eur_polymorphic\n'
             awk -v chr="{wildcards.chrom}" \
                 -v ct="$ct_n" -v ctp="$ct_plink" -v pm="$panel_match" \
-                -v fn="$full_n" -v fs="$full_samples" -v fe="$full_exact" -v fsp="$full_same" \
                 -v en="$eur_n" -v es="$eur_samples" -v ee="$eur_exact" -v esp="$eur_same" \
-                'BEGIN { OFS="\t"; print chr,ct,ctp,pm,fn,fs,fe,(ct?fe/ct:0),fsp,(fsp-fe),en,es,ee,(ct?ee/ct:0),esp,(esp-ee) }'
+                'BEGIN { OFS="\t"; print chr,ct,ctp,pm,en,es,ee,(ct?ee/ct:0),esp,(esp-ee) }'
         } > {output.audit}
         """
 

@@ -19,7 +19,6 @@ dependencies:
   - plink2
   - king
   - eigensoft
-  - shapeit5=5.1.1
 
   # Plotting
   - matplotlib

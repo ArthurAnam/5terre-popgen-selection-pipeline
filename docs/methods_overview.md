@@ -347,27 +347,34 @@ phasing is not a downstream consequence of LD decay.
 
 ## Phasing
 
-The Cinque Terre dataset is phased before LASSI analysis.
+The Cinque Terre dataset is phased before LASSI using SHAPEIT2 (v2.r900) with
+the phased 1000 Genomes Phase 3 EUR reference panel.
 
-The production phasing software is SHAPEIT5 `phase_common`, replacing the
-obsolete SHAPEIT2 plan. SHAPEIT5 is the maintained successor and is designed
-for common-variant phasing as the first stage of WGS phasing.
+The CT cohort contains 46 individuals. SHAPEIT2 documentation specifically
+states that reference-assisted phasing is particularly useful for studies with
+fewer than approximately 100 individuals. The European/CEU effective
+population-size value recommended by SHAPEIT2, Ne=11,418, is therefore used.
 
-Before production phasing, the workflow quantifies exact CHR:POS:REF:ALT
-overlap between the CT MAF>=0.05 panel and two possible phased reference scopes:
-the full 1000 Genomes Phase 3 panel and the 503-sample EUR subset. This
-preflight is required because SHAPEIT5 reference-assisted phasing considers
-only target variants present in the reference panel.
+The target phasing panel contains biallelic CT SNPs with MAF>=0.05, matching
+the common-variant panel used for CT LASSI. A formal SHAPEIT2 `-check` step
+is run chromosome-by-chromosome against the EUR reference before phasing.
+Study SNPs absent from the reference or showing incompatible alleles are
+excluded from the reference-assisted run according to the SHAPEIT2 alignment
+output.
 
-The provisional production design is two-stage: first phase exact
-target-reference shared variants with reference support; then use the resulting
-CT haplotypes as a scaffold to phase the complete CT MAF>=0.05 panel. This
-preserves target common variants that are absent from the external reference
-while still exploiting external haplotype information.
+For sequence-derived genotypes, SHAPEIT2 recommends a 0.5-Mb conditioning
+window instead of the 2-Mb GWAS default. The production candidate therefore
+uses `--window 0.5`, `--effective-size 11418`, 100 conditioning states,
+and the documented default MCMC schedule (7 burn-in, 8 pruning and 20 main
+iterations). The `--no-mcmc` shortcut is not used because SHAPEIT2 recommends
+it only for much smaller study samples, typically fewer than 10 individuals.
 
-GRCh37 SHAPEIT5 genetic maps will be used. Reference scope and whether
-whole-chromosome or chunked phasing is preferable remain to be finalized after
-the overlap preflight.
+A fixed random seed and one SHAPEIT2 thread per chromosome are used for exact
+reproducibility; chromosome jobs may be parallelized by Snakemake. GRCh37
+genetic maps are supplied explicitly.
+
+CEU, TSI and IBS are already phased in the 1000 Genomes source and are not
+re-phased for LASSI.
 
 ---
 

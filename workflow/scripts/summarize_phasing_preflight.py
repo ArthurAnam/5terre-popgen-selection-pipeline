@@ -33,11 +33,8 @@ def main():
 
     ct_bcf = sum(as_int(r, "ct_maf005_bcftools") for r in rows)
     ct_plink = sum(as_int(r, "ct_maf005_plink") for r in rows)
-    full_exact = sum(as_int(r, "exact_full_1kg") for r in rows)
     eur_exact = sum(as_int(r, "exact_eur_polymorphic") for r in rows)
-    full_same = sum(as_int(r, "same_position_full_1kg") for r in rows)
     eur_same = sum(as_int(r, "same_position_eur_polymorphic") for r in rows)
-    full_ref = sum(as_int(r, "full_1kg_biallelic_snps") for r in rows)
     eur_ref = sum(as_int(r, "eur_polymorphic_biallelic_snps") for r in rows)
     mismatches = [r for r in rows if r["ct_panel_count_match"] != "PASS"]
 
@@ -48,17 +45,13 @@ def main():
         w.writerow(["ct_maf005_bcftools_total", ct_bcf])
         w.writerow(["ct_maf005_plink_total", ct_plink])
         w.writerow(["ct_panel_count_match_all_chromosomes", "PASS" if not mismatches else "FAIL"])
-        w.writerow(["full_1kg_biallelic_snps_total", full_ref])
         w.writerow(["eur_polymorphic_biallelic_snps_total", eur_ref])
-        w.writerow(["exact_full_1kg_total", full_exact])
-        w.writerow(["fraction_ct_maf005_exact_full_1kg", full_exact / ct_bcf if ct_bcf else 0.0])
-        w.writerow(["same_position_full_1kg_total", full_same])
-        w.writerow(["same_position_allele_mismatch_full_1kg", full_same - full_exact])
         w.writerow(["exact_eur_polymorphic_total", eur_exact])
         w.writerow(["fraction_ct_maf005_exact_eur_polymorphic", eur_exact / ct_bcf if ct_bcf else 0.0])
         w.writerow(["same_position_eur_polymorphic_total", eur_same])
         w.writerow(["same_position_allele_mismatch_eur_polymorphic", eur_same - eur_exact])
-        w.writerow(["reference_scope_decision", "PENDING_REVIEW"])
+        w.writerow(["reference_scope", "1000G_EUR_FIXED"])
+        w.writerow(["effective_population_size", 11418])
         w.writerow(["production_phasing_started", "NO"])
 
 if __name__ == "__main__":
