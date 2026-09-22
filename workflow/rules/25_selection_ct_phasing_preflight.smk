@@ -72,13 +72,13 @@ rule selection_ct_phasing_overlap_audit_chromosome:
 
         if [ "$ct_n" -eq "$ct_plink" ]; then panel_match="PASS"; else panel_match="FAIL"; fi
 
-        {
-            printf 'chromosome\tct_maf005_bcftools\tct_maf005_plink\tct_panel_count_match\teur_polymorphic_biallelic_snps\teur_samples\texact_eur_polymorphic\tfraction_ct_exact_eur_polymorphic\tsame_position_eur_polymorphic\tallele_mismatch_eur_polymorphic\n'
-            awk -v chr="{wildcards.chrom}" \
-                -v ct="$ct_n" -v ctp="$ct_plink" -v pm="$panel_match" \
-                -v en="$eur_n" -v es="$eur_samples" -v ee="$eur_exact" -v esp="$eur_same" \
-                'BEGIN { OFS="\t"; print chr,ct,ctp,pm,en,es,ee,(ct?ee/ct:0),esp,(esp-ee) }'
-        } > {output.audit}
+        printf 'chromosome\tct_maf005_bcftools\tct_maf005_plink\tct_panel_count_match\teur_polymorphic_biallelic_snps\teur_samples\texact_eur_polymorphic\tfraction_ct_exact_eur_polymorphic\tsame_position_eur_polymorphic\tallele_mismatch_eur_polymorphic\n' \
+            > {output.audit}
+        awk -v chr="{wildcards.chrom}" \
+            -v ct="$ct_n" -v ctp="$ct_plink" -v pm="$panel_match" \
+            -v en="$eur_n" -v es="$eur_samples" -v ee="$eur_exact" -v esp="$eur_same" \
+            'BEGIN {{ OFS="\t"; print chr,ct,ctp,pm,en,es,ee,(ct?ee/ct:0),esp,(esp-ee) }}' \
+            >> {output.audit}
         """
 
 
