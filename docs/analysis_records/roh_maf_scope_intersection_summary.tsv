@@ -1,0 +1,5 @@
+metric	value
+joint_maf0.05_variants	4878327
+populations	CEU,CT,FIN,GBR,IBS,TSI
+all_populations_maf0.05_intersection_variants	4142839
+intersection_fraction_of_joint_maf_panel	0.8492335589639645

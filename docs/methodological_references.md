@@ -701,13 +701,34 @@ ROH >=1.5 Mb, 50 SNP/window, 50 SNP/run, density <=50 kb/SNP, gap <=500 kb,
 
 One marker-ascertainment question remains before this definition is frozen:
 the current common panel uses MAF>=0.05 calculated jointly across all 549
-samples. A final audit will compare this with the intersection of SNPs having
-MAF>=0.05 within each of CT, CEU, FIN, GBR, IBS and TSI. This is an audit, not
-an automatic replacement: requiring common frequency in every population may
-itself become overly stringent and remove differentiated but informative
-markers. The first step is therefore to measure marker count, physical density
-and gap structure of that intersection before deciding whether an alternate
-ROH call is warranted.
+samples. A final audit compares this with the intersection of SNPs having
+MAF>=0.05 within each of CT, CEU, FIN, GBR, IBS and TSI.
+
+#### Completed MAF-scope density audit
+
+The strict all-population intersection retains 4,142,839 of 4,878,327 joint
+MAF>=0.05 variants (84.92%). Considered separately, each population retains
+94.10-96.73% of the joint panel: CT 94.10%, FIN 94.17%, GBR 95.22%, TSI
+96.29%, IBS 96.53% and CEU 96.73%. The larger 15.08% loss in the intersection
+therefore reflects the accumulation of population-specific frequency
+differences rather than one population losing a very large fraction alone.
+
+The strict intersection remains extremely dense: 1,482.88 markers/Mb with a
+mean inter-marker gap of 674 bp. Large-gap structure is nearly unchanged
+relative to the joint panel: 208 gaps exceed 100 kb, 37 exceed 500 kb and 22
+exceed 1 Mb, versus 201, 35 and 21 respectively in the joint-MAF panel.
+
+Consequently there is no physical-density reason to replace the joint-MAF
+panel automatically. Requiring MAF>=0.05 in every population is also a
+stricter ascertainment rule that can remove differentiated but biologically
+informative variants. The final decision will therefore use one direct ROH
+sensitivity call: the joint panel and the strict all-population intersection
+will be run with identical selected technical parameters (ROH>=1.5 Mb,
+50 SNP/window, 50 SNP/run, density<=50 kb/SNP, gap<=500 kb,
+5 missing/window, 1 heterozygote/window, window threshold 0.05). If burden and
+individual ranking are concordant, the joint-MAF panel will be frozen as the
+primary analysis and the stricter intersection retained as a sensitivity
+analysis.
 
 ### Howrigan et al. 2011: specific ROH parameter implications
 

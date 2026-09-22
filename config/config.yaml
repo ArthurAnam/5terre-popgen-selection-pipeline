@@ -339,10 +339,10 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "gap_het_sensitivity_completed_maf_scope_audit_next"
+    parameter_status: "maf_scope_density_audit_completed_maf_scope_call_sensitivity_next"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
-    maf_scope_status: "joint_maf0.05_primary_candidate_all_population_maf0.05_intersection_audit_next"
+    maf_scope_status: "joint_maf0.05_primary_candidate_all_population_maf0.05_intersection_call_sensitivity_next"
     expected_joint_samples: 549
     expected_joint_maf0.05_variants: 4878327
     ld_pruning: "unpruned_primary_candidate_supported_by_light_vif_sensitivity"
@@ -476,12 +476,30 @@ population_structure:
         status: "technical_parameters_selected_pending_maf_scope_and_froh_denominator"
       maf_scope_sensitivity:
         enabled: true
-        status: "all_population_maf0.05_intersection_density_audit_next"
+        status: "all_population_maf0.05_intersection_density_audit_completed_call_sensitivity_next"
         populations: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
         comparison:
           primary_candidate: "joint_MAF>=0.05_common_marker_panel"
           sensitivity: "intersection_of_variants_with_MAF>=0.05_within_each_population"
         rationale: "Use the same marker set for every population while checking whether joint-MAF filtering silently retains many markers that are rare or nearly uninformative within particular populations. Audit marker count, density and gaps before any alternate ROH call."
+        observed_density_audit:
+          joint_maf0.05_variants: 4878327
+          all_population_maf0.05_intersection_variants: 4142839
+          intersection_fraction_of_joint_panel: 0.8492335589639645
+          per_population_retained_fraction_of_joint_panel:
+            CEU: 0.9673349080535192
+            CT: 0.9410408527349643
+            FIN: 0.9417423227266233
+            GBR: 0.9522073858517479
+            IBS: 0.9652897396996962
+            TSI: 0.9628876867007891
+          markers_per_mb: 1482.8827232350943
+          mean_intermarker_gap_bp: 674.3657383369818
+          gaps_gt_100kb: 208
+          gaps_gt_500kb: 37
+          gaps_gt_1000kb: 22
+          interpretation: "The all-population MAF intersection removes about 15.1% of the joint panel but remains extremely dense and has nearly unchanged large-gap structure. Density alone therefore does not justify replacing the joint-MAF primary candidate."
+        next_decision: "Run one final ROH call sensitivity using identical technical parameters on the joint-MAF panel and the all-population MAF intersection; if concordant, freeze joint MAF as primary and retain the stricter intersection as sensitivity."
     marker_density_audit:
       enabled: true
       status: "completed"
