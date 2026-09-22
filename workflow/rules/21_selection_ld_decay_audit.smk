@@ -141,9 +141,19 @@ rule selection_ld_summarize:
 
 rule audit_selection_ld_decay:
     input:
-        expand(SEL_LD_DIR + "/anchors/{maf_tag}.anchor_summary.tsv", maf_tag=SEL_LD_TAGS),
-        expand(SEL_LD_DIR + "/summary/{maf_tag}.ld_decay_bins.tsv", maf_tag=SEL_LD_TAGS),
-        expand(SEL_LD_DIR + "/summary/{maf_tag}.ld_decay_summary.tsv", maf_tag=SEL_LD_TAGS),
-        expand(SEL_LD_DIR + "/summary/{maf_tag}.ld_decay.png", maf_tag=SEL_LD_TAGS),
-        expand(SEL_LD_DIR + "/summary/{maf_tag}.ld_decay.pdf", maf_tag=SEL_LD_TAGS),
-        expand(SEL_LD_DIR + "/summary/{maf_tag}.README.txt", maf_tag=SEL_LD_TAGS)
+        SEL_LD_DIR + "/anchors/maf005.anchor_summary.tsv",
+        SEL_LD_DIR + "/summary/maf005.ld_decay_bins.tsv",
+        SEL_LD_DIR + "/summary/maf005.ld_decay_summary.tsv",
+        SEL_LD_DIR + "/summary/maf005.ld_decay.png",
+        SEL_LD_DIR + "/summary/maf005.ld_decay.pdf",
+        SEL_LD_DIR + "/summary/maf005.README.txt"
+
+
+rule audit_selection_ld_decay_sensitivity:
+    input:
+        SEL_LD_DIR + "/anchors/maf001.anchor_summary.tsv",
+        SEL_LD_DIR + "/summary/maf001.ld_decay_bins.tsv",
+        SEL_LD_DIR + "/summary/maf001.ld_decay_summary.tsv",
+        SEL_LD_DIR + "/summary/maf001.ld_decay.png",
+        SEL_LD_DIR + "/summary/maf001.ld_decay.pdf",
+        SEL_LD_DIR + "/summary/maf001.README.txt"

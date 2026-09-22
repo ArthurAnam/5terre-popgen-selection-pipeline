@@ -1,0 +1,10 @@
+metric	maf0.05_primary	maf0.01_sensitivity
+total_valid_ld_pairs	4033512	7272074
+baseline_interval_kb	0.5-1.5	0.5-1.5
+baseline_pair_count	7603	14365
+baseline_mean_r2	0.4144855994950274	0.186481064711031
+decay_fraction	0.3333333333	0.3333333333
+decay_threshold_r2	0.13816186648452627	0.06216035489746097
+first_crossing_bin_center_kb	55.5	63.5
+stable_5bin_crossing_kb	57.5	67.5
+role	primary_LASSI_window_calibration	sensitivity_only

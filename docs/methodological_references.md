@@ -963,3 +963,37 @@ Reference correction: the primary LASSI method is Harris AM & DeGiorgio M
 haplotype data", Molecular Biology and Evolution 37:3023-3046,
 doi:10.1093/molbev/msaa115. The previously listed Genetics paper describes
 SS-H12, a different shared-sweep statistic, and is not the LASSI method paper.
+
+### Completed LD-decay audit and primary MAF decision
+
+The CT LD-decay audit completed under both prespecified frequency thresholds.
+With MAF>=0.05, 4,033,512 valid anchor-neighbor LD pairs were summarized.
+Mean r2 in the 0.5-1.5-kb baseline interval was 0.41449, giving a one-third
+threshold of 0.13816. The first 1-kb bin below this threshold was centered at
+55.5 kb; the five-consecutive-bin stability diagnostic began at 57.5 kb.
+
+The MAF>=0.01 sensitivity included 7,272,074 valid pairs. Its baseline mean r2
+was 0.18648 and its direct/stable crossings were 63.5/67.5 kb. The sensitivity
+therefore changes the absolute estimate modestly but not its order of magnitude.
+
+The production decision is to calibrate the LASSI window from the MAF>=0.05
+LD curve. This is because the planned LASSI scan uses the same MAF>=0.05 marker
+panel, so the SNP-delimited window should be calibrated from that panel rather
+than from a broader marker set. MAF>=0.01 remains a documented sensitivity and
+is not averaged with the primary estimate. This choice is tied to the LASSI
+marker panel rather than to an intrinsic phasing requirement.
+
+The selected physical decay estimate is therefore 55.5 kb according to the
+literature-matched first-crossing rule, with 57.5 kb retained as the stability
+diagnostic. The final LASSI SNP-window count remains to be obtained by
+translating 55.5 kb to the empirical marker count in the frozen MAF>=0.05
+LASSI panel after visual review of the static and interactive curves.
+
+### Cross-analysis figure policy
+
+Scientific figures are now accompanied, where useful, by self-contained HTML
+versions for interactive inspection. Individual-level hover text reports sample
+ID, population and plotted quantities; pairwise KING figures report both sample
+IDs; LD-decay HTML reports distance bin, mean r2, pair count and uncertainty.
+Static PNG/PDF files remain the manuscript-oriented outputs. Captions are
+versioned in config/figure_registry.tsv and docs/figure_captions.md.
