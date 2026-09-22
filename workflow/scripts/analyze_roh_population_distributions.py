@@ -107,7 +107,7 @@ def jitter(i, j):
 def make_box_scatter(by_pop, field, ylabel, png, pdf):
     data = [[r[field] for r in by_pop[p]] for p in POP_ORDER]
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.boxplot(data, labels=POP_ORDER, showfliers=False)
+    ax.boxplot(data, tick_labels=POP_ORDER, showfliers=False)
     for i, pop in enumerate(POP_ORDER, start=1):
         vals = data[i - 1]
         ax.scatter([jitter(i, j) for j in range(len(vals))], vals, s=13, alpha=0.55)
