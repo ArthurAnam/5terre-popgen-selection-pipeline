@@ -362,6 +362,23 @@ threshold for declaring populations identical and does not automatically merge
 groups. If a proposed pooling becomes important to downstream inference, a
 separate uncertainty/stability analysis should be added before formal use.
 
+Observed exploratory FST results
+--------------------------------
+
+The completed quick diagnostic produced the following pairwise Hudson FST
+ranking (lowest to highest): CEU-GBR 0.00031653; IBS-TSI 0.0015252;
+CEU-IBS 0.00230597; GBR-IBS 0.0025142; CEU-TSI 0.00346362;
+GBR-TSI 0.00385377; CT-TSI 0.0053019; CT-IBS 0.00603848;
+CEU-FIN 0.00618549; FIN-GBR 0.00659861; CEU-CT 0.0077535;
+CT-GBR 0.00813886; FIN-IBS 0.010168; FIN-TSI 0.0116828; and
+CT-FIN 0.0158024.
+
+Average-linkage clustering first joined CEU with GBR (height 0.00031653),
+then IBS with TSI (0.0015252), then those two reference clusters
+(0.00303439). CT joined that four-population cluster at 0.006808185, and FIN
+joined last at 0.01008746. This is retained as a descriptive exploratory
+result only; it is not used to merge labels in downstream analyses.
+
 Primary estimator reference:
 Bhatia G, Patterson N, Sankararaman S, Price AL. 2013. Estimating and
 interpreting FST: The impact of rare variants. Genome Research 23:1514-1521.

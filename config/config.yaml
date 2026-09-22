@@ -312,6 +312,29 @@ population_structure:
       distance: "pairwise_hudson_fst"
       negative_fst_for_clustering: "truncate_to_zero"
     interpretation: "Quick diagnostic only. No population labels are merged automatically."
+    observed_pairwise_fst:
+      CEU_GBR: 0.00031653
+      IBS_TSI: 0.0015252
+      CEU_IBS: 0.00230597
+      GBR_IBS: 0.0025142
+      CEU_TSI: 0.00346362
+      GBR_TSI: 0.00385377
+      CT_TSI: 0.0053019
+      CT_IBS: 0.00603848
+      CEU_FIN: 0.00618549
+      FIN_GBR: 0.00659861
+      CEU_CT: 0.0077535
+      CT_GBR: 0.00813886
+      FIN_IBS: 0.010168
+      FIN_TSI: 0.0116828
+      CT_FIN: 0.0158024
+    observed_average_linkage:
+      step1: "CEU+GBR at 0.00031653"
+      step2: "IBS+TSI at 0.0015252"
+      step3: "(CEU+GBR)+(IBS+TSI) at 0.00303439"
+      step4: "CT joins CEU+GBR+IBS+TSI at 0.006808185"
+      step5: "FIN joins all remaining groups at 0.01008746"
+    observed_interpretation: "Closest reference pair is CEU-GBR, followed by IBS-TSI. CT is closest to TSI then IBS, but remains separate in the average-linkage hierarchy until after the two reference pairs have merged."
 
   roh:
     method: "PLINK --homozyg"
