@@ -156,9 +156,7 @@ rule summarize_and_plot_joint_smartpca:
         eigenvalues=PCA_SMARTPCA_DIR + "/{pca_panel}/pca_eigenvalues.tsv",
         summary=PCA_SMARTPCA_DIR + "/{pca_panel}/pca_summary.tsv",
         pc12_png=PCA_SMARTPCA_DIR + "/{pca_panel}/pc1_pc2.png",
-        pc12_pdf=PCA_SMARTPCA_DIR + "/{pca_panel}/pc1_pc2.pdf",
         pc23_png=PCA_SMARTPCA_DIR + "/{pca_panel}/pc2_pc3.png",
-        pc23_pdf=PCA_SMARTPCA_DIR + "/{pca_panel}/pc2_pc3.pdf"
     params:
         panel=lambda wildcards: wildcards.pca_panel,
         expected_samples=lambda wildcards: config["population_structure"]["pca"]["expected_joint_samples"]
@@ -177,9 +175,7 @@ rule summarize_and_plot_joint_smartpca:
             --eigenvalues-out {output.eigenvalues} \
             --summary-out {output.summary} \
             --pc12-png {output.pc12_png} \
-            --pc12-pdf {output.pc12_pdf} \
-            --pc23-png {output.pc23_png} \
-            --pc23-pdf {output.pc23_pdf}
+            --pc23-png {output.pc23_png}
         """
 
 
@@ -194,9 +190,7 @@ rule run_joint_smartpca_both_panels:
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pca_eigenvalues.tsv", pca_panel=["unmasked", "highld_masked"]),
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pca_summary.tsv", pca_panel=["unmasked", "highld_masked"]),
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc1_pc2.png", pca_panel=["unmasked", "highld_masked"]),
-        expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc1_pc2.pdf", pca_panel=["unmasked", "highld_masked"]),
         expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc2_pc3.png", pca_panel=["unmasked", "highld_masked"]),
-        expand(PCA_SMARTPCA_DIR + "/{pca_panel}/pc2_pc3.pdf", pca_panel=["unmasked", "highld_masked"])
 
 
 
@@ -221,15 +215,10 @@ rule compare_joint_smartpca_panels:
         ct_reference_distances=PCA_COMPARISON_DIR + "/ct_reference_centroid_distances.tsv",
         summary=PCA_COMPARISON_DIR + "/comparison_summary.tsv",
         pc1_png=PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.png",
-        pc1_pdf=PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.pdf",
         pc2_png=PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.png",
-        pc2_pdf=PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.pdf",
         pc3_png=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
-        pc3_pdf=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf",
         side_by_side_pc12_png=PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.png",
-        side_by_side_pc12_pdf=PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.pdf",
         side_by_side_pc23_png=PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.png",
-        side_by_side_pc23_pdf=PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.pdf"
     params:
         expected_samples=lambda wildcards: config["population_structure"]["pca"]["expected_joint_samples"],
         n_components=lambda wildcards: config["population_structure"]["pca"]["smartpca"]["n_components"]
@@ -252,15 +241,10 @@ rule compare_joint_smartpca_panels:
             --ct-reference-distances-out {output.ct_reference_distances} \
             --summary-out {output.summary} \
             --pc1-png {output.pc1_png} \
-            --pc1-pdf {output.pc1_pdf} \
             --pc2-png {output.pc2_png} \
-            --pc2-pdf {output.pc2_pdf} \
             --pc3-png {output.pc3_png} \
-            --pc3-pdf {output.pc3_pdf} \
             --side-by-side-pc12-png {output.side_by_side_pc12_png} \
-            --side-by-side-pc12-pdf {output.side_by_side_pc12_pdf} \
-            --side-by-side-pc23-png {output.side_by_side_pc23_png} \
-            --side-by-side-pc23-pdf {output.side_by_side_pc23_pdf}
+            --side-by-side-pc23-png {output.side_by_side_pc23_png}
         """
 
 
@@ -272,12 +256,7 @@ rule compare_joint_pca_panels:
         PCA_COMPARISON_DIR + "/ct_reference_centroid_distances.tsv",
         PCA_COMPARISON_DIR + "/comparison_summary.tsv",
         PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.png",
-        PCA_COMPARISON_DIR + "/pc1_masked_vs_unmasked.pdf",
         PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.png",
-        PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.pdf",
         PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
-        PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf",
         PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.png",
-        PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.pdf",
         PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.png",
-        PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.pdf"

@@ -83,7 +83,7 @@ def euclidean(a, b):
     return math.sqrt(sum((x - y) ** 2 for x, y in zip(a, b)))
 
 
-def plot_pc(samples, unmasked, masked, pc_index, sign, png_path, pdf_path):
+def plot_pc(samples, unmasked, masked, pc_index, sign, png_path):
     x = [unmasked[sid]["pcs"][pc_index] for sid in samples]
     y = [sign * masked[sid]["pcs"][pc_index] for sid in samples]
 
@@ -101,7 +101,6 @@ def plot_pc(samples, unmasked, masked, pc_index, sign, png_path, pdf_path):
     ax.set_aspect("equal", adjustable="box")
     fig.tight_layout()
     fig.savefig(png_path, dpi=300)
-    fig.savefig(pdf_path)
     plt.close(fig)
 
 
@@ -115,7 +114,6 @@ def plot_side_by_side_population_pca(
     x_index,
     y_index,
     png_path,
-    pdf_path,
 ):
     # Align masked PC signs to the unmasked solution before comparing panels.
     unmasked_xy = [
@@ -194,7 +192,6 @@ def plot_side_by_side_population_pca(
 
     fig.tight_layout()
     fig.savefig(png_path, dpi=300)
-    fig.savefig(pdf_path)
     plt.close(fig)
 
 
@@ -212,15 +209,10 @@ def main():
     parser.add_argument("--ct-reference-distances-out", required=True)
     parser.add_argument("--summary-out", required=True)
     parser.add_argument("--pc1-png", required=True)
-    parser.add_argument("--pc1-pdf", required=True)
     parser.add_argument("--pc2-png", required=True)
-    parser.add_argument("--pc2-pdf", required=True)
     parser.add_argument("--pc3-png", required=True)
-    parser.add_argument("--pc3-pdf", required=True)
     parser.add_argument("--side-by-side-pc12-png", required=True)
-    parser.add_argument("--side-by-side-pc12-pdf", required=True)
     parser.add_argument("--side-by-side-pc23-png", required=True)
-    parser.add_argument("--side-by-side-pc23-pdf", required=True)
     args = parser.parse_args()
 
     unmasked = read_coordinates(Path(args.unmasked_coordinates), args.n_components)
@@ -389,9 +381,9 @@ def main():
             writer.writerow([f"PC{i+1}_abs_correlation", abs_same[i]])
             writer.writerow([f"PC{i+1}_aligned_rmse", correlation_rows[i][4]])
 
-    plot_pc(samples, unmasked, masked, 0, signs[0], args.pc1_png, args.pc1_pdf)
-    plot_pc(samples, unmasked, masked, 1, signs[1], args.pc2_png, args.pc2_pdf)
-    plot_pc(samples, unmasked, masked, 2, signs[2], args.pc3_png, args.pc3_pdf)
+    plot_pc(samples, unmasked, masked, 0, signs[0], args.pc1_png)
+    plot_pc(samples, unmasked, masked, 1, signs[1], args.pc2_png)
+    plot_pc(samples, unmasked, masked, 2, signs[2], args.pc3_png)
 
     plot_side_by_side_population_pca(
         samples,
@@ -402,8 +394,7 @@ def main():
         signs,
         0,
         1,
-        args.side_by_side_pc12_png,
-        args.side_by_side_pc12_pdf,
+        args.side_by_side_pc12_png
     )
     plot_side_by_side_population_pca(
         samples,
@@ -414,8 +405,7 @@ def main():
         signs,
         1,
         2,
-        args.side_by_side_pc23_png,
-        args.side_by_side_pc23_pdf,
+        args.side_by_side_pc23_png
     )
 
 

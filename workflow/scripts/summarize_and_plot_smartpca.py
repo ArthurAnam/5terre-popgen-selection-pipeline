@@ -71,7 +71,7 @@ def read_evec(path: Path):
     return rows, n_pcs
 
 
-def make_plot(rows, pve, x_index, y_index, png_path, pdf_path):
+def make_plot(rows, pve, x_index, y_index, png_path):
     fig, ax = plt.subplots(figsize=(7.0, 5.8))
 
     for pop in POP_ORDER:
@@ -98,7 +98,6 @@ def make_plot(rows, pve, x_index, y_index, png_path, pdf_path):
     ax.legend(frameon=False, fontsize=9, ncol=2)
     fig.tight_layout()
     fig.savefig(png_path, dpi=300)
-    fig.savefig(pdf_path)
     plt.close(fig)
 
 
@@ -113,9 +112,7 @@ def main():
     parser.add_argument("--eigenvalues-out", required=True)
     parser.add_argument("--summary-out", required=True)
     parser.add_argument("--pc12-png", required=True)
-    parser.add_argument("--pc12-pdf", required=True)
     parser.add_argument("--pc23-png", required=True)
-    parser.add_argument("--pc23-pdf", required=True)
     args = parser.parse_args()
 
     annotations = read_annotations(Path(args.annotations))
@@ -175,8 +172,8 @@ def main():
             writer.writerow([f"PC{i+1}_eigenvalue", evals[i]])
             writer.writerow([f"PC{i+1}_variance_percent", pve[i]])
 
-    make_plot(rows, pve, 0, 1, args.pc12_png, args.pc12_pdf)
-    make_plot(rows, pve, 1, 2, args.pc23_png, args.pc23_pdf)
+    make_plot(rows, pve, 0, 1, args.pc12_png)
+    make_plot(rows, pve, 1, 2, args.pc23_png)
 
 
 if __name__ == "__main__":

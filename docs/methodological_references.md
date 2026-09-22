@@ -329,6 +329,8 @@ unmasked solution and both panels use identical axis limits, so apparent
 differences are not introduced by arbitrary eigenvector sign changes or
 automatic rescaling.
 
+To limit redundant disk use, PCA figures are stored in a single raster format (PNG at 300 dpi) rather than duplicated as both PNG and PDF. Vector output can be regenerated later at manuscript-submission stage without rerunning smartpca.
+
 Paper presentation remains pending visual review of the PC1-PC2 and PC2-PC3
 plots. Because the primary structure is quantitatively robust to the mask, the
 choice of which panel is shown as the main figure can be based on a priori
