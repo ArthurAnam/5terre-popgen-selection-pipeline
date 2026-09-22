@@ -654,8 +654,13 @@ selection:
   external_populations:
     role: "comparative_scan_or_reference_interpretation"
     italian_wgs_reference_cohorts: "under_evaluation"
-    onekg_eur_candidate_populations: ["TSI", "FIN", "IBS"]
-    final_comparison_set: "to_be_defined"
+    onekg_eur_candidate_populations: ["CEU", "TSI", "IBS"]
+    final_comparison_set: ["CEU", "TSI", "IBS"]
+    roles:
+      CEU: "empirical_LASSI_benchmark_and_Northern_European_reference"
+      TSI: "Southern_European_proximate_comparator"
+      IBS: "Southern_European_proximate_comparator"
+    excluded_from_primary_lassi_comparison: ["FIN", "GBR"]
 
   preprocessing:
     maf_threshold: 0.05
@@ -664,7 +669,7 @@ selection:
     ld_pruning: false
 
   ld_decay:
-    purpose: "Estimate CT linkage-disequilibrium decay before translating physical decay distance into a SNP-delimited LASSI window."
+    purpose: "Estimate linkage-disequilibrium decay separately within CT, CEU, TSI and IBS before translating each population-specific physical decay distance into its own SNP-delimited LASSI window."
     status: "physical_decay_audit_completed_maf0.05_selected_primary"
     target_dataset: "final_QCed_Cinque_Terre_46_samples"
     statistic: "PLINK1.9 unphased hard-call r2"
@@ -713,11 +718,16 @@ selection:
 
   phasing:
     method: "SHAPEIT2"
-    purpose: "Phase target and selected comparison datasets using suitable phased reference haplotypes."
+    purpose: "Phase Cinque Terre for haplotype-based LASSI; CEU, TSI and IBS use the already phased 1000 Genomes Phase 3 haplotypes."
     reference_support:
       primary: "1000 Genomes Project EUR"
       additional_italian_wgs_cohorts: "under_evaluation"
     independent_from_ld_decay: true
+    population_handling:
+      CT: "requires phasing"
+      CEU: "use published 1000 Genomes Phase 3 phased haplotypes"
+      TSI: "use published 1000 Genomes Phase 3 phased haplotypes"
+      IBS: "use published 1000 Genomes Phase 3 phased haplotypes"
     genetic_map: null
 
     parameters_to_refine:
@@ -732,17 +742,31 @@ selection:
     window_definition: "derived_from_ld_decay"
     scan_mode: "sliding_likelihood_window"
 
-    likelihood_window_snps: null
-    likelihood_shift_snps: null
+    likelihood_window_snps: "population_specific; CT=99, CEU/TSI/IBS pending"
+    likelihood_shift_snps: "population_specific; CT=10, CEU/TSI/IBS pending"
     window_parameter_units: "SNP count, not kb"
     window_calibration:
-      physical_scale_kb: 55.5
-      stable_physical_scale_kb: 57.5
-      marker_panel: "CT MAF>=0.05"
-      conversion_method: "count SNPs in centered windows of total width 55.5 kb around the 2,200 deterministic LD anchors; use the rounded genome-wide median count as winsize"
-      stable_conversion: "repeat at 57.5 kb as a diagnostic"
-      step_rule: "round 10% of winsize to nearest integer, minimum 1 SNP"
-      status: "empirical_snp_count_conversion_next"
+      strategy: "population_specific"
+      populations: ["CT", "CEU", "TSI", "IBS"]
+      principle: "Each population receives its own MAF>=0.05 LD-decay estimate and its own SNP-delimited winsize/winstep; no common window is imposed across populations."
+      step_rule: "round 10% of each population-specific winsize to nearest integer, minimum 1 SNP"
+      CT:
+        physical_scale_kb: 55.5
+        stable_physical_scale_kb: 57.5
+        n_anchors: 2200
+        median_snps_primary: 99.0
+        q1_snps_primary: 68.0
+        q3_snps_primary: 136.0
+        median_snps_stable: 103.0
+        selected_winsize_snps: 99
+        selected_winstep_snps: 10
+        status: "frozen"
+      CEU:
+        status: "ld_decay_and_snp_window_next"
+      TSI:
+        status: "ld_decay_and_snp_window_next"
+      IBS:
+        status: "ld_decay_and_snp_window_next"
     parameters_to_refine:
       grid_size: null
       selection_model: null

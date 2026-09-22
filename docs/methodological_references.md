@@ -1017,3 +1017,36 @@ This avoids substituting physical distance directly into LASSI and avoids
 using a single genome-wide average marker density in the presence of local
 variation in WGS SNP density. The final winsize and winstep remain unfrozen
 until the empirical count distribution has been inspected.
+
+
+### Final LASSI comparison populations and population-specific windows
+
+The comparative LASSI design is restricted to four populations with distinct
+roles. Cinque Terre (CT) is the focal discovery population. TSI and IBS are
+Southern-European comparator populations chosen for geographic and genetic
+proximity. CEU is retained as an empirical LASSI benchmark / validation
+reference because Harris and DeGiorgio applied LASSI to 1000 Genomes CEU and
+reported established European sweep candidates, including the LCT/MCM6 region.
+
+The original LASSI human application used a common 117-SNP window for CEU and
+YRI. The present study deliberately does not copy that choice across all
+populations. Instead, CT, CEU, TSI and IBS each receive a population-specific
+MAF>=0.05 LD-decay analysis and an independently derived SNP-delimited LASSI
+window. This is an explicit methodological extension: each population's
+analysis window is calibrated to its own background LD scale.
+
+For CT, calibration is complete. Across 2,200 deterministic anchors, 55.5-kb
+windows contain a median of 99 SNPs (IQR 68-136), while the 57.5-kb stability
+interval contains a median of 103 SNPs (IQR 70-141). The small difference
+supports winsize=99 SNP and winstep=10 SNP for CT.
+
+CEU, TSI and IBS will undergo the same sequence independently:
+within-population MAF>=0.05 filtering -> within-population LD decay -> first
+one-third-baseline crossing -> empirical SNP count over that physical interval
+-> population-specific winsize -> approximately 10% winstep.
+
+The three 1000 Genomes comparison populations are already phased in the Phase 3
+source panel, so they do not require re-phasing for LASSI. The phasing branch is
+required for CT only. CEU benchmarking will be interpreted qualitatively and
+positionally against the published LASSI CEU scan rather than as an expectation
+of numerically identical T statistics.
