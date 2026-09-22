@@ -641,6 +641,36 @@ length, mean/median ROH length and maximum ROH length are compared at the same
 >=1.5 Mb biological scale. The FROH denominator will be frozen and documented
 separately after the production ROH definition is selected.
 
+#### Completed long-ROH call sensitivity
+
+The two prespecified frameworks completed successfully on all 549 individuals.
+The unpruned population-history candidate produced a mean summed ROH burden of
+37.55 Mb in CT, compared with 20.60 Mb in FIN, 14.42 Mb in IBS, 12.91 Mb in
+GBR, 9.43 Mb in CEU and 8.89 Mb in TSI. Under the light-VIF/Howrigan-derived
+sensitivity, the corresponding means were 28.19 Mb in CT, 7.05 Mb in FIN,
+4.79 Mb in IBS, 4.00 Mb in GBR, 2.44 Mb in TSI and 2.37 Mb in CEU.
+
+Thus CT has the highest mean burden of ROH >=1.5 Mb under both definitions.
+Absolute burden decreases under light VIF pruning in every population, but the
+reduction is much smaller for CT: the light-VIF framework retains ~75.1% of
+the CT mean total burden versus ~25.1-34.2% in the reference populations.
+This is treated as robustness evidence, not as a standalone demographic proof,
+because the two frameworks differ jointly in LD treatment and several linked
+PLINK parameters.
+
+At the individual level within CT, agreement is especially strong. Total ROH
+burden has Pearson r=0.993 and Spearman rho=0.977 between frameworks; N_ROH
+has Pearson r=0.909 and Spearman rho=0.911. Hence individuals with high versus
+low long-ROH burden remain ordered very similarly even though absolute segment
+burden changes.
+
+The next sensitivity deliberately returns to the unpruned primary candidate
+and holds marker panel, MAF, minimum physical length, SNP count, density,
+missingness and window threshold fixed. Only maximum internal gap
+(100/500/1000 kb) and tolerated heterozygotes per window (0/1) are varied in a
+3x2 design. This isolates the two remaining technical choices before the
+production ROH definition and FROH denominator are frozen.
+
 ### Howrigan et al. 2011: specific ROH parameter implications
 
 Howrigan et al. (2011) is a key parameter-tuning reference for PLINK ROH

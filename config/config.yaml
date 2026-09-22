@@ -339,13 +339,13 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "light_vif_density_audit_completed_roh_call_sensitivity_next"
+    parameter_status: "roh_call_sensitivity_completed_gap_het_sensitivity_next"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
     maf_scope_status: "provisional_for_density_audit_before_final_cross_population_roh_call"
     expected_joint_samples: 549
     expected_joint_maf0.05_variants: 4878327
-    ld_pruning: "primary_candidate_unpruned_with_light_vif_sensitivity_pending"
+    ld_pruning: "unpruned_primary_candidate_supported_by_light_vif_sensitivity"
     pruning: null
     ld_sensitivity:
       enabled: true
@@ -408,6 +408,46 @@ population_structure:
         postprocess_min_roh_kb: 1500
         role: "methodological_sensitivity"
       froh_status: "deferred_until_roh_definition_and_denominator_are_frozen"
+      observed_call_sensitivity:
+        status: "completed"
+        interpretation: "CT has the highest mean long-ROH burden in both frameworks. Light-VIF reduces absolute burden in all populations but preserves the CT individual ranking extremely strongly."
+        primary_population_history_mean_total_roh_mb:
+          CT: 37.549617043478264
+          FIN: 20.601735363636365
+          IBS: 14.415328186915888
+          GBR: 12.912042274725275
+          CEU: 9.433073777777778
+          TSI: 8.886029233644859
+        light_vif_mean_total_roh_mb:
+          CT: 28.192754413043478
+          FIN: 7.047810898989899
+          IBS: 4.790818682242991
+          GBR: 3.9999806483516482
+          TSI: 2.439690140186916
+          CEU: 2.367463414141414
+        ct_concordance_primary_vs_light_vif:
+          total_roh_mb_pearson: 0.9930290972872299
+          total_roh_mb_spearman: 0.9772363203932892
+          n_roh_pearson: 0.9092572157590255
+          n_roh_spearman: 0.9108510105671549
+        retained_mean_total_roh_fraction_light_vif_vs_primary:
+          CT: 0.7508133672947829
+          FIN: 0.3420979240141985
+          IBS: 0.33234197793647113
+          GBR: 0.30978683025081355
+          TSI: 0.2745534677006917
+          CEU: 0.25097475859020957
+      next_parameter_sensitivity:
+        panel: "joint_maf0.05_unpruned"
+        fixed_min_roh_kb: 1500
+        fixed_window_snp: 50
+        fixed_min_snp: 50
+        fixed_density_kb_per_snp: 50
+        fixed_window_missing: 5
+        fixed_window_threshold: 0.05
+        homozyg_gap_kb: [100, 500, 1000]
+        homozyg_window_het: [0, 1]
+        rationale: "Vary only maximum internal gap and heterozygote tolerance to isolate their effects before freezing the production definition."
     marker_density_audit:
       enabled: true
       status: "completed"
