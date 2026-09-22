@@ -82,7 +82,7 @@ rule roh_all_population_maf_intersection:
     params:
         pop_args=" ".join(
             f"--population-list {population}={ROH_MAF_SCOPE_DIR}/maf_lists/{population}.maf0.05.snplist"
-            for pop in ROH_MAF_SCOPE_POPS
+            for population in ROH_MAF_SCOPE_POPS
         )
     conda:
         "../../envs/pipeline.yaml"
