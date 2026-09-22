@@ -225,7 +225,11 @@ rule compare_joint_smartpca_panels:
         pc2_png=PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.png",
         pc2_pdf=PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.pdf",
         pc3_png=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
-        pc3_pdf=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf"
+        pc3_pdf=PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf",
+        side_by_side_pc12_png=PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.png",
+        side_by_side_pc12_pdf=PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.pdf",
+        side_by_side_pc23_png=PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.png",
+        side_by_side_pc23_pdf=PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.pdf"
     params:
         expected_samples=lambda wildcards: config["population_structure"]["pca"]["expected_joint_samples"],
         n_components=lambda wildcards: config["population_structure"]["pca"]["smartpca"]["n_components"]
@@ -252,7 +256,11 @@ rule compare_joint_smartpca_panels:
             --pc2-png {output.pc2_png} \
             --pc2-pdf {output.pc2_pdf} \
             --pc3-png {output.pc3_png} \
-            --pc3-pdf {output.pc3_pdf}
+            --pc3-pdf {output.pc3_pdf} \
+            --side-by-side-pc12-png {output.side_by_side_pc12_png} \
+            --side-by-side-pc12-pdf {output.side_by_side_pc12_pdf} \
+            --side-by-side-pc23-png {output.side_by_side_pc23_png} \
+            --side-by-side-pc23-pdf {output.side_by_side_pc23_pdf}
         """
 
 
@@ -268,4 +276,8 @@ rule compare_joint_pca_panels:
         PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.png",
         PCA_COMPARISON_DIR + "/pc2_masked_vs_unmasked.pdf",
         PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
-        PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf"
+        PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.pdf",
+        PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.png",
+        PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.pdf",
+        PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.png",
+        PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.pdf"

@@ -105,6 +105,99 @@ def plot_pc(samples, unmasked, masked, pc_index, sign, png_path, pdf_path):
     plt.close(fig)
 
 
+def plot_side_by_side_population_pca(
+    samples,
+    unmasked,
+    masked,
+    unmasked_eval,
+    masked_eval,
+    signs,
+    x_index,
+    y_index,
+    png_path,
+    pdf_path,
+):
+    # Align masked PC signs to the unmasked solution before comparing panels.
+    unmasked_xy = [
+        (
+            unmasked[sid]["pcs"][x_index],
+            unmasked[sid]["pcs"][y_index],
+            unmasked[sid]["population"],
+        )
+        for sid in samples
+    ]
+    masked_xy = [
+        (
+            signs[x_index] * masked[sid]["pcs"][x_index],
+            signs[y_index] * masked[sid]["pcs"][y_index],
+            masked[sid]["population"],
+        )
+        for sid in samples
+    ]
+
+    all_x = [x for x, _, _ in unmasked_xy] + [x for x, _, _ in masked_xy]
+    all_y = [y for _, y, _ in unmasked_xy] + [y for _, y, _ in masked_xy]
+    x_lo, x_hi = min(all_x), max(all_x)
+    y_lo, y_hi = min(all_y), max(all_y)
+    x_pad = 0.04 * (x_hi - x_lo) if x_hi > x_lo else 1.0
+    y_pad = 0.04 * (y_hi - y_lo) if y_hi > y_lo else 1.0
+
+    fig, axes = plt.subplots(1, 2, figsize=(12.0, 5.5), sharex=True, sharey=True)
+    panels = [
+        ("Unmasked", unmasked_xy, unmasked_eval),
+        ("High-LD masked", masked_xy, masked_eval),
+    ]
+
+    for ax, (title, values, evals) in zip(axes, panels):
+        for pop in POP_ORDER:
+            subset = [(x, y) for x, y, p in values if p == pop]
+            xs = [x for x, _ in subset]
+            ys = [y for _, y in subset]
+            if pop == "CT":
+                ax.scatter(
+                    xs,
+                    ys,
+                    label="Cinque Terre",
+                    marker="*",
+                    s=72,
+                    linewidths=0.7,
+                    edgecolors="black",
+                    zorder=5,
+                )
+            else:
+                ax.scatter(
+                    xs,
+                    ys,
+                    label=pop,
+                    marker="o",
+                    s=24,
+                    alpha=0.72,
+                    linewidths=0,
+                )
+
+        ax.axhline(0, linewidth=0.5, alpha=0.35)
+        ax.axvline(0, linewidth=0.5, alpha=0.35)
+        ax.set_xlim(x_lo - x_pad, x_hi + x_pad)
+        ax.set_ylim(y_lo - y_pad, y_hi + y_pad)
+        ax.set_title(title)
+        ax.set_xlabel(
+            f"PC{x_index + 1} ({evals[x_index + 1]['variance_percent']:.2f}%)"
+        )
+
+    axes[0].set_ylabel(
+        f"PC{y_index + 1} ({unmasked_eval[y_index + 1]['variance_percent']:.2f}%)"
+    )
+    axes[1].set_ylabel(
+        f"PC{y_index + 1} ({masked_eval[y_index + 1]['variance_percent']:.2f}%)"
+    )
+    axes[0].legend(frameon=False, fontsize=9, ncol=2)
+
+    fig.tight_layout()
+    fig.savefig(png_path, dpi=300)
+    fig.savefig(pdf_path)
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--unmasked-coordinates", required=True)
@@ -124,6 +217,10 @@ def main():
     parser.add_argument("--pc2-pdf", required=True)
     parser.add_argument("--pc3-png", required=True)
     parser.add_argument("--pc3-pdf", required=True)
+    parser.add_argument("--side-by-side-pc12-png", required=True)
+    parser.add_argument("--side-by-side-pc12-pdf", required=True)
+    parser.add_argument("--side-by-side-pc23-png", required=True)
+    parser.add_argument("--side-by-side-pc23-pdf", required=True)
     args = parser.parse_args()
 
     unmasked = read_coordinates(Path(args.unmasked_coordinates), args.n_components)
@@ -295,6 +392,31 @@ def main():
     plot_pc(samples, unmasked, masked, 0, signs[0], args.pc1_png, args.pc1_pdf)
     plot_pc(samples, unmasked, masked, 1, signs[1], args.pc2_png, args.pc2_pdf)
     plot_pc(samples, unmasked, masked, 2, signs[2], args.pc3_png, args.pc3_pdf)
+
+    plot_side_by_side_population_pca(
+        samples,
+        unmasked,
+        masked,
+        unmasked_eval,
+        masked_eval,
+        signs,
+        0,
+        1,
+        args.side_by_side_pc12_png,
+        args.side_by_side_pc12_pdf,
+    )
+    plot_side_by_side_population_pca(
+        samples,
+        unmasked,
+        masked,
+        unmasked_eval,
+        masked_eval,
+        signs,
+        1,
+        2,
+        args.side_by_side_pc23_png,
+        args.side_by_side_pc23_pdf,
+    )
 
 
 if __name__ == "__main__":

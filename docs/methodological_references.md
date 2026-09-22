@@ -323,6 +323,12 @@ correlations and cross-match to neighboring PCs. This pattern is consistent
 with rotation/reordering among later components whose eigenvalues are close;
 it is not interpreted as a contradiction of the PC1-PC3 robustness result.
 
+For visual review, the comparison workflow also generates side-by-side population plots
+for PC1-PC2 and PC2-PC3. The masked coordinates are sign-aligned to the
+unmasked solution and both panels use identical axis limits, so apparent
+differences are not introduced by arbitrary eigenvector sign changes or
+automatic rescaling.
+
 Paper presentation remains pending visual review of the PC1-PC2 and PC2-PC3
 plots. Because the primary structure is quantitatively robust to the mask, the
 choice of which panel is shown as the main figure can be based on a priori
