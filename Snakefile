@@ -40,6 +40,7 @@ include: "workflow/rules/15_roh_call_sensitivity.smk"
 include: "workflow/rules/16_roh_gap_het_sensitivity.smk"
 include: "workflow/rules/17_roh_maf_scope_audit.smk"
 include: "workflow/rules/18_roh_maf_scope_call_sensitivity.smk"
+include: "workflow/rules/19_roh_production_froh.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
