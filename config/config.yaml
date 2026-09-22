@@ -709,7 +709,7 @@ selection:
       lassi_window_snps: null
       lassi_shift_snps: null
       shift_fraction_of_window: 0.10
-    next_decision: "Inspect static and interactive LD plots, then convert 55.5 kb to the empirical SNP count of the final MAF>=0.05 LASSI panel; MAF>=0.01 remains a sensitivity only."
+    next_decision: "Convert 55.5 kb to an empirical SNP count using 2,200 deterministic anchors in the final MAF>=0.05 panel; freeze LASSI winsize/winstep only after reviewing the resulting SNP-count distribution. MAF>=0.01 remains a sensitivity only."
 
   phasing:
     method: "SHAPEIT2"
@@ -734,7 +734,15 @@ selection:
 
     likelihood_window_snps: null
     likelihood_shift_snps: null
-
+    window_parameter_units: "SNP count, not kb"
+    window_calibration:
+      physical_scale_kb: 55.5
+      stable_physical_scale_kb: 57.5
+      marker_panel: "CT MAF>=0.05"
+      conversion_method: "count SNPs in centered windows of total width 55.5 kb around the 2,200 deterministic LD anchors; use the rounded genome-wide median count as winsize"
+      stable_conversion: "repeat at 57.5 kb as a diagnostic"
+      step_rule: "round 10% of winsize to nearest integer, minimum 1 SNP"
+      status: "empirical_snp_count_conversion_next"
     parameters_to_refine:
       grid_size: null
       selection_model: null

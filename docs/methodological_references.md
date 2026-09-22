@@ -997,3 +997,23 @@ ID, population and plotted quantities; pairwise KING figures report both sample
 IDs; LD-decay HTML reports distance bin, mean r2, pair count and uncertainty.
 Static PNG/PDF files remain the manuscript-oriented outputs. Captions are
 versioned in config/figure_registry.tsv and docs/figure_captions.md.
+
+### LASSI window units: SNP count, not physical distance
+
+The 55.5-kb LD-decay estimate is an intermediate calibration scale only.
+LASSI itself uses an SNP-delimited sliding window, so the production parameter
+must be expressed as a number of SNPs rather than kb.
+
+The workflow therefore converts the selected 55.5-kb physical interval to an
+empirical SNP count using the same final CT MAF>=0.05 marker panel used for
+the LD audit and planned LASSI scan. At each of the 2,200 deterministic
+genome-wide LD anchors, the number of retained SNPs in a centered window of
+total width 55.5 kb is counted. The rounded genome-wide median of those counts
+is the candidate LASSI winsize. The 57.5-kb stable LD crossing is converted in
+parallel as a robustness diagnostic. Winstep is then set to approximately 10%
+of winsize, rounded to an integer.
+
+This avoids substituting physical distance directly into LASSI and avoids
+using a single genome-wide average marker density in the presence of local
+variation in WGS SNP density. The final winsize and winstep remain unfrozen
+until the empirical count distribution has been inspected.
