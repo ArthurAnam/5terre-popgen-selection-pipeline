@@ -615,14 +615,31 @@ unpruned panel contains ~1,746 common markers/Mb, physical length is more
 informative than importing a historical SNP-count threshold from a much
 sparser array.
 
-Before any production `--homozyg` call, the light-VIF panel will therefore
-be built and its marker density and gap structure audited. The final minimum
-SNP count will be chosen only after that observed post-pruning density is
-known. Maximum internal gap and tolerated heterozygotes also remain open:
-the former will be evaluated against the measured gap distribution and
-Italian/human precedents, while the latter requires special care because the
-Cinque Terre WGS and 1000 Genomes reference genotypes were generated under
-different sequencing/genotyping regimes.
+The light-VIF density audit is now complete. PLINK 1.9
+`--indep 50 5 10` retained 814,440 of the 4,878,327 common MAF>=0.05
+markers. Across the autosomal terminal-marker spans this corresponds to
+291.52 markers/Mb and a mean inter-marker gap of 3.43 kb. Only 207 consecutive
+marker gaps exceed 100 kb, 35 exceed 500 kb, and 21 exceed 1 Mb.
+
+Thus, even after light VIF pruning, the panel remains dense: a 1.5 Mb interval
+contains roughly 437 retained markers on average. A historical 50-65 SNP
+minimum is therefore a safety floor in this dataset, not the biological
+definition of a long ROH. Physical length remains explicit.
+
+The next step is a prespecified two-framework sensitivity analysis. The
+population-history candidate uses the unpruned common panel and calls ROH
+directly at >=1.5 Mb with PLINK settings 50 SNP/window, 50 SNP/run, density
+50 kb/SNP, gap 1000 kb, 5 missing/window, 1 heterozygote/window, and window
+threshold 0.05. The light-VIF sensitivity uses `--indep 50 5 10`, then the
+Howrigan/UK-Biobank-style 65 SNP/window, 65 SNP/run, density 200 kb/SNP,
+gap 500 kb, 3 missing/window, 0 heterozygotes/window, threshold 0.05, and a
+minimal 10-kb calling floor. For comparability, only segments >=1.5 Mb from
+that sensitivity call are retained in downstream summaries.
+
+This design intentionally does not compute FROH yet. First, N_ROH, summed ROH
+length, mean/median ROH length and maximum ROH length are compared at the same
+>=1.5 Mb biological scale. The FROH denominator will be frozen and documented
+separately after the production ROH definition is selected.
 
 ### Howrigan et al. 2011: specific ROH parameter implications
 

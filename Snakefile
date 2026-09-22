@@ -36,6 +36,7 @@ include: "workflow/rules/11_pca_smartpca.smk"
 include: "workflow/rules/12_exploratory_population_grouping.smk"
 include: "workflow/rules/13_roh_preprocessing_audit.smk"
 include: "workflow/rules/14_roh_ld_sensitivity_preprocessing.smk"
+include: "workflow/rules/15_roh_call_sensitivity.smk"
 include: "workflow/rules/99_provenance.smk"
 
 

@@ -1,0 +1,12 @@
+metric	value
+expected_joint_samples	549
+maf_threshold	0.05
+maf_scope	joint_harmonized_ct_plus_1kg_eur_maf0.05_light_vif
+ld_pruning_before_density_audit	PLINK1.9_indep_50_5_10_VIF
+retained_variants	814440
+autosomes	22
+sum_terminal_marker_spans_bp	2793742747
+markers_per_mb_across_terminal_marker_spans	291.5229044888148
+mean_intermarker_gap_bp_genomewide	3430.3548362143274
+maximum_intermarker_gap_bp_genomewide	21133173
+total_intermarker_gaps	814418

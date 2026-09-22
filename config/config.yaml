@@ -339,7 +339,7 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "marker_density_audit_completed_light_vif_density_audit_next"
+    parameter_status: "light_vif_density_audit_completed_roh_call_sensitivity_next"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
     maf_scope_status: "provisional_for_density_audit_before_final_cross_population_roh_call"
@@ -349,7 +349,7 @@ population_structure:
     pruning: null
     ld_sensitivity:
       enabled: true
-      status: "light_vif_panel_density_audit_next"
+      status: "light_vif_panel_density_audit_completed"
       primary_candidate:
         panel: "joint_maf0.05_unpruned"
         role: "population_history_and_froh_primary_candidate"
@@ -365,14 +365,49 @@ population_structure:
         rationale: "Reproduce the light VIF pruning strategy evaluated by Howrigan et al. 2011 rather than translating it into a different pairwise-r2 algorithm."
       reuse_pca_pruning: false
       pca_pruning_not_reused_rationale: "PCA and ROH have different inferential goals. PCA requires strong reduction of correlated markers, whereas ROH detection must balance redundant LD against removal of genuine homozygous tracts. The PCA r2=0.2 panel is therefore not reused for ROH."
-      next_decision: "Audit the marker density and gap structure after light VIF pruning before freezing homozyg-snp or other ROH calling parameters."
+      observed_light_vif_density_audit:
+        retained_variants: 814440
+        autosomes: 22
+        sum_terminal_marker_spans_bp: 2793742747
+        markers_per_mb_across_terminal_marker_spans: 291.5229044888148
+        mean_intermarker_gap_bp_genomewide: 3430.3548362143274
+        maximum_intermarker_gap_bp_genomewide: 21133173
+        total_intermarker_gaps: 814418
+        gaps_gt_50kb: 567
+        gaps_gt_100kb: 207
+        gaps_gt_250kb: 65
+        gaps_gt_500kb: 35
+        gaps_gt_1000kb: 21
+      next_decision: "Run a prespecified long-ROH sensitivity comparison between an unpruned population-history framework and a light-VIF Howrigan-derived framework."
     candidate_calling_framework:
-      min_roh_kb: 1500
-      status: "literature_supported_candidate_not_yet_frozen"
-      rationale: "A 1.5 Mb physical threshold is a recurrent human-population ROH boundary used for population isolation/autozygosity analyses and is especially important here because the unpruned WGS-derived panel is extremely dense."
-      homozyg_gap_kb: null
-      homozyg_window_het: null
-      homozyg_snp: null
+      comparison_min_roh_kb: 1500
+      status: "prespecified_sensitivity_before_production_freeze"
+      rationale: "Both frameworks are compared only for ROH >=1.5 Mb so the biological scale is held constant while LD treatment and historically linked PLINK settings differ."
+      primary_population_history:
+        panel: "joint_maf0.05_unpruned"
+        homozyg_window_snp: 50
+        homozyg_snp: 50
+        homozyg_kb: 1500
+        homozyg_density: 50
+        homozyg_gap: 1000
+        homozyg_window_missing: 5
+        homozyg_window_het: 1
+        homozyg_window_threshold: 0.05
+        role: "primary_candidate"
+      light_vif_howrigan:
+        panel: "joint_maf0.05_light_vif"
+        preprocessing: "PLINK1.9 --indep 50 5 10"
+        homozyg_window_snp: 65
+        homozyg_snp: 65
+        homozyg_kb: 10
+        homozyg_density: 200
+        homozyg_gap: 500
+        homozyg_window_missing: 3
+        homozyg_window_het: 0
+        homozyg_window_threshold: 0.05
+        postprocess_min_roh_kb: 1500
+        role: "methodological_sensitivity"
+      froh_status: "deferred_until_roh_definition_and_denominator_are_frozen"
     marker_density_audit:
       enabled: true
       status: "completed"
