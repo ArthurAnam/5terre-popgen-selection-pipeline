@@ -339,7 +339,7 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "production_roh_froh_completed_distribution_analysis_next"
+    parameter_status: "production_roh_froh_and_distribution_analysis_completed"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur"
     maf_scope_status: "joint_maf0.05_frozen_primary_all_population_maf0.05_intersection_retained_as_sensitivity"
@@ -532,7 +532,34 @@ population_structure:
               mean_froh_ge1.5mb: 0.0029380691588785047
               median_froh_ge1.5mb: 0.0018374404332129964
               mean_froh_ge5mb: 0.0006729804919194304
-          interpretation: "CT has the highest mean FROH and a much larger contribution from ROH >=5 Mb, but its median primary FROH is close to FIN. Individual-level distribution analysis is required before interpreting the population contrast as a uniform shift."
+          interpretation: "CT has the highest mean FROH and a much larger contribution from ROH >=5 Mb, but its median primary FROH is close to FIN. Distributional testing confirms that CT does not differ clearly from FIN for total FROH>=1.5 Mb, whereas CT has substantially higher FROH from ROH>=5 Mb than every reference population, including FIN."
+        population_distribution_analysis:
+          status: "completed"
+          primary_endpoint: "FROH_GE1_5MB"
+          secondary_endpoint: "FROH_GE5MB"
+          test: "two-sided Mann-Whitney with tie-corrected normal approximation"
+          multiplicity: "Holm correction across five CT-vs-reference contrasts within endpoint"
+          effect_size: "Cliff's delta; positive means larger in CT"
+          primary_froh_ge1.5mb:
+            CT_vs_CEU: {p_holm: 2.7560397923721187e-09, cliffs_delta: 0.6376811594202898}
+            CT_vs_FIN: {p_holm: 0.14273767878903862, cliffs_delta: 0.1515151515151516}
+            CT_vs_GBR: {p_holm: 5.289884956989609e-06, cliffs_delta: 0.5009555661729574}
+            CT_vs_IBS: {p_holm: 8.880762411817648e-06, cliffs_delta: 0.46871190572937826}
+            CT_vs_TSI: {p_holm: 5.273615599920656e-10, cliffs_delta: 0.6594880130028444}
+          secondary_froh_ge5mb:
+            CT_vs_CEU: {p_holm: 8.947347990072268e-15, cliffs_delta: 0.5968379446640317}
+            CT_vs_FIN: {p_holm: 1.580921344801194e-07, cliffs_delta: 0.47277119016249447}
+            CT_vs_GBR: {p_holm: 6.663419454027393e-10, cliffs_delta: 0.5296225513616819}
+            CT_vs_IBS: {p_holm: 1.2096679062882647e-07, cliffs_delta: 0.46119463632669655}
+            CT_vs_TSI: {p_holm: 1.18773100723245e-10, cliffs_delta: 0.5381958553433563}
+          long_roh_presence:
+            CT: {n_with_ge5mb_roh: 29, n_total: 46, fraction: 0.6304347826086957}
+            CEU: {n_with_ge5mb_roh: 3, n_total: 99, fraction: 0.030303030303030304}
+            FIN: {n_with_ge5mb_roh: 26, n_total: 99, fraction: 0.26262626262626265}
+            GBR: {n_with_ge5mb_roh: 10, n_total: 91, fraction: 0.10989010989010989}
+            IBS: {n_with_ge5mb_roh: 21, n_total: 107, fraction: 0.19626168224299065}
+            TSI: {n_with_ge5mb_roh: 14, n_total: 107, fraction: 0.1308411214953271}
+          final_interpretation: "The CT signal is not a uniform excess of total autozygosity relative to FIN; rather, CT shows a pronounced enrichment of very long ROH, consistent with a stronger recent-autozygosity component in a subset of individuals. This is an interpretation of ROH-length structure, not a direct demographic-time estimate."
       maf_scope_sensitivity:
         enabled: true
         status: "completed_joint_maf0.05_retained_as_primary"

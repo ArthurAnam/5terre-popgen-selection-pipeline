@@ -784,12 +784,43 @@ recent-autozygosity component in at least a subset of CT individuals, but that
 interpretation must be based on the individual distribution rather than the
 population mean alone.
 
-The next analysis therefore treats FROH>=1.5 Mb as the primary endpoint and
-FROH>=5 Mb as a secondary length-specific endpoint. CT is compared separately
+The distribution analysis used FROH>=1.5 Mb as the primary endpoint and
+FROH>=5 Mb as a secondary length-specific endpoint. CT was compared separately
 with each EUR reference population using two-sided Mann-Whitney tests, Holm
-correction across the five prespecified CT-vs-reference contrasts, and Cliff's
-delta as a distributional effect-size measure. Means, medians, quartiles and
-individual scatter are reported alongside the tests.
+correction across the five prespecified CT-vs-reference contrasts within each
+endpoint, and Cliff's delta as a distributional effect-size measure.
+
+#### Completed ROH/FROH population-distribution analysis
+
+For primary FROH>=1.5 Mb, CT is clearly shifted upward relative to CEU
+(Holm-adjusted p=2.76e-9; Cliff's delta=0.638), GBR (5.29e-6; delta=0.501),
+IBS (8.88e-6; delta=0.469) and TSI (5.27e-10; delta=0.659). In contrast,
+CT versus FIN is not significant after Holm correction (p=0.143) and has only
+a small positive distributional effect (delta=0.152). This agrees with the
+nearly identical CT and FIN medians and shows that the higher CT mean total
+FROH is driven partly by the upper tail rather than by a uniform population
+shift.
+
+For FROH contributed specifically by ROH>=5 Mb, CT is higher than every
+reference population, including FIN. Holm-adjusted p-values range from
+1.58e-7 (CT vs FIN) to 8.95e-15 (CT vs CEU), with Cliff's delta ranging from
+0.461 to 0.597. The CT-vs-FIN contrast is therefore qualitatively different
+for very long ROH than for total >=1.5-Mb FROH.
+
+The presence/absence pattern is also informative descriptively: 29/46 CT
+individuals (63.0%) have at least one ROH >=5 Mb, compared with 26/99 FIN
+(26.3%), 21/107 IBS (19.6%), 14/107 TSI (13.1%), 10/91 GBR (11.0%) and
+3/99 CEU (3.0%). These proportions are reported descriptively here and are not
+used as an additional inferential endpoint, avoiding unnecessary post-hoc
+multiple testing.
+
+Overall, the ROH analysis supports a specific interpretation: CT does not show
+a clear uniform excess of total autozygosity relative to FIN, but it does show
+a pronounced excess of very long ROH. This is consistent with a stronger
+recent-autozygosity component in a subset of CT individuals. ROH length is only
+an indirect demographic clock, so this result is not treated as a direct
+estimate of generations since shared ancestry or as proof of a specific
+historical event.
 
 
 ### Howrigan et al. 2011: specific ROH parameter implications
