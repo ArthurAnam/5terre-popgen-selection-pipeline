@@ -43,9 +43,9 @@ include: "workflow/rules/18_roh_maf_scope_call_sensitivity.smk"
 include: "workflow/rules/19_roh_production_froh.smk"
 include: "workflow/rules/20_roh_population_distributions.smk"
 include: "workflow/rules/21_selection_ld_decay_audit.smk"
-include: "workflow/rules/22_interactive_figures.smk"
 include: "workflow/rules/23_selection_lassi_window.smk"
 include: "workflow/rules/24_selection_reference_ld_windows.smk"
+include: "workflow/rules/22_interactive_figures.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
