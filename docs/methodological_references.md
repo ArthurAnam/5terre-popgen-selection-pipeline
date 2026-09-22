@@ -510,6 +510,34 @@ global Phase 3 cohort to the 503 EUR individuals and by the planned removal of
 strand-ambiguous palindromic SNPs.
 
 
+### ROH marker-density audit before parameter freezing
+
+The ROH branch now fixes only the MAF threshold (MAF >= 0.05) and deliberately
+does not yet freeze LD pruning, minimum SNP count, minimum physical length,
+maximum gap, or density settings. The first reproducible ROH step is a marker
+density audit on the exact harmonized 549-sample CT + 1000G EUR dataset.
+
+For this initial audit, MAF >= 0.05 is calculated jointly across the 549
+harmonized samples, matching the already observed joint common-variant count of
+4,878,327. No LD pruning is applied at this stage. The audit reports, by
+chromosome, the number of retained markers, physical span, marker density,
+inter-marker gap distribution, and the fractions of consecutive-marker gaps
+exceeding 50, 100, 250, 500 and 1000 kb.
+
+This is intentionally a preprocessing diagnostic rather than a ROH call.
+PLINK 1.9 documents that ROH results depend on minimum SNP count, minimum
+physical span, mean SNP density and maximum internal gap, while Howrigan et al.
+(2011) showed that LD treatment and marker density can materially affect PLINK
+ROH detection. Therefore these parameters will be chosen only after the
+observed density of the present WGS-derived common-marker panel is known.
+
+The joint MAF scope used for this density audit is provisional for the final
+cross-population ROH comparison. Before the production ROH call, the project
+will explicitly assess whether the common comparison panel should require the
+MAF threshold jointly or within each population, so population-specific allele
+frequency differences are not silently converted into a marker-ascertainment
+difference.
+
 ### Howrigan et al. 2011: specific ROH parameter implications
 
 Howrigan et al. (2011) is a key parameter-tuning reference for PLINK ROH

@@ -339,16 +339,31 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "pending_documentation_review"
-    maf_threshold: null
+    parameter_status: "maf_fixed_marker_density_audit_next"
+    maf_threshold: 0.05
+    maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
+    maf_scope_status: "provisional_for_density_audit_before_final_cross_population_roh_call"
+    expected_joint_samples: 549
+    expected_joint_maf0.05_variants: 4878327
     ld_pruning: null
     pruning: null
+    marker_density_audit:
+      enabled: true
+      input_master: "exact_harmonized_ct_plus_1kg_eur"
+      ld_pruning_before_audit: false
+      gap_thresholds_kb: [50, 100, 250, 500, 1000]
+      purpose: "Measure physical marker density and inter-marker gaps before choosing ROH SNP-count, density, gap, and LD-pruning settings."
 
     parameters_to_refine:
       homozyg_snp: null
       homozyg_kb: null
       homozyg_density: null
       homozyg_gap: null
+      homozyg_window_snp: null
+      homozyg_window_het: 0
+      homozyg_window_missing: null
+      homozyg_window_threshold: null
+      froh_denominator: null
 
 
 # ============================================================

@@ -34,6 +34,7 @@ include: "workflow/rules/09_1kg_eur_harmonization.smk"
 include: "workflow/rules/10_pca_preprocessing.smk"
 include: "workflow/rules/11_pca_smartpca.smk"
 include: "workflow/rules/12_exploratory_population_grouping.smk"
+include: "workflow/rules/13_roh_preprocessing_audit.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
