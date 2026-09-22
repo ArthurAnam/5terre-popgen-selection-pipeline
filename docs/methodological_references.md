@@ -913,3 +913,53 @@ record count, whereas the manual exact-key audit contained 18,751,091 unique
 keys documented above. Neither duplicate locus occurs in the Cinque Terre QC
 VCF, so the record-versus-unique-key distinction does not change the final
 7,548,844-site harmonized intersection.
+
+
+### Selection branch: LD-decay calibration for LASSI
+
+The selection scan is now entering a separate branch from the completed
+population-structure analyses. The primary LASSI target is the final QCed
+Cinque Terre cohort (46 individuals); reference populations are not pooled into
+the CT LD calculation.
+
+The original LASSI empirical human protocol based its SNP-delimited window on
+the physical interval over which pairwise LD, measured as r^2, decayed below
+one third of its value for SNP pairs separated by 1 kb. Harris and DeGiorgio
+used 117-SNP windows with a 12-SNP step in their human application; those
+numbers are not copied directly because CT marker density and LD structure are
+dataset-specific.
+
+For CT, physical LD decay is therefore estimated first. The primary audit uses
+MAF >=0.05, matching the working selection-preprocessing threshold already
+recorded in the project, while MAF >=0.01 is run as a prespecified sensitivity.
+The goal is not to use MAF filtering as a biological definition of selection;
+it is to establish whether the physical LD-decay estimate is robust to the
+common-variant threshold in this 46-sample cohort.
+
+An exhaustive all-pairs calculation is not appropriate for the WGS-density
+panel. Instead, 100 anchor SNPs per autosome are selected deterministically at
+approximately even physical positions after excluding the first and last
+500 kb of each chromosome's observed marker span. Each anchor is compared
+with every eligible SNP within 500 kb using PLINK 1.9 unphased hard-call r^2.
+This produces thousands of observations per 1-kb distance bin while keeping
+the intermediate pair table tractable. Anchor selection is deterministic, so
+the estimate is exactly reproducible.
+
+The baseline LD value is the mean r^2 of pairs separated by 0.5-1.5 kb.
+The direct LASSI-style decay estimate is the first subsequent 1-kb bin whose
+mean r^2 is below one third of that baseline. A requirement of five
+consecutive bins below the threshold is also reported as a stability
+diagnostic, but is not substituted silently for the literature-based first
+crossing.
+
+This stage deliberately stops at a physical distance. The final LASSI
+window size in SNPs will be derived only after the MAF-sensitivity result is
+reviewed and the marker panel used for the scan is frozen. The step size will
+then be approximately 10% of the final SNP-window size, matching the design of
+the original LASSI human scan.
+
+Reference correction: the primary LASSI method is Harris AM & DeGiorgio M
+(2020), "A likelihood approach for uncovering selective sweep signatures from
+haplotype data", Molecular Biology and Evolution 37:3023-3046,
+doi:10.1093/molbev/msaa115. The previously listed Genetics paper describes
+SS-H12, a different shared-sweep statistic, and is not the LASSI method paper.

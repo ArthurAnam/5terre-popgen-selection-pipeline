@@ -97,7 +97,7 @@ The `m` parameter may provide additional interpretation of the sweep model, incl
 
 Citation:
 
-Harris, A. M., & DeGiorgio, M. (2020). Identifying and classifying shared selective sweeps from multilocus data. *Genetics, 215*(1), 143–171. https://doi.org/10.1534/genetics.120.303049
+Harris, A. M., & DeGiorgio, M. (2020). A likelihood approach for uncovering selective sweep signatures from haplotype data. *Molecular Biology and Evolution, 37*(10), 3023–3046. https://doi.org/10.1093/molbev/msaa115
 
 ---
 

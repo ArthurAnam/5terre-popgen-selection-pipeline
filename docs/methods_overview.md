@@ -253,14 +253,16 @@ Main outputs include:
 
 ROH analyses are useful for comparing the distribution and burden of homozygous segments between Cinque Terre and external reference populations.
 
-The working method is PLINK `--homozyg`, but MAF handling, LD pruning and
-ROH-calling parameters are not yet fixed. These choices will be made only
-after reviewing the PLINK ROH documentation and relevant WGS ROH literature,
-because marker density and marker selection directly affect ROH detection and
-cross-population comparability.
+The production method is PLINK `--homozyg` on the joint CT + 1000G EUR
+MAF >= 0.05 marker panel without LD pruning. The frozen call uses a 50-SNP
+sliding window, a minimum of 50 SNP per called ROH, a minimum physical length
+of 1.5 Mb, density <=50 kb/SNP, gap <=500 kb, <=5 missing calls per window,
+<=1 heterozygous call per window, and window hit threshold 0.05.
 
-Final PLINK `--homozyg` parameters will therefore be refined based on the
-documentation, WGS SNP density, and the harmonized comparison dataset.
+Primary fROH is the summed length of autosomal ROH >=1.5 Mb divided by
+2.77e9 bp. Light-VIF pruning, gap/heterozygote settings, and marker-frequency
+scope were evaluated in prespecified sensitivity analyses before freezing the
+production definition.
 
 ---
 
@@ -318,28 +320,28 @@ The final comparison set remains under evaluation.
 
 ## LD decay and LASSI window definition
 
-LD decay is used to derive suitable LASSI window-size parameters.
+LD decay is used to calibrate the physical scale of the SNP-delimited LASSI
+window. The procedure follows the empirical human protocol of Harris and
+DeGiorgio (2020): LD is measured as pairwise r^2 and the relevant physical
+interval is the first distance at which mean LD falls below one third of the
+value observed for SNP pairs separated by approximately 1 kb.
 
-The current working strategy estimates LD decay and uses the decay pattern to define the SNP-based window length for LASSI.
+Because the final CT WGS dataset is extremely dense, an all-pairs LD
+calculation would be unnecessarily large. The audit therefore selects 100
+anchor SNPs per autosome at deterministic, approximately even physical
+positions (excluding 500-kb chromosome edges) and computes unphased hard-call
+r^2 between each anchor and all SNPs within 500 kb. LD is summarized in
+1-kb distance bins. The primary calibration uses MAF >=0.05 and a prespecified
+MAF >=0.01 sensitivity is run in parallel.
 
-Current working parameters:
+The first output is a physical LD-decay distance in kb. It is intentionally
+not converted immediately to a LASSI SNP count. After confirming robustness to
+MAF threshold, the selected physical interval will be converted to the
+empirical number of SNPs in the final LASSI marker panel, and the step size
+will be set at approximately 10% of that SNP-window size.
 
-```text
-Baseline distance: 1 kb
-Decay fraction: one third of baseline LD
-Shift fraction: approximately 10% of the LASSI window
-```
-
-The derived parameters are:
-
-* LASSI window size in SNPs
-* LASSI shift size in SNPs
-
-These values are dataset-dependent and therefore remain to be finalized after LD decay estimation.
-
-LD decay and phasing are both preparatory steps for the selection branch.
-
-Phasing is not considered a downstream consequence of LD decay.
+LD decay and phasing are both preparatory steps for the selection branch;
+phasing is not a downstream consequence of LD decay.
 
 ---
 
