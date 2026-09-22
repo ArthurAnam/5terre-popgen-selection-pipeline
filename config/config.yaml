@@ -339,10 +339,10 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "maf_scope_density_audit_completed_maf_scope_call_sensitivity_next"
+    parameter_status: "production_roh_definition_frozen_froh_next"
     maf_threshold: 0.05
-    maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
-    maf_scope_status: "joint_maf0.05_primary_candidate_all_population_maf0.05_intersection_call_sensitivity_next"
+    maf_scope: "joint_harmonized_ct_plus_1kg_eur"
+    maf_scope_status: "joint_maf0.05_frozen_primary_all_population_maf0.05_intersection_retained_as_sensitivity"
     expected_joint_samples: 549
     expected_joint_maf0.05_variants: 4878327
     ld_pruning: "unpruned_primary_candidate_supported_by_light_vif_sensitivity"
@@ -463,8 +463,11 @@ population_structure:
           GBR: 0.26922005805930584
           IBS: 0.2886899196577508
           TSI: 0.23523907867872426
-      selected_primary_candidate_parameters:
-        panel: "joint_maf0.05_unpruned_pending_maf_scope_audit"
+      production_parameters:
+        panel: "joint_maf0.05_unpruned"
+        maf_threshold: 0.05
+        maf_scope: "joint_549_sample_ct_plus_1kg_eur"
+        ld_pruning: false
         homozyg_window_snp: 50
         homozyg_snp: 50
         homozyg_kb: 1500
@@ -473,10 +476,18 @@ population_structure:
         homozyg_window_missing: 5
         homozyg_window_het: 1
         homozyg_window_threshold: 0.05
-        status: "technical_parameters_selected_pending_maf_scope_and_froh_denominator"
+        homozyg_het: null
+        homozyg_het_rationale: "No whole-run heterozygote cap is imposed; the one-heterozygote tolerance is local to each 50-SNP scanning window."
+        status: "frozen"
+      froh:
+        status: "frozen_for_primary_roh_ge_1.5Mb"
+        denominator_bp: 2770000000
+        denominator_definition: "total SNP-mappable autosomal distance"
+        primary_min_roh_kb: 1500
+        length_classes: ["1.5_to_lt5_Mb", "ge5_Mb"]
       maf_scope_sensitivity:
         enabled: true
-        status: "all_population_maf0.05_intersection_density_audit_completed_call_sensitivity_next"
+        status: "completed_joint_maf0.05_retained_as_primary"
         populations: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
         comparison:
           primary_candidate: "joint_MAF>=0.05_common_marker_panel"
@@ -499,7 +510,31 @@ population_structure:
           gaps_gt_500kb: 37
           gaps_gt_1000kb: 22
           interpretation: "The all-population MAF intersection removes about 15.1% of the joint panel but remains extremely dense and has nearly unchanged large-gap structure. Density alone therefore does not justify replacing the joint-MAF primary candidate."
-        next_decision: "Run one final ROH call sensitivity using identical technical parameters on the joint-MAF panel and the all-population MAF intersection; if concordant, freeze joint MAF as primary and retain the stricter intersection as sensitivity."
+        observed_call_sensitivity:
+          status: "completed"
+          interpretation: "The stricter all-population MAF intersection slightly increases absolute ROH burden but preserves population ordering and individual ranking extremely strongly. Joint MAF>=0.05 is retained as the less restrictive primary marker ascertainment, with the all-population intersection retained as sensitivity."
+          primary_joint_mean_total_roh_mb:
+            CT: 36.57970608695652
+            FIN: 19.412186141414143
+            IBS: 13.633625261682242
+            GBR: 11.936560087912088
+            CEU: 8.617890232323232
+            TSI: 8.138451570093459
+          strict_all_population_mean_total_roh_mb:
+            CT: 37.65133630434783
+            FIN: 20.805778666666665
+            IBS: 14.850618046728972
+            GBR: 13.437733824175824
+            CEU: 9.64925594949495
+            TSI: 9.161045429906542
+          ct_concordance:
+            total_roh_mb_pearson: 0.998988156576896
+            total_roh_mb_spearman: 0.9924761023743447
+            n_roh_pearson: 0.9903269784524286
+            n_roh_spearman: 0.9809577447322839
+            max_roh_mb_pearson: 0.990855931418971
+            max_roh_mb_spearman: 0.9965464076472402
+        decision: "Freeze joint MAF>=0.05 as the primary ROH panel; retain the all-population MAF>=0.05 intersection as a prespecified ascertainment sensitivity."
     marker_density_audit:
       enabled: true
       status: "completed"
@@ -523,16 +558,8 @@ population_structure:
       interpretation: "The joint MAF>=0.05 WGS-derived panel is extremely dense (about one marker per 573 bp on average). Rare large gaps are localized exceptions; physical-length and LD-sensitivity criteria should therefore drive ROH tuning rather than copying SNP-array SNP-count defaults."
 
     parameters_to_refine:
-      homozyg_snp: 50
-      homozyg_kb: 1500
-      homozyg_density: 50
-      homozyg_gap: 500
-      homozyg_window_snp: 50
-      homozyg_window_het: 1
-      homozyg_window_missing: 5
-      homozyg_window_threshold: 0.05
-      maf_scope: "pending_all_population_maf0.05_intersection_audit"
-      froh_denominator: null
+      status: "production_roh_parameters_frozen"
+      remaining: []
 
 
 # ============================================================
