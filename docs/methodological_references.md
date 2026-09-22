@@ -538,6 +538,37 @@ MAF threshold jointly or within each population, so population-specific allele
 frequency differences are not silently converted into a marker-ascertainment
 difference.
 
+#### Completed ROH marker-density audit
+
+The audit completed on the expected 549-sample harmonized dataset and retained
+exactly 4,878,327 variants after joint MAF >= 0.05. Across the terminal-marker
+spans of the 22 autosomes, the panel covers 2,793,824,144 bp and contains
+1,746.11 markers/Mb, corresponding to a genome-wide mean inter-marker gap of
+572.70 bp.
+
+The panel is therefore far denser than a conventional SNP-array panel. The
+chromosome-specific median gap ranges from 247 to 318 bp and the chromosome-
+specific 99th percentile is approximately 3.1-4.0 kb. Large gaps are rare:
+355 of 4,878,305 consecutive-marker gaps exceed 50 kb, 201 exceed 100 kb,
+61 exceed 250 kb, 35 exceed 500 kb, and 21 exceed 1 Mb. The largest observed
+gap is 21,133,173 bp.
+
+Interpretation:
+- minimum SNP-count thresholds cannot be interpreted independently of physical
+  length on this WGS-derived panel, because even a short physical interval can
+  contain many common markers;
+- the final ROH definition should therefore include an explicit physical-length
+  threshold and should not rely on an SNP-count threshold alone;
+- the handful of very large gaps are localized coverage/assembly exceptions and
+  should be prevented from bridging otherwise separate ROH by an explicit
+  maximum-gap criterion;
+- LD pruning remains the main unresolved preprocessing choice. Howrigan et al.
+  supports light-to-moderate pruning in SNP-array-like data, while later work
+  shows that pruning effects can be population- and dataset-dependent. The next
+  workflow step should therefore compare an unpruned common-marker call with a
+  light/moderate LD-pruned sensitivity analysis before freezing the production
+  ROH settings.
+
 ### Howrigan et al. 2011: specific ROH parameter implications
 
 Howrigan et al. (2011) is a key parameter-tuning reference for PLINK ROH

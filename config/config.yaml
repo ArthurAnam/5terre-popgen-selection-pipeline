@@ -349,10 +349,25 @@ population_structure:
     pruning: null
     marker_density_audit:
       enabled: true
+      status: "completed"
       input_master: "exact_harmonized_ct_plus_1kg_eur"
       ld_pruning_before_audit: false
       gap_thresholds_kb: [50, 100, 250, 500, 1000]
       purpose: "Measure physical marker density and inter-marker gaps before choosing ROH SNP-count, density, gap, and LD-pruning settings."
+      observed:
+        retained_variants: 4878327
+        autosomes: 22
+        sum_terminal_marker_spans_bp: 2793824144
+        markers_per_mb_across_terminal_marker_spans: 1746.1109749791037
+        mean_intermarker_gap_bp_genomewide: 572.703863739557
+        maximum_intermarker_gap_bp_genomewide: 21133173
+        total_intermarker_gaps: 4878305
+        gaps_gt_50kb: 355
+        gaps_gt_100kb: 201
+        gaps_gt_250kb: 61
+        gaps_gt_500kb: 35
+        gaps_gt_1000kb: 21
+      interpretation: "The joint MAF>=0.05 WGS-derived panel is extremely dense (about one marker per 573 bp on average). Rare large gaps are localized exceptions; physical-length and LD-sensitivity criteria should therefore drive ROH tuning rather than copying SNP-array SNP-count defaults."
 
     parameters_to_refine:
       homozyg_snp: null
