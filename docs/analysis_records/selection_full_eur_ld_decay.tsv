@@ -1,0 +1,7 @@
+population	role	baseline_mean_r2	one_third_threshold_r2	first_crossing_kb	stable_crossing_kb	total_valid_ld_pairs	baseline_pair_count	lassi_role
+CT	focal_discovery_population	0.4144855994950274	0.13816186648452627	55.5	57.5	4033512	7603	production_scan
+CEU	empirical_LASSI_benchmark	0.41264905618283076	0.13754968538052195	53.5	53.5	NA	NA	production_scan
+FIN	European_LD_context_only	0.4129174862827422	0.1376391620804835	55.5	58.5	4883220	9225	context_only
+GBR	European_LD_context_only	0.423464777295785	0.14115492575114616	55.5	55.5	4774972	9041	context_only
+IBS	Southern_European_proximate_comparator	0.41134044457191504	0.13711348151026032	53.5	53.5	NA	NA	production_scan
+TSI	Southern_European_proximate_comparator	0.40857039026268993	0.1361901300739443	52.5	52.5	NA	NA	production_scan

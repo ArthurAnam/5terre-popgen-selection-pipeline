@@ -1083,3 +1083,25 @@ The frozen selection scans remain CT, CEU, TSI and IBS with their existing
 population-specific windows. If FIN or GBR are later promoted to formal LASSI
 comparators, their SNP-window conversion must then be performed explicitly
 from their own LD decay rather than borrowing a window from another population.
+
+
+### Completed full European LD-decay context
+
+The full MAF>=0.05 LD-decay context is now complete for CT and all five
+1000 Genomes EUR populations. FIN has baseline mean r2=0.41292, first crossing
+55.5 kb and five-bin stable crossing 58.5 kb. GBR has baseline mean r2=0.42346,
+with both first and stable crossing at 55.5 kb.
+
+Together with CEU (53.5 kb), TSI (52.5 kb), IBS (53.5 kb) and CT (55.5 kb),
+the first-crossing estimates span only 52.5-55.5 kb across all six populations.
+This supports the conclusion that the physical LD scale is broadly similar
+across the European context at the resolution used here. FIN is the only
+population in which the five-bin stability diagnostic extends appreciably
+beyond the first crossing (58.5 kb versus 55.5 kb), but this does not alter the
+descriptive first-crossing comparison.
+
+FIN and GBR remain contextual populations only for the selection branch.
+Their LD curves are included in the static and interactive six-population
+comparison, but no production LASSI winsize is derived because they are not
+part of the planned LASSI scan. CT/CEU/TSI/IBS winsize/winstep parameters
+remain frozen and unchanged.

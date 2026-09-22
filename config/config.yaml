@@ -674,13 +674,21 @@ selection:
 
   ld_decay:
     purpose: "Estimate linkage-disequilibrium decay separately within CT and all five 1000G EUR populations for complete European LD context; translate decay to SNP-delimited LASSI windows only for CT, CEU, TSI and IBS."
-    status: "lassi_population_window_calibration_completed_full_eur_ld_context_fin_gbr_next"
+    status: "full_eur_ld_context_completed_lassi_windows_frozen"
     target_dataset: "final_QCed_Cinque_Terre_46_samples"
     statistic: "PLINK1.9 unphased hard-call r2"
     rationale: "LASSI's human empirical protocol calibrated SNP-window size from the physical interval over which r2 decayed below one third of its value at 1 kb. The CT audit first estimates that physical distance, separately from the later conversion to SNP count."
     primary_maf_threshold: 0.05
     sensitivity_maf_threshold: 0.01
     maf_sensitivity_rationale: "Common variants provide a stable primary LD-decay calibration in the 46-sample CT cohort; MAF>=0.01 is retained as a prespecified sensitivity so the 0.05 threshold is not accepted solely by convention."
+    full_eur_context_observed:
+      CEU: {baseline_mean_r2: 0.41264905618283076, first_crossing_kb: 53.5, stable_crossing_kb: 53.5}
+      FIN: {baseline_mean_r2: 0.4129174862827422, first_crossing_kb: 55.5, stable_crossing_kb: 58.5}
+      GBR: {baseline_mean_r2: 0.423464777295785, first_crossing_kb: 55.5, stable_crossing_kb: 55.5}
+      IBS: {baseline_mean_r2: 0.41134044457191504, first_crossing_kb: 53.5, stable_crossing_kb: 53.5}
+      TSI: {baseline_mean_r2: 0.40857039026268993, first_crossing_kb: 52.5, stable_crossing_kb: 52.5}
+      CT: {baseline_mean_r2: 0.4144855994950274, first_crossing_kb: 55.5, stable_crossing_kb: 57.5}
+      interpretation: "Across CT and all five 1000G EUR populations, the selected physical LD-decay scale is tightly clustered between 52.5 and 55.5 kb. FIN has a later five-bin stable crossing at 58.5 kb, but its direct first crossing is still 55.5 kb."
     anchor_sampling:
       method: "deterministic_even_physical_spacing"
       anchors_per_chromosome: 100
@@ -718,7 +726,7 @@ selection:
       lassi_window_snps: null
       lassi_shift_snps: null
       shift_fraction_of_window: 0.10
-    next_decision: "Complete descriptive MAF>=0.05 LD-decay curves for FIN and GBR so all five 1000G EUR populations are represented. Do not derive/use FIN or GBR LASSI windows unless the scan design changes; CT/CEU/TSI/IBS windows remain frozen."
+    next_decision: "Full MAF>=0.05 LD context is complete for CT plus all five 1000G EUR populations. Proceed to CT phasing and LASSI input preparation; FIN and GBR remain LD-context-only populations unless the scan design changes."
 
   phasing:
     method: "SHAPEIT2"
