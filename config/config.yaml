@@ -339,7 +339,7 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "production_roh_definition_frozen_froh_next"
+    parameter_status: "production_roh_froh_completed_distribution_analysis_next"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur"
     maf_scope_status: "joint_maf0.05_frozen_primary_all_population_maf0.05_intersection_retained_as_sensitivity"
@@ -485,6 +485,54 @@ population_structure:
         denominator_definition: "total SNP-mappable autosomal distance"
         primary_min_roh_kb: 1500
         length_classes: ["1.5_to_lt5_Mb", "ge5_Mb"]
+        observed_production:
+          status: "completed"
+          total_roh_segments_ge1.5mb: 2885
+          total_roh_segments_ge5mb: 234
+          population_summary:
+            CT:
+              n: 46
+              mean_froh_ge1.5mb: 0.01320567006749333
+              median_froh_ge1.5mb: 0.00733841083032491
+              mean_n_roh_ge1.5mb: 8.956521739130435
+              median_n_roh_ge1.5mb: 7.0
+              mean_max_roh_mb: 9.23210795652174
+              median_max_roh_mb: 6.5731705
+              mean_n_roh_ge5mb: 1.9565217391304348
+              median_n_roh_ge5mb: 1.0
+              mean_total_roh_mb_ge5mb: 18.35638363043478
+              mean_froh_ge5mb: 0.006626853296185842
+              mean_fraction_roh_burden_ge5mb: 0.5018187840765688
+            FIN:
+              n: 99
+              mean_froh_ge1.5mb: 0.007008009437333625
+              median_froh_ge1.5mb: 0.007033592057761733
+              mean_n_roh_ge1.5mb: 8.030303030303031
+              median_n_roh_ge1.5mb: 8
+              mean_max_roh_mb: 4.267829919191919
+              median_max_roh_mb: 3.690538
+              mean_froh_ge5mb: 0.0008407270794588485
+            IBS:
+              n: 107
+              mean_froh_ge1.5mb: 0.004921886376058572
+              median_froh_ge1.5mb: 0.002811552346570397
+              mean_froh_ge5mb: 0.001360847639933871
+            GBR:
+              n: 91
+              mean_froh_ge1.5mb: 0.00430922746856032
+              median_froh_ge1.5mb: 0.0027341884476534298
+              mean_froh_ge5mb: 0.0008764585948347681
+            CEU:
+              n: 99
+              mean_froh_ge1.5mb: 0.0031111517084199394
+              median_froh_ge1.5mb: 0.00249945559566787
+              mean_froh_ge5mb: 0.0004397975458556686
+            TSI:
+              n: 107
+              mean_froh_ge1.5mb: 0.0029380691588785047
+              median_froh_ge1.5mb: 0.0018374404332129964
+              mean_froh_ge5mb: 0.0006729804919194304
+          interpretation: "CT has the highest mean FROH and a much larger contribution from ROH >=5 Mb, but its median primary FROH is close to FIN. Individual-level distribution analysis is required before interpreting the population contrast as a uniform shift."
       maf_scope_sensitivity:
         enabled: true
         status: "completed_joint_maf0.05_retained_as_primary"

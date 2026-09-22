@@ -763,6 +763,34 @@ Production summaries retain continuous ROH lengths and additionally report
 1.5-<5 Mb and >=5 Mb classes. These bins are descriptive: the primary phenotype
 remains FROH based on all ROH >=1.5 Mb.
 
+#### Completed production ROH and FROH
+
+The frozen production workflow completed on all 549 individuals and yielded
+2,885 ROH >=1.5 Mb, of which 234 were >=5 Mb. The segment count is internally
+consistent with the summed population-level N_ROH values.
+
+CT has the highest mean primary FROH (0.01321; mean total ROH 36.58 Mb), followed
+by FIN (0.00701; 19.41 Mb), IBS (0.00492; 13.63 Mb), GBR (0.00431; 11.94 Mb),
+CEU (0.00311; 8.62 Mb) and TSI (0.00294; 8.14 Mb). However, CT median FROH
+(0.00734) is very close to FIN (0.00703), so the CT-vs-FIN contrast is not
+well described as a simple uniform upward shift.
+
+The length composition is more distinctive. CT has a median of one ROH >=5 Mb
+and mean long-ROH burden of 18.36 Mb, whereas every reference population has a
+median of zero >=5-Mb ROH. On average, ROH >=5 Mb account for ~50.2% of the CT
+total >=1.5-Mb burden, compared with ~12.0% in FIN, 14.1% in CEU, 20.3% in GBR,
+22.9% in TSI and 27.6% in IBS. This pattern is consistent with a stronger
+recent-autozygosity component in at least a subset of CT individuals, but that
+interpretation must be based on the individual distribution rather than the
+population mean alone.
+
+The next analysis therefore treats FROH>=1.5 Mb as the primary endpoint and
+FROH>=5 Mb as a secondary length-specific endpoint. CT is compared separately
+with each EUR reference population using two-sided Mann-Whitney tests, Holm
+correction across the five prespecified CT-vs-reference contrasts, and Cliff's
+delta as a distributional effect-size measure. Means, medians, quartiles and
+individual scatter are reported alongside the tests.
+
 
 ### Howrigan et al. 2011: specific ROH parameter implications
 
