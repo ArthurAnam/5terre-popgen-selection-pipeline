@@ -9,12 +9,20 @@ from pathlib import Path
 
 POP_ORDER = ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
 POP_COLORS = {
-    "CT": "#111111",
-    "CEU": "#4E79A7",
-    "FIN": "#F28E2B",
-    "GBR": "#59A14F",
-    "IBS": "#E15759",
-    "TSI": "#B07AA1",
+    "CT": "#000000",
+    "CEU": "#0072B2",
+    "FIN": "#E69F00",
+    "GBR": "#009E73",
+    "IBS": "#D55E00",
+    "TSI": "#CC79A7",
+}
+POP_SHAPES = {
+    "CT": "star",
+    "CEU": "circle",
+    "FIN": "square",
+    "GBR": "triangle",
+    "IBS": "diamond",
+    "TSI": "cross",
 }
 
 def read_tsv(path):
@@ -93,6 +101,31 @@ def axes_svg(width, height, ml, mr, mt, mb, xlo, xhi, ylo, yhi, xlabel, ylabel):
     parts.append(f'<text x="20" y="{mt+ph/2:.2f}" text-anchor="middle" class="label" transform="rotate(-90 20 {mt+ph/2:.2f})">{esc(ylabel)}</text>')
     return parts, sx, sy
 
+def point_svg(x, y, pop, tip, size=5.0, opacity=0.80):
+    color = POP_COLORS.get(pop, "#3366AA")
+    shape = POP_SHAPES.get(pop, "circle")
+    attr = f'class="hoverpoint" data-tooltip="{esc(tip)}"'
+    if shape == "square":
+        return f'<rect x="{x-size:.2f}" y="{y-size:.2f}" width="{2*size:.2f}" height="{2*size:.2f}" fill="{color}" fill-opacity="{opacity}" {attr}/>'
+    if shape == "triangle":
+        pts = f"{x:.2f},{y-size*1.15:.2f} {x-size*1.05:.2f},{y+size*.9:.2f} {x+size*1.05:.2f},{y+size*.9:.2f}"
+        return f'<polygon points="{pts}" fill="{color}" fill-opacity="{opacity}" {attr}/>'
+    if shape == "diamond":
+        pts = f"{x:.2f},{y-size*1.2:.2f} {x-size:.2f},{y:.2f} {x:.2f},{y+size*1.2:.2f} {x+size:.2f},{y:.2f}"
+        return f'<polygon points="{pts}" fill="{color}" fill-opacity="{opacity}" {attr}/>'
+    if shape == "cross":
+        return (f'<g {attr} stroke="{color}" stroke-width="2.2" stroke-linecap="round" opacity="{opacity}">'
+                f'<line x1="{x-size:.2f}" y1="{y-size:.2f}" x2="{x+size:.2f}" y2="{y+size:.2f}"/>'
+                f'<line x1="{x-size:.2f}" y1="{y+size:.2f}" x2="{x+size:.2f}" y2="{y-size:.2f}"/></g>')
+    if shape == "star":
+        pts = []
+        for i in range(10):
+            angle = -math.pi / 2 + i * math.pi / 5
+            radius = size * (1.35 if i % 2 == 0 else 0.58)
+            pts.append(f"{x + radius*math.cos(angle):.2f},{y + radius*math.sin(angle):.2f}")
+        return f'<polygon points="{" ".join(pts)}" fill="{color}" fill-opacity="{opacity}" stroke="#000" stroke-width="0.7" {attr}/>'
+    return f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{size:.2f}" fill="{color}" fill-opacity="{opacity}" {attr}/>'
+
 def page(title, caption, svg, notes=""):
     return f"""<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -102,12 +135,23 @@ body{{font-family:Arial,Helvetica,sans-serif;margin:24px;color:#222;max-width:11
 h1{{font-size:24px;margin-bottom:8px}} .caption{{font-size:15px;line-height:1.45;max-width:1000px}}
 .note{{font-size:13px;color:#555}} svg{{width:100%;height:auto;border:1px solid #ddd;background:white}}
 .axis,.tick{{stroke:#333;stroke-width:1}} .grid{{stroke:#ddd;stroke-width:0.7}} .ticktext{{font-size:11px;fill:#333}}
-.label{{font-size:13px;fill:#222}} .legend{{font-size:12px;fill:#222}} circle{{stroke:#fff;stroke-width:0.6}}
+.label{{font-size:13px;fill:#222}} .legend{{font-size:12px;fill:#222}} .hoverpoint{{cursor:crosshair}}
+#tooltip{{display:none;position:fixed;z-index:9999;pointer-events:none;background:rgba(20,20,20,.94);color:white;
+padding:8px 10px;border-radius:5px;font-size:13px;line-height:1.35;max-width:430px;box-shadow:0 2px 8px rgba(0,0,0,.28)}}
 </style></head><body>
 <h1>{esc(title)}</h1><p class="caption">{esc(caption)}</p>
+<div id="tooltip"></div>
 {svg}
-<p class="note">Hover over points or bins to display the underlying sample/pair/bin information. This HTML is an inspection aid; manuscript output should use the versioned static figure and underlying tables.</p>
+<p class="note">Passa il mouse sui punti/bin: il tooltip mostra campione, popolazione e valori sottostanti. Gli HTML servono per ispezione; PNG/PDF e tabelle restano gli output per il manoscritto.</p>
 {notes}
+<script>
+const tt=document.getElementById('tooltip');
+document.querySelectorAll('.hoverpoint').forEach(el=>{{
+  el.addEventListener('mouseenter',()=>{{tt.textContent=el.dataset.tooltip||'';tt.style.display='block';}});
+  el.addEventListener('mousemove',(e)=>{{tt.style.left=(e.clientX+14)+'px';tt.style.top=(e.clientY+14)+'px';}});
+  el.addEventListener('mouseleave',()=>{{tt.style.display='none';}});
+}});
+</script>
 </body></html>"""
 
 def scatter_html(rows, xfield, yfield, xlabel, ylabel, title, caption, tooltip_fields, popfield=None):
@@ -119,18 +163,17 @@ def scatter_html(rows, xfield, yfield, xlabel, ylabel, title, caption, tooltip_f
     parts, sx, sy = axes_svg(width, height, ml, mr, mt, mb, xlo, xhi, ylo, yhi, xlabel, ylabel)
     for r in rows:
         pop = r.get(popfield, "") if popfield else ""
-        color = POP_COLORS.get(pop, "#4E79A7")
         tip = " | ".join(f"{k}: {r.get(k,'')}" for k in tooltip_fields)
-        radius = 5.0 if pop == "CT" else 3.8
-        parts.append(f'<circle cx="{sx(float(r[xfield])):.2f}" cy="{sy(float(r[yfield])):.2f}" r="{radius}" fill="{color}" fill-opacity="0.76"><title>{esc(tip)}</title></circle>')
+        radius = 6.0 if pop == "CT" else 4.6
+        parts.append(point_svg(sx(float(r[xfield])), sy(float(r[yfield])), pop, tip, radius, 0.82))
     if popfield:
-        lx = width - mr - 115
-        ly = mt + 10
+        lx = width - mr - 120
+        ly = mt + 12
         shown = [p for p in POP_ORDER if any(r.get(popfield) == p for r in rows)]
         for i, pop in enumerate(shown):
-            y = ly + i * 19
-            parts.append(f'<circle cx="{lx}" cy="{y}" r="5" fill="{POP_COLORS[pop]}"/>')
-            parts.append(f'<text x="{lx+12}" y="{y+4}" class="legend">{pop}</text>')
+            y = ly + i * 22
+            parts.append(point_svg(lx, y, pop, f"population: {pop}", 5.5, 1.0))
+            parts.append(f'<text x="{lx+14}" y="{y+4}" class="legend">{pop}</text>')
     svg = f'<svg viewBox="0 0 {width} {height}" role="img">{"".join(parts)}</svg>'
     return page(title, caption, svg)
 
@@ -158,9 +201,10 @@ def grouped_html(rows, valuefield, ylabel, title, caption):
         x = [float(r[valuefield]) for r in sub]
         vmin, vq1, vmed, vq3, vmax = min(x), q(x, .25), q(x, .5), q(x, .75), max(x)
         boxw = min(54, step * 0.45)
-        parts.append(f'<line x1="{cx}" y1="{sy(vmin):.2f}" x2="{cx}" y2="{sy(vmax):.2f}" stroke="#555"/>')
-        parts.append(f'<rect x="{cx-boxw/2:.2f}" y="{sy(vq3):.2f}" width="{boxw:.2f}" height="{sy(vq1)-sy(vq3):.2f}" fill="none" stroke="#555"/>')
-        parts.append(f'<line x1="{cx-boxw/2:.2f}" y1="{sy(vmed):.2f}" x2="{cx+boxw/2:.2f}" y2="{sy(vmed):.2f}" stroke="#111" stroke-width="2"/>')
+        color = POP_COLORS[pop]
+        parts.append(f'<line x1="{cx}" y1="{sy(vmin):.2f}" x2="{cx}" y2="{sy(vmax):.2f}" stroke="{color}" stroke-width="1.4"/>')
+        parts.append(f'<rect x="{cx-boxw/2:.2f}" y="{sy(vq3):.2f}" width="{boxw:.2f}" height="{sy(vq1)-sy(vq3):.2f}" fill="{color}" fill-opacity="0.13" stroke="{color}" stroke-width="1.5"/>')
+        parts.append(f'<line x1="{cx-boxw/2:.2f}" y1="{sy(vmed):.2f}" x2="{cx+boxw/2:.2f}" y2="{sy(vmed):.2f}" stroke="{color}" stroke-width="2.4"/>')
         for r in sub:
             px = cx + jitter(r["IID"], min(24, step * 0.25))
             tip = (
@@ -169,7 +213,7 @@ def grouped_html(rows, valuefield, ylabel, title, caption):
                 f"total_ROH_Mb>=1.5: {r.get('TOTAL_ROH_MB_GE1_5MB','')} | "
                 f"max_ROH_Mb: {r.get('MAX_ROH_MB','')}"
             )
-            parts.append(f'<circle cx="{px:.2f}" cy="{sy(float(r[valuefield])):.2f}" r="4" fill="{POP_COLORS[pop]}" fill-opacity="0.68"><title>{esc(tip)}</title></circle>')
+            parts.append(point_svg(px, sy(float(r[valuefield])), pop, tip, 4.8 if pop != "CT" else 5.8, 0.76))
         parts.append(f'<text x="{cx:.2f}" y="{height-mb+23}" text-anchor="middle" class="ticktext">{pop}</text>')
     parts.append(f'<text x="20" y="{mt+ph/2:.2f}" text-anchor="middle" class="label" transform="rotate(-90 20 {mt+ph/2:.2f})">{esc(ylabel)}</text>')
     svg = f'<svg viewBox="0 0 {width} {height}" role="img">{"".join(parts)}</svg>'
@@ -192,7 +236,7 @@ def ld_html(bins, summary, title, caption):
     parts.append(f'<line x1="{sx(crossing):.2f}" y1="{mt}" x2="{sx(crossing):.2f}" y2="{height-mb}" stroke="#555" stroke-dasharray="3 5"/>')
     for r in rows:
         tip = f"distance bin center: {r['bin_center_kb']} kb | mean r2: {r['mean_r2']} | n_pairs: {r['n_pairs']} | SE: {r['se_r2']}"
-        parts.append(f'<circle cx="{sx(float(r["bin_center_kb"])):.2f}" cy="{sy(float(r["mean_r2"])):.2f}" r="2.2" fill="#2F4B7C"><title>{esc(tip)}</title></circle>')
+        parts.append(f'<circle class="hoverpoint" data-tooltip="{esc(tip)}" cx="{sx(float(r["bin_center_kb"])):.2f}" cy="{sy(float(r["mean_r2"])):.2f}" r="3.0" fill="#2F4B7C" fill-opacity="0.85"/>')
     svg = f'<svg viewBox="0 0 {width} {height}" role="img">{"".join(parts)}</svg>'
     notes = (
         f'<p class="note">Baseline mean r² = {esc(sm["baseline_mean_r2"])}; '
