@@ -77,6 +77,8 @@ def main():
     parser.add_argument("--maf-threshold", type=float, required=True)
     parser.add_argument("--expected-variants", type=int, required=True)
     parser.add_argument("--expected-samples", type=int, required=True)
+    parser.add_argument("--panel-label", default="joint_harmonized_ct_plus_1kg_eur")
+    parser.add_argument("--ld-pruning-label", default="NO")
     parser.add_argument("--gap-thresholds-kb", required=True)
     parser.add_argument("--by-chromosome-out", required=True)
     parser.add_argument("--gap-thresholds-out", required=True)
@@ -214,8 +216,8 @@ def main():
         writer.writerow(["metric", "value"])
         writer.writerow(["expected_joint_samples", args.expected_samples])
         writer.writerow(["maf_threshold", args.maf_threshold])
-        writer.writerow(["maf_scope", "joint_harmonized_ct_plus_1kg_eur"])
-        writer.writerow(["ld_pruning_before_density_audit", "NO"])
+        writer.writerow(["maf_scope", args.panel_label])
+        writer.writerow(["ld_pruning_before_density_audit", args.ld_pruning_label])
         writer.writerow(["retained_variants", total_markers])
         writer.writerow(["autosomes", len(rows)])
         writer.writerow(["sum_terminal_marker_spans_bp", total_span_bp])
@@ -233,7 +235,8 @@ def main():
             f"Joint samples: {args.expected_samples}\n"
             f"MAF threshold: {args.maf_threshold}\n"
             f"Retained variants: {total_markers}\n"
-            "LD pruning before this audit: NO\n\n"
+            f"Panel label: {args.panel_label}\n"
+            f"LD pruning before this audit: {args.ld_pruning_label}\n\n"
             "This step does not call ROH. It measures the physical density and gap\n"
             "structure of the common harmonized marker panel before minimum SNP\n"
             "count, minimum ROH length, density, gap, and LD-pruning parameters are\n"

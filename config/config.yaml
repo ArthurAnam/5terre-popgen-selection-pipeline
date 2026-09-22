@@ -339,14 +339,40 @@ population_structure:
   roh:
     method: "PLINK --homozyg"
     purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "maf_fixed_marker_density_audit_next"
+    parameter_status: "marker_density_audit_completed_light_vif_density_audit_next"
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur_initial_density_audit"
     maf_scope_status: "provisional_for_density_audit_before_final_cross_population_roh_call"
     expected_joint_samples: 549
     expected_joint_maf0.05_variants: 4878327
-    ld_pruning: null
+    ld_pruning: "primary_candidate_unpruned_with_light_vif_sensitivity_pending"
     pruning: null
+    ld_sensitivity:
+      enabled: true
+      status: "light_vif_panel_density_audit_next"
+      primary_candidate:
+        panel: "joint_maf0.05_unpruned"
+        role: "population_history_and_froh_primary_candidate"
+        rationale: "Preserve the physical ROH signal in the primary candidate analysis; long physical-length thresholds are intended to reduce background-LD-driven short homozygous tracts."
+      light_vif:
+        panel: "joint_maf0.05_light_vif"
+        tool: "PLINK1.9 --indep"
+        window_snps: 50
+        step_snps: 5
+        vif_threshold: 10
+        approximate_single_predictor_r2: 0.9
+        role: "methodological_sensitivity"
+        rationale: "Reproduce the light VIF pruning strategy evaluated by Howrigan et al. 2011 rather than translating it into a different pairwise-r2 algorithm."
+      reuse_pca_pruning: false
+      pca_pruning_not_reused_rationale: "PCA and ROH have different inferential goals. PCA requires strong reduction of correlated markers, whereas ROH detection must balance redundant LD against removal of genuine homozygous tracts. The PCA r2=0.2 panel is therefore not reused for ROH."
+      next_decision: "Audit the marker density and gap structure after light VIF pruning before freezing homozyg-snp or other ROH calling parameters."
+    candidate_calling_framework:
+      min_roh_kb: 1500
+      status: "literature_supported_candidate_not_yet_frozen"
+      rationale: "A 1.5 Mb physical threshold is a recurrent human-population ROH boundary used for population isolation/autozygosity analyses and is especially important here because the unpruned WGS-derived panel is extremely dense."
+      homozyg_gap_kb: null
+      homozyg_window_het: null
+      homozyg_snp: null
     marker_density_audit:
       enabled: true
       status: "completed"

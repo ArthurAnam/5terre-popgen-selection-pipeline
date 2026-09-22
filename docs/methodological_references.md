@@ -569,6 +569,61 @@ Interpretation:
   light/moderate LD-pruned sensitivity analysis before freezing the production
   ROH settings.
 
+### ROH decision framework after literature review
+
+The ROH literature review is recorded here rather than only in generated
+README files. Generated README files explain individual result directories;
+`config/config.yaml` records executable parameter choices; this document
+records the biological and methodological rationale behind those choices; and
+`docs/analysis_records/` stores compact observed numerical results that would
+otherwise live only under ignored `results/` paths.
+
+The workflow deliberately uses analysis-specific LD treatment. The PCA branch
+uses strong pairwise-r2 pruning because PCA is intended to summarize broad
+population structure without allowing local blocks of highly correlated
+markers to dominate eigenvectors. That PCA marker panel is not automatically
+appropriate for ROH detection, where extended homozygosity and local LD are
+part of the biological/statistical problem being measured.
+
+For ROH, two literature-supported approaches are therefore kept distinct:
+
+1. Primary candidate: the common harmonized MAF >= 0.05 marker panel without
+   LD pruning, with physical ROH length intended to be the principal protection
+   against short background-LD tracts. This follows the population-history /
+   FROH tradition in which long ROH are analyzed as genomic segments rather
+   than forcing approximate marker independence.
+2. Methodological sensitivity: PLINK 1.9 VIF pruning using
+   `--indep 50 5 10`. This reproduces the light-pruning procedure evaluated
+   by Howrigan et al. (2011) rather than replacing it with
+   `--indep-pairwise`. The VIF threshold of 10 corresponds to multiple
+   R-squared = 0.90 in the single-predictor special case, but the algorithms
+   are not equivalent.
+
+The existing PCA pruning (`--indep-pairwise 50 5 0.2`) is intentionally not
+reused for ROH. Reusing it merely for pipeline uniformity would impose a much
+stronger, differently defined LD filter than the ROH-specific methodological
+precedent and could remove informative homozygous sequence.
+
+A minimum physical ROH length of 1.5 Mb is retained as a strong candidate, not
+yet a frozen production parameter. McQuillan et al. (2008) showed that ROH
+>=1.5 Mb distinguish European populations with different isolation histories.
+The northeastern-Italian isolate study also defined gROH using a 1.5 Mb
+minimum, and later human ROH work commonly treats this scale as a useful
+boundary between shorter background-homozygosity tracts and longer segments
+more informative about autozygosity/population history. Because the present
+unpruned panel contains ~1,746 common markers/Mb, physical length is more
+informative than importing a historical SNP-count threshold from a much
+sparser array.
+
+Before any production `--homozyg` call, the light-VIF panel will therefore
+be built and its marker density and gap structure audited. The final minimum
+SNP count will be chosen only after that observed post-pruning density is
+known. Maximum internal gap and tolerated heterozygotes also remain open:
+the former will be evaluated against the measured gap distribution and
+Italian/human precedents, while the latter requires special care because the
+Cinque Terre WGS and 1000 Genomes reference genotypes were generated under
+different sequencing/genotyping regimes.
+
 ### Howrigan et al. 2011: specific ROH parameter implications
 
 Howrigan et al. (2011) is a key parameter-tuning reference for PLINK ROH
