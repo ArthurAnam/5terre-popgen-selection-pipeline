@@ -73,7 +73,7 @@ datasets:
         IBS: 107
         TSI: 107
       expected_total_eur_samples: 503
-      selection_comparison_candidates: ["TSI", "FIN", "IBS"]
+      selection_comparison_candidates: ["CEU", "TSI", "IBS"]
     assumed_phased: true
     phase3_vcf_filename_template: "ALL.chr{chrom}.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"
     upstream_processing:
@@ -670,7 +670,7 @@ selection:
 
   ld_decay:
     purpose: "Estimate linkage-disequilibrium decay separately within CT, CEU, TSI and IBS before translating each population-specific physical decay distance into its own SNP-delimited LASSI window."
-    status: "physical_decay_audit_completed_maf0.05_selected_primary"
+    status: "population_specific_ld_decay_and_snp_window_calibration_completed"
     target_dataset: "final_QCed_Cinque_Terre_46_samples"
     statistic: "PLINK1.9 unphased hard-call r2"
     rationale: "LASSI's human empirical protocol calibrated SNP-window size from the physical interval over which r2 decayed below one third of its value at 1 kb. The CT audit first estimates that physical distance, separately from the later conversion to SNP count."
@@ -714,7 +714,7 @@ selection:
       lassi_window_snps: null
       lassi_shift_snps: null
       shift_fraction_of_window: 0.10
-    next_decision: "Convert 55.5 kb to an empirical SNP count using 2,200 deterministic anchors in the final MAF>=0.05 panel; freeze LASSI winsize/winstep only after reviewing the resulting SNP-count distribution. MAF>=0.01 remains a sensitivity only."
+    next_decision: "LD/window calibration is complete for CT, CEU, TSI and IBS. Proceed to CT phasing and LASSI input preparation; no further LD-window tuning is planned unless a predefined sensitivity analysis is required."
 
   phasing:
     method: "SHAPEIT2"
@@ -742,17 +742,21 @@ selection:
     window_definition: "derived_from_ld_decay"
     scan_mode: "sliding_likelihood_window"
 
-    likelihood_window_snps: "population_specific; CT=99, CEU/TSI/IBS pending"
-    likelihood_shift_snps: "population_specific; CT=10, CEU/TSI/IBS pending"
+    likelihood_window_snps: "population_specific; CT=99, CEU=116, TSI=112, IBS=116"
+    likelihood_shift_snps: "population_specific; CT=10, CEU=12, TSI=11, IBS=12"
     window_parameter_units: "SNP count, not kb"
     window_calibration:
       strategy: "population_specific"
+      status: "completed_and_frozen"
       populations: ["CT", "CEU", "TSI", "IBS"]
       principle: "Each population receives its own MAF>=0.05 LD-decay estimate and its own SNP-delimited winsize/winstep; no common window is imposed across populations."
       step_rule: "round 10% of each population-specific winsize to nearest integer, minimum 1 SNP"
       CT:
+        role: "focal_discovery_population"
         physical_scale_kb: 55.5
         stable_physical_scale_kb: 57.5
+        baseline_mean_r2: 0.4144855994950274
+        one_third_threshold_r2: 0.13816186648452627
         n_anchors: 2200
         median_snps_primary: 99.0
         q1_snps_primary: 68.0
@@ -762,11 +766,45 @@ selection:
         selected_winstep_snps: 10
         status: "frozen"
       CEU:
-        status: "ld_decay_and_snp_window_next"
+        role: "empirical_LASSI_benchmark"
+        physical_scale_kb: 53.5
+        stable_physical_scale_kb: 53.5
+        baseline_mean_r2: 0.41264905618283076
+        one_third_threshold_r2: 0.13754968538052195
+        n_anchors: 2200
+        median_snps_primary: 116.0
+        q1_snps_primary: 78.75
+        q3_snps_primary: 156.0
+        selected_winsize_snps: 116
+        selected_winstep_snps: 12
+        status: "frozen"
       TSI:
-        status: "ld_decay_and_snp_window_next"
+        role: "Southern_European_proximate_comparator"
+        physical_scale_kb: 52.5
+        stable_physical_scale_kb: 52.5
+        baseline_mean_r2: 0.40857039026268993
+        one_third_threshold_r2: 0.1361901300739443
+        n_anchors: 2200
+        median_snps_primary: 112.0
+        q1_snps_primary: 77.0
+        q3_snps_primary: 154.0
+        selected_winsize_snps: 112
+        selected_winstep_snps: 11
+        status: "frozen"
       IBS:
-        status: "ld_decay_and_snp_window_next"
+        role: "Southern_European_proximate_comparator"
+        physical_scale_kb: 53.5
+        stable_physical_scale_kb: 53.5
+        baseline_mean_r2: 0.41134044457191504
+        one_third_threshold_r2: 0.13711348151026032
+        n_anchors: 2200
+        median_snps_primary: 116.0
+        q1_snps_primary: 78.75
+        q3_snps_primary: 156.0
+        selected_winsize_snps: 116
+        selected_winstep_snps: 12
+        status: "frozen"
+      interpretation: "Physical LD decay is highly similar across the four populations (52.5-55.5 kb), but the SNP count representing that physical scale differs because population-specific MAF>=0.05 panels have different marker densities. Population-specific winsizes are therefore retained."
     parameters_to_refine:
       grid_size: null
       selection_model: null

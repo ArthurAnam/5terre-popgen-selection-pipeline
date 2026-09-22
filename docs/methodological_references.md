@@ -1040,10 +1040,27 @@ windows contain a median of 99 SNPs (IQR 68-136), while the 57.5-kb stability
 interval contains a median of 103 SNPs (IQR 70-141). The small difference
 supports winsize=99 SNP and winstep=10 SNP for CT.
 
-CEU, TSI and IBS will undergo the same sequence independently:
-within-population MAF>=0.05 filtering -> within-population LD decay -> first
-one-third-baseline crossing -> empirical SNP count over that physical interval
--> population-specific winsize -> approximately 10% winstep.
+The population-specific calibration is now complete. CEU crosses the one-third
+baseline threshold at 53.5 kb and yields a median 116 SNPs per calibrated window
+(IQR 78.75-156), giving winsize=116 and winstep=12. TSI crosses at 52.5 kb,
+with median 112 SNPs (IQR 77-154), giving winsize=112 and winstep=11. IBS
+crosses at 53.5 kb, with median 116 SNPs (IQR 78.75-156), giving winsize=116
+and winstep=12. For all three 1000 Genomes populations, the direct first
+crossing is already stable for at least five consecutive bins.
+
+Across CT, CEU, TSI and IBS the selected physical scales are therefore tightly
+clustered at 52.5-55.5 kb, whereas the SNP-delimited windows range from 99 to
+116 SNPs. This distinction is biologically and technically useful: background
+LD scale is similar at this resolution, while different population-specific
+MAF>=0.05 marker densities translate that scale into different LASSI SNP
+windows. The final scan parameters are CT 99/10, CEU 116/12, TSI 112/11 and
+IBS 116/12 (winsize/winstep, in SNP).
+
+The CEU result is also an empirical implementation benchmark: the independently
+derived CEU winsize of 116 SNPs is extremely close to the 117-SNP window used
+in the original human LASSI application. This agreement is treated as a
+plausibility check, not as an exact replication target, because preprocessing,
+filtering and calibration details differ.
 
 The three 1000 Genomes comparison populations are already phased in the Phase 3
 source panel, so they do not require re-phasing for LASSI. The phasing branch is

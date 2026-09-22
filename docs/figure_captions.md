@@ -37,3 +37,30 @@ Mean pairwise r2 as a function of physical distance in the final QCed Cinque Ter
 ## Cinque Terre LD decay sensitivity, MAF >=0.01
 
 Prespecified lower-MAF sensitivity for CT LD-decay calibration. The first one-third-baseline crossing is 63.5 kb and the five-bin stable crossing is 67.5 kb. This result is retained as a robustness check only; the LASSI window is calibrated from MAF>=0.05.
+
+## CEU LD decay, MAF >=0.05
+
+Population-specific CEU LD decay used to calibrate the CEU LASSI window. The
+mean 0.5-1.5-kb baseline r2 is 0.4126 and the direct/stable one-third-baseline
+crossing is 53.5 kb. This physical scale converts to a median 116 SNPs and
+winsize/winstep 116/12.
+
+## TSI LD decay, MAF >=0.05
+
+Population-specific TSI LD decay used to calibrate the TSI LASSI window. The
+mean 0.5-1.5-kb baseline r2 is 0.4086 and the direct/stable crossing is 52.5 kb.
+This converts to a median 112 SNPs and winsize/winstep 112/11.
+
+## IBS LD decay, MAF >=0.05
+
+Population-specific IBS LD decay used to calibrate the IBS LASSI window. The
+mean 0.5-1.5-kb baseline r2 is 0.4113 and the direct/stable crossing is 53.5 kb.
+This converts to a median 116 SNPs and winsize/winstep 116/12.
+
+## Population-specific LD decay comparison
+
+Comparison of CT, CEU, TSI and IBS MAF>=0.05 LD-decay curves. The selected
+one-third-baseline crossings are 55.5, 53.5, 52.5 and 53.5 kb, respectively.
+Although the physical decay scales are similar, their empirical SNP-delimited
+LASSI windows differ (99, 116, 112 and 116 SNPs), reflecting population-specific
+marker density after within-population MAF filtering.

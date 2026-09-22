@@ -246,6 +246,39 @@ def ld_html(bins, summary, title, caption):
     )
     return page(title, caption, svg, notes)
 
+def ld_compare_html(series, title, caption):
+    width, height, ml, mr, mt, mb = 940, 600, 82, 120, 25, 62
+    prepared = {}
+    all_x = []
+    all_y = []
+    for pop, bins, summary in series:
+        rows = [r for r in bins if int(r["n_pairs"]) > 0 and r["mean_r2"] not in ("nan", "NaN", "")]
+        prepared[pop] = (rows, {r["metric"]: r["value"] for r in summary})
+        all_x.extend(float(r["bin_center_kb"]) for r in rows)
+        all_y.extend(float(r["mean_r2"]) for r in rows)
+    xlo, xhi = 0.0, max(all_x)
+    ylo, yhi = 0.0, max(all_y) * 1.08
+    parts, sx, sy = axes_svg(width, height, ml, mr, mt, mb, xlo, xhi, ylo, yhi, "Physical distance between SNPs (kb)", "Mean pairwise r²")
+    for pop in ["CT", "CEU", "TSI", "IBS"]:
+        rows, sm = prepared[pop]
+        color = POP_COLORS[pop]
+        pts = " ".join(f"{sx(float(r['bin_center_kb'])):.2f},{sy(float(r['mean_r2'])):.2f}" for r in rows)
+        parts.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="1.8"/>')
+        crossing = float(sm["first_crossing_bin_center_kb"])
+        parts.append(f'<line x1="{sx(crossing):.2f}" y1="{mt}" x2="{sx(crossing):.2f}" y2="{height-mb}" stroke="{color}" stroke-dasharray="3 6" opacity="0.65"/>')
+        for r in rows:
+            tip = f"population: {pop} | distance: {r['bin_center_kb']} kb | mean r2: {r['mean_r2']} | n_pairs: {r['n_pairs']} | SE: {r['se_r2']}"
+            parts.append(f'<circle class="hoverpoint" data-tooltip="{esc(tip)}" cx="{sx(float(r["bin_center_kb"])):.2f}" cy="{sy(float(r["mean_r2"])):.2f}" r="2.6" fill="{color}" fill-opacity="0.65"/>')
+    lx = width - mr + 18
+    ly = mt + 18
+    for i, pop in enumerate(["CT", "CEU", "TSI", "IBS"]):
+        y = ly + i * 24
+        parts.append(f'<line x1="{lx}" y1="{y}" x2="{lx+24}" y2="{y}" stroke="{POP_COLORS[pop]}" stroke-width="3"/>')
+        parts.append(f'<text x="{lx+32}" y="{y+4}" class="legend">{pop}</text>')
+    svg = f'<svg viewBox="0 0 {width} {height}" role="img">{"".join(parts)}</svg>'
+    notes = '<p class="note">Vertical dotted lines mark each population-specific first one-third-baseline crossing.</p>'
+    return page(title, caption, svg, notes)
+
 def read_eigen(path):
     rows = read_tsv(path)
     return {int(r["PC"]): float(r["variance_percent"]) for r in rows}
@@ -267,6 +300,12 @@ def main():
     p.add_argument("--ld-maf005-summary", required=True)
     p.add_argument("--ld-maf001-bins", required=True)
     p.add_argument("--ld-maf001-summary", required=True)
+    p.add_argument("--ld-ceu-bins", required=True)
+    p.add_argument("--ld-ceu-summary", required=True)
+    p.add_argument("--ld-tsi-bins", required=True)
+    p.add_argument("--ld-tsi-summary", required=True)
+    p.add_argument("--ld-ibs-bins", required=True)
+    p.add_argument("--ld-ibs-summary", required=True)
     p.add_argument("--out-dir", required=True)
     p.add_argument("--index-out", required=True)
     a = p.parse_args()
@@ -315,6 +354,24 @@ def main():
     write(out / "ld_decay_maf001.html", ld_html(
         read_tsv(a.ld_maf001_bins), read_tsv(a.ld_maf001_summary),
         reg["ld_decay_maf001"]["title"], reg["ld_decay_maf001"]["caption"]))
+
+    ref_series = []
+    for pop, bins_path, summary_path, fid, filename in [
+        ("CEU", a.ld_ceu_bins, a.ld_ceu_summary, "ld_decay_ceu", "ld_decay_ceu.html"),
+        ("TSI", a.ld_tsi_bins, a.ld_tsi_summary, "ld_decay_tsi", "ld_decay_tsi.html"),
+        ("IBS", a.ld_ibs_bins, a.ld_ibs_summary, "ld_decay_ibs", "ld_decay_ibs.html"),
+    ]:
+        bins = read_tsv(bins_path)
+        summary = read_tsv(summary_path)
+        write(out / filename, ld_html(bins, summary, reg[fid]["title"], reg[fid]["caption"]))
+        ref_series.append((pop, bins, summary))
+
+    ct_bins = read_tsv(a.ld_maf005_bins)
+    ct_summary = read_tsv(a.ld_maf005_summary)
+    write(out / "ld_decay_population_comparison.html", ld_compare_html(
+        [("CT", ct_bins, ct_summary)] + ref_series,
+        reg["ld_decay_population_comparison"]["title"],
+        reg["ld_decay_population_comparison"]["caption"]))
 
     index_rows = []
     for _, r in reg.items():

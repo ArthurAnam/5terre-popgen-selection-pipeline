@@ -1,0 +1,5 @@
+population	role	baseline_mean_r2	one_third_threshold_r2	first_crossing_kb	stable_crossing_kb	n_anchors	median_snp_count	q1_snp_count	q3_snp_count	winsize_snps	winstep_snps
+CT	focal_discovery_population	0.4144855994950274	0.13816186648452627	55.5	57.5	2200	99.0	68.0	136.0	99	10
+CEU	empirical_LASSI_benchmark	0.41264905618283076	0.13754968538052195	53.5	53.5	2200	116.0	78.75	156.0	116	12
+TSI	Southern_European_proximate_comparator	0.40857039026268993	0.1361901300739443	52.5	52.5	2200	112.0	77.0	154.0	112	11
+IBS	Southern_European_proximate_comparator	0.41134044457191504	0.13711348151026032	53.5	53.5	2200	116.0	78.75	156.0	116	12

@@ -164,7 +164,7 @@ def main():
         w.writerow(["stable_winsize_snps_candidate", stable_winsize])
         w.writerow(["stable_winstep_snps_candidate", stable_winstep])
         w.writerow(["step_fraction", args.step_fraction])
-        w.writerow(["decision_rule", "use rounded genome-wide median SNP count in the 55.5-kb MAF>=0.05 windows; 57.5-kb result is stability diagnostic"])
+        w.writerow(["decision_rule", "use rounded genome-wide median SNP count in the population-specific primary-width MAF>=0.05 windows; stable-width result is the stability diagnostic"])
 
 if __name__ == "__main__":
     main()
