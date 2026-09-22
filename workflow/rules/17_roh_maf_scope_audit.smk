@@ -17,7 +17,7 @@ rule roh_maf_scope_population_keep_files:
         annotations=PCA_SAMPLE_ANNOTATIONS,
         script="workflow/scripts/make_roh_population_keep_files.py"
     output:
-        expand(ROH_MAF_SCOPE_DIR + "/keep/{pop}.keep", pop=ROH_MAF_SCOPE_POPS)
+        expand(ROH_MAF_SCOPE_DIR + "/keep/{population}.keep", population=ROH_MAF_SCOPE_POPS)
     params:
         outdir=ROH_MAF_SCOPE_DIR + "/keep",
         expected="CT:46,CEU:99,FIN:99,GBR:91,IBS:107,TSI:107"
@@ -39,11 +39,11 @@ rule roh_population_maf_snplist:
         bed=ROH_COMMON_BED_PREFIX + ".bed",
         bim=ROH_COMMON_BED_PREFIX + ".bim",
         fam=ROH_COMMON_BED_PREFIX + ".fam",
-        keep=ROH_MAF_SCOPE_DIR + "/keep/{pop}.keep"
+        keep=ROH_MAF_SCOPE_DIR + "/keep/{population}.keep"
     output:
-        ROH_MAF_SCOPE_DIR + "/maf_lists/{pop}.maf0.05.snplist"
+        ROH_MAF_SCOPE_DIR + "/maf_lists/{population}.maf0.05.snplist"
     log:
-        "logs/roh/maf_scope/{pop}.maf0.05.log"
+        "logs/roh/maf_scope/{population}.maf0.05.log"
     threads: 1
     conda:
         "../../envs/pipeline.yaml"
@@ -51,7 +51,7 @@ rule roh_population_maf_snplist:
         r"""
         set -euo pipefail
         mkdir -p {ROH_MAF_SCOPE_DIR}/maf_lists logs/roh/maf_scope
-        tmp="{ROH_MAF_SCOPE_DIR}/maf_lists/.{wildcards.pop}.$$"
+        tmp="{ROH_MAF_SCOPE_DIR}/maf_lists/.{wildcards.population}.$$"
         trap 'rm -f "$tmp".*' EXIT
 
         plink2 \
@@ -71,8 +71,8 @@ rule roh_all_population_maf_intersection:
     input:
         joint=ROH_MAF_SNPLIST,
         lists=expand(
-            ROH_MAF_SCOPE_DIR + "/maf_lists/{pop}.maf0.05.snplist",
-            pop=ROH_MAF_SCOPE_POPS
+            ROH_MAF_SCOPE_DIR + "/maf_lists/{population}.maf0.05.snplist",
+            population=ROH_MAF_SCOPE_POPS
         ),
         script="workflow/scripts/intersect_roh_population_maf_snplists.py"
     output:
@@ -81,7 +81,7 @@ rule roh_all_population_maf_intersection:
         summary=ROH_MAF_SCOPE_DIR + "/intersection_summary.tsv"
     params:
         pop_args=" ".join(
-            f"--population-list {pop}={ROH_MAF_SCOPE_DIR}/maf_lists/{pop}.maf0.05.snplist"
+            f"--population-list {population}={ROH_MAF_SCOPE_DIR}/maf_lists/{population}.maf0.05.snplist"
             for pop in ROH_MAF_SCOPE_POPS
         )
     conda:
