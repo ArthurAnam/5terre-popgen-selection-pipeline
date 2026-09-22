@@ -12,3 +12,8 @@ local_paths:
   # version-controlled.
   onekg_phase3_vcf_dir: "/absolute/path/to/phase3_all_vcfs"
   onekg_phase3_sample_metadata: "/absolute/path/to/1000GP_Phase3.sample"
+
+
+  # SHAPEIT5 GRCh37/b37 genetic maps, one chr*.b37.gmap.gz file per autosome.
+  # Required only when the production CT phasing step is run.
+  shapeit5_b37_map_dir: "/absolute/path/to/shapeit5_b37_maps"

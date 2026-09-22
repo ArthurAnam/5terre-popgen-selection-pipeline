@@ -729,24 +729,42 @@ selection:
     next_decision: "Full MAF>=0.05 LD context is complete for CT plus all five 1000G EUR populations. Proceed to CT phasing and LASSI input preparation; FIN and GBR remain LD-context-only populations unless the scan design changes."
 
   phasing:
-    method: "SHAPEIT2"
-    purpose: "Phase Cinque Terre for haplotype-based LASSI; CEU, TSI and IBS use the already phased 1000 Genomes Phase 3 haplotypes."
+    method: "SHAPEIT5 phase_common"
+    software_version_target: "5.1.1"
+    status: "reference_overlap_preflight_next"
+    purpose: "Phase Cinque Terre common SNPs for haplotype-based LASSI; CEU, TSI and IBS use the already phased 1000 Genomes Phase 3 haplotypes."
+    marker_panel:
+      target_population: "CT"
+      maf_threshold: 0.05
+      variant_type: "biallelic SNPs"
+      rationale: "Phase the same common-variant scale used by the production CT LASSI scan."
     reference_support:
-      primary: "1000 Genomes Project EUR"
-      additional_italian_wgs_cohorts: "under_evaluation"
+      candidate_full_1kg_phase3: "audit_exact_overlap_before_use"
+      candidate_1kg_eur: "audit_exact_overlap_before_use"
+      selected_scope: null
+      additional_italian_wgs_cohorts: "not_required_for_current_preflight"
+      caution: "SHAPEIT5 --reference ignores input sites absent from the reference panel; marker retention must therefore be quantified before production phasing."
+    provisional_strategy:
+      stage1: "reference-assisted phase_common on exact target-reference overlap"
+      stage2: "phase the complete CT MAF>=0.05 panel using the stage1 CT haplotypes as a scaffold, if the overlap audit supports this design"
+      rationale: "Use external reference information without silently discarding CT common SNPs that are absent from the reference."
     independent_from_ld_decay: true
     population_handling:
       CT: "requires phasing"
       CEU: "use published 1000 Genomes Phase 3 phased haplotypes"
       TSI: "use published 1000 Genomes Phase 3 phased haplotypes"
       IBS: "use published 1000 Genomes Phase 3 phased haplotypes"
-    genetic_map: null
-
+    genetic_map:
+      build: "GRCh37/b37"
+      source: "SHAPEIT5 distributed genetic maps"
+      local_directory_key: "local_paths.shapeit5_b37_map_dir"
+      required_for_production_phasing: true
+    seed: 15052011
     parameters_to_refine:
-      effective_population_size: null
-      burn_in: null
-      pruning: null
-      main_iterations: null
+      reference_scope: "full_1kg_vs_eur_pending_overlap_audit"
+      whole_chromosome_vs_chunking: "pending_after_preflight"
+      effective_population_size: "SHAPEIT5 default unless justified otherwise"
+      mcmc_or_pbwt_tuning: "use SHAPEIT5 defaults unless diagnostics indicate a need to change"
 
   lassi:
     method: "LASSI"

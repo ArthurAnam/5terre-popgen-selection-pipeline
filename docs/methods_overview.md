@@ -308,13 +308,14 @@ Main steps include:
 
 External populations may be used for comparison, reference interpretation, or phasing support, but the primary LASSI scan target is the Cinque Terre dataset.
 
-Candidate external populations for selection-related comparison currently include:
+The production LASSI comparison set is:
 
-* TSI
-* FIN
-* IBS
+* Cinque Terre (focal discovery population)
+* CEU (empirical LASSI benchmark)
+* TSI (Southern-European comparator)
+* IBS (Southern-European comparator)
 
-The final comparison set remains under evaluation.
+FIN and GBR are retained for European LD context but are not part of the primary LASSI scan.
 
 ---
 
@@ -334,11 +335,10 @@ r^2 between each anchor and all SNPs within 500 kb. LD is summarized in
 1-kb distance bins. The primary calibration uses MAF >=0.05 and a prespecified
 MAF >=0.01 sensitivity is run in parallel.
 
-The first output is a physical LD-decay distance in kb. It is intentionally
-not converted immediately to a LASSI SNP count. After confirming robustness to
-MAF threshold, the selected physical interval will be converted to the
-empirical number of SNPs in the final LASSI marker panel, and the step size
-will be set at approximately 10% of that SNP-window size.
+LD-decay calibration is complete. Population-specific physical decay scales
+were converted to empirical SNP counts in the corresponding MAF>=0.05 panels.
+The frozen LASSI winsize/winstep values are CT 99/10, CEU 116/12, TSI 112/11,
+and IBS 116/12 SNPs. FIN and GBR are retained as LD-context-only populations.
 
 LD decay and phasing are both preparatory steps for the selection branch;
 phasing is not a downstream consequence of LD decay.
@@ -349,21 +349,25 @@ phasing is not a downstream consequence of LD decay.
 
 The Cinque Terre dataset is phased before LASSI analysis.
 
-The current phasing method is:
+The production phasing software is SHAPEIT5 `phase_common`, replacing the
+obsolete SHAPEIT2 plan. SHAPEIT5 is the maintained successor and is designed
+for common-variant phasing as the first stage of WGS phasing.
 
-* SHAPEIT2
+Before production phasing, the workflow quantifies exact CHR:POS:REF:ALT
+overlap between the CT MAF>=0.05 panel and two possible phased reference scopes:
+the full 1000 Genomes Phase 3 panel and the 503-sample EUR subset. This
+preflight is required because SHAPEIT5 reference-assisted phasing considers
+only target variants present in the reference panel.
 
-The 1000 Genomes Project EUR panel is expected to provide primary phasing/reference support.
+The provisional production design is two-stage: first phase exact
+target-reference shared variants with reference support; then use the resulting
+CT haplotypes as a scaffold to phase the complete CT MAF>=0.05 panel. This
+preserves target common variants that are absent from the external reference
+while still exploiting external haplotype information.
 
-Additional Italian WGS reference cohorts may also be evaluated as potential support, depending on data availability, compatibility, and final analytical design.
-
-Phasing parameters remain to be refined, including:
-
-* effective population size
-* burn-in iterations
-* pruning iterations
-* main iterations
-* genetic map
+GRCh37 SHAPEIT5 genetic maps will be used. Reference scope and whether
+whole-chromosome or chunked phasing is preferable remain to be finalized after
+the overlap preflight.
 
 ---
 
@@ -383,7 +387,7 @@ Current working outputs include:
 * region-level summaries
 * functional genomic annotations
 
-The LASSI window size and shift size are derived from LD decay analysis and remain to be finalized.
+The LASSI window size and shift size are derived from population-specific LD-decay calibration and are frozen at CT 99/10, CEU 116/12, TSI 112/11 and IBS 116/12 SNPs.
 
 ---
 

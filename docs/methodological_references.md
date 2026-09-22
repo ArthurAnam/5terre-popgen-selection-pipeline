@@ -1105,3 +1105,38 @@ Their LD curves are included in the static and interactive six-population
 comparison, but no production LASSI winsize is derived because they are not
 part of the planned LASSI scan. CT/CEU/TSI/IBS winsize/winstep parameters
 remain frozen and unchanged.
+
+
+### CT phasing: move from SHAPEIT2 plan to SHAPEIT5 and reference-overlap preflight
+
+The historical project plan listed SHAPEIT2. This is replaced by SHAPEIT5
+`phase_common`, the maintained SHAPEIT lineage for common-variant phasing and
+the first step of WGS phasing. The environment is pinned to Bioconda
+SHAPEIT5 5.1.1 and production phasing will use GRCh37 genetic maps distributed
+with SHAPEIT5.
+
+A reference-assisted run cannot be launched blindly. SHAPEIT5 documentation
+states that, with `--reference`, input sites absent from the reference panel
+are not considered. Because LASSI windows have already been calibrated in SNP
+units on the CT MAF>=0.05 panel, silently changing marker density during
+phasing would invalidate the direct connection between the frozen 99-SNP CT
+window and the actual scan panel.
+
+The next workflow step therefore performs a chromosome-wise preflight. It
+constructs the CT biallelic-SNP MAF>=0.05 panel directly from the final CT QC
+VCF, checks its counts against the existing PLINK selection panel, and measures
+exact CHR:POS:REF:ALT overlap with both (i) the full phased 1000 Genomes Phase 3
+panel and (ii) the polymorphic 503-sample EUR subset. No phasing decision is
+made from assumed ancestry similarity alone.
+
+The provisional strategy, if marker overlap is adequate, is two-stage:
+reference-assisted SHAPEIT5 on the exact shared sites followed by a second
+`phase_common` run using the phased CT overlap as a scaffold for the complete
+CT MAF>=0.05 panel. SHAPEIT5 scaffolds may contain a subset of variants and
+samples, allowing non-scaffold target variants to be phased onto the trusted
+common scaffold. This design is intended to retain the LASSI marker panel while
+still benefiting from external reference haplotypes.
+
+The choice between full-1000G and EUR-only reference support remains open until
+the overlap audit is observed. Likewise, whole-chromosome versus chunked
+phasing is not frozen at this stage.
