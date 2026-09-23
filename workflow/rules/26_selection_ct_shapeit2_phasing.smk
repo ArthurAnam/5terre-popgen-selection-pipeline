@@ -140,6 +140,14 @@ rule summarize_selection_ct_shapeit2_check:
             SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude",
             chrom=SHAPEIT2_CHROMS,
         ),
+        initial_logs=expand(
+            SHAPEIT2_DIR + "/check/chr{chrom}.check.log",
+            chrom=SHAPEIT2_CHROMS,
+        ),
+        postcheck_logs=expand(
+            SHAPEIT2_DIR + "/check_after_exclude/chr{chrom}.check_after_exclude.log",
+            chrom=SHAPEIT2_CHROMS,
+        ),
         postcheck_ok=expand(
             SHAPEIT2_DIR + "/check_after_exclude/chr{chrom}.check_after_exclude.ok",
             chrom=SHAPEIT2_CHROMS,
@@ -156,6 +164,8 @@ rule summarize_selection_ct_shapeit2_check:
         python {input.script} \
             --preflight {input.preflight} \
             --exclusions {input.exclusions} \
+            --initial-logs {input.initial_logs} \
+            --postcheck-logs {input.postcheck_logs} \
             --out {output.summary} \
             --chrom-out {output.chromosomes}
         """
