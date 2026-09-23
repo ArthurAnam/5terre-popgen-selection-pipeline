@@ -750,14 +750,14 @@ selection:
       effective_population_size_rationale: "European/CEU value recommended in SHAPEIT2 documentation."
       window_mb: 0.5
       window_rationale: "Use 0.5 Mb because SHAPEIT2 documentation reports better performance for sequence-derived genotypes than the 2-Mb GWAS default; this setting is also used in Delaneau et al. 2013 (AJHG 93:687-696, doi:10.1016/j.ajhg.2013.09.002) and explicitly retained for sequencing-based reference phasing by Sharp et al. 2016 (Bioinformatics 32:1974-1980, doi:10.1093/bioinformatics/btw065)."
-      states: 100
+      states: 400
       burn: 7
       prune: 8
       main: 20
       no_mcmc: false
       threads_per_chromosome: 1
       seed: 15052011
-      rationale: "Use documented SHAPEIT2 defaults for MCMC iterations, with the sequence-data window recommendation and a fixed seed. Production states remain provisional until the dedicated chr20 states=400 benchmark is reviewed. One thread per chromosome preserves exact reproducibility; Snakemake can parallelize chromosomes."
+      rationale: "Use 400 Hamming-distance-selected conditioning states to privilege phasing accuracy over runtime while retaining the documented SHAPEIT2 default MCMC schedule. The choice is supported by sequencing/reference-based SHAPEIT2 precedent and by the completed chr20 benchmark, which showed practical runtime and <1 GB peak RSS at one thread. One thread per chromosome preserves exact reproducibility; Snakemake parallelizes independent chromosomes."
     benchmark:
       chromosome: 20
       states: 400
@@ -808,6 +808,7 @@ selection:
       alignment_audit_status: "PASS"
       retained_snps_after_shapeit2_check: 4914283
       retained_fraction_after_shapeit2_check: 0.9814186254300199
+      production_states_status: "frozen_at_400_after_chr20_benchmark"
       production_phasing_started: false
     population_handling:
       CT: "requires SHAPEIT2 phasing"

@@ -371,8 +371,10 @@ Sharp et al. (2016, *Bioinformatics*), who state that SHAPEIT2 had previously
 shown good performance at 0.5 Mb for unphased genotypes derived from sequencing
 and therefore used that window in their reference-based sequencing experiments.
 The production candidate therefore uses `--window 0.5`,
-`--effective-size 11418`, 100 conditioning states, and the documented
-default MCMC schedule (7 burn-in, 8 pruning and 20 main iterations). The `--no-mcmc` shortcut is not used because SHAPEIT2 recommends
+`--effective-size 11418`, 400 conditioning states, and the documented
+default MCMC schedule (7 burn-in, 8 pruning and 20 main iterations). The
+400-state setting was frozen after a chromosome-20 benchmark confirmed
+practical runtime and sub-1-GB peak resident memory with one thread. The `--no-mcmc` shortcut is not used because SHAPEIT2 recommends
 it only for much smaller study samples, typically fewer than 10 individuals.
 
 A fixed random seed and one SHAPEIT2 thread per chromosome are used for exact

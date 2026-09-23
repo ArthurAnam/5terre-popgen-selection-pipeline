@@ -1331,3 +1331,20 @@ by running independent chromosomes concurrently through Snakemake. Practical
 concurrency should be chosen from the workstation's available CPU cores,
 memory, and thermal behavior rather than by increasing SHAPEIT2 threads within
 a chromosome.
+
+
+### Final CT SHAPEIT2 conditioning-state decision
+
+Following the completed chromosome-20 benchmark, the production CT phasing
+state count is frozen at `--states 400`. The benchmark phased 111,416 chr20
+SNPs in 2,400 s with one thread, max RSS 836.42 MB, and mean CPU load 99.49%.
+This demonstrates that K=400 is computationally practical on the available
+workstation while providing a substantially larger conditioning set than the
+SHAPEIT2 default K=100. The production configuration therefore uses 400
+Hamming-distance-selected conditioning haplotypes per window, with no
+additional perfect-match, random, or coverage-based states.
+
+Genome-wide execution remains one SHAPEIT2 thread per chromosome for exact
+seed reproducibility. Parallelism is delegated to Snakemake by running
+independent chromosomes concurrently, avoiding within-chromosome
+multithreading while efficiently using the workstation's available CPU cores.
