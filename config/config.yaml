@@ -730,7 +730,7 @@ selection:
 
   phasing:
     method: "SHAPEIT2"
-    software_version_target: "v2.r900"
+    software_version_target: "v2.r904"
     status: "eur_reference_overlap_preflight_completed_shapeit2_check_next"
     purpose: "Phase the 46 Cinque Terre individuals for haplotype-based LASSI using the phased 1000 Genomes EUR reference panel; CEU, TSI and IBS already use published phased 1000G haplotypes."
     rationale: "SHAPEIT2 explicitly documents reference-assisted phasing as particularly useful for study datasets with fewer than 100 individuals. The CT cohort contains 46 individuals."
@@ -740,9 +740,9 @@ selection:
       variant_type: "biallelic SNPs"
       rationale: "Phase the same common-variant panel used for the production CT LASSI scan."
     reference_support:
-      selected_scope: "1000_Genomes_Phase3_EUR"
+      selected_scope: "1000_Genomes_Phase3_EUR_via_include_grp"
       reference_samples: 503
-      required_format: "SHAPEIT2/IMPUTE2 HAP + LEGEND + SAMPLE"
+      required_format: "1000 Genomes Phase 3 SHAPEIT2/IMPUTE2 HAP + LEGEND + SAMPLE (full 2503-sample panel), restricted internally to EUR with --include-grp"
       alignment_check: "SHAPEIT2 -check before phasing"
       caution: "With --input-ref, SHAPEIT2 requires study SNPs to be represented in the reference with compatible alleles; incompatible or study-only sites are excluded after the formal alignment check."
     parameters:
@@ -765,9 +765,10 @@ selection:
       required_for_production_phasing: true
     local_resources:
       binary_key: "local_paths.shapeit2_binary"
-      reference_haps_template_key: "local_paths.shapeit2_eur_reference_haps_template"
-      reference_legend_template_key: "local_paths.shapeit2_eur_reference_legend_template"
-      reference_sample_key: "local_paths.shapeit2_eur_reference_sample"
+      reference_haps_template_key: "local_paths.shapeit2_reference_haps_template"
+      reference_legend_template_key: "local_paths.shapeit2_reference_legend_template"
+      reference_sample_key: "local_paths.shapeit2_reference_sample"
+      reference_group_file: "config/shapeit2_reference_groups.txt"
       genetic_map_template_key: "local_paths.shapeit2_b37_map_template"
     preflight:
       exact_eur_overlap_audit: true

@@ -347,10 +347,10 @@ phasing is not a downstream consequence of LD decay.
 
 ## Phasing
 
-The Cinque Terre dataset is phased before LASSI using SHAPEIT2 (v2.r900) with
+The Cinque Terre dataset is phased before LASSI using SHAPEIT2 (v2.r904) with
 the phased 1000 Genomes Phase 3 EUR reference panel.
 
-The CT cohort contains 46 individuals. SHAPEIT2 documentation specifically
+The CT cohort contains 46 individuals. The existing local reference files contain all 2503 Phase 3 individuals; the accompanying SAMPLE file labels each individual by population and super-population, enabling SHAPEIT2 to restrict the reference internally to EUR without generating a second physical HAP/LEGEND panel. SHAPEIT2 documentation specifically
 states that reference-assisted phasing is particularly useful for studies with
 fewer than approximately 100 individuals. The European/CEU effective
 population-size value recommended by SHAPEIT2, Ne=11,418, is therefore used.

@@ -1108,7 +1108,7 @@ remain frozen and unchanged.
 
 ### CT phasing: SHAPEIT2 reference-assisted production design
 
-The CT production phasing method is SHAPEIT2 v2.r900 with the phased
+The CT production phasing method is SHAPEIT2 v2.r904 with the phased
 1000 Genomes Phase 3 EUR reference panel. This is a deliberate small-study
 reference-assisted design: the SHAPEIT2 documentation states that external
 reference haplotypes are particularly useful when phasing fewer than about
@@ -1131,7 +1131,7 @@ alignment exclusion file and are removed from the phasing command with
 independent quantitative summary of marker retention, but the actual SHAPEIT2
 -check output is authoritative for the production exclusion list.
 
-The reference scope is not an open parameter: it is 1000 Genomes EUR. GRCh37
+The reference scope is not an open parameter: it is 1000 Genomes EUR. The local HAP/LEGEND/SAMPLE files are the complete 2503-sample Phase 3 reference, and the EUR restriction is implemented with SHAPEIT2 `--include-grp` using a one-line group file containing `EUR`. This is preferable to duplicating/subsetting the large reference files on disk and is directly supported by SHAPEIT2. GRCh37
 genetic maps are supplied explicitly. A fixed seed and one SHAPEIT2 thread per
 chromosome are used for exact reproducibility, while Snakemake may parallelize
 different chromosomes.
@@ -1169,3 +1169,19 @@ The production sequence is therefore: prepare CT MAF>=0.05 chromosome VCF ->
 SHAPEIT2 `-check` with EUR reference and GRCh37 map -> inspect the generated
 `.snp.strand.exclude` list -> standard reference-assisted SHAPEIT2 phasing
 with that exclusion list.
+
+
+### Historical SHAPEIT2 run versus current EUR-only reference design
+
+Inspection of the archived 2025 CT phasing logs shows that the previous run
+used the complete `1000GP_Phase3_chr*.hap.gz`, `.legend.gz`, and
+`1000GP_Phase3.sample` resources. The SAMPLE file contains 2503 individuals,
+so that historical run was not physically restricted to EUR and its logged
+command lines do not show an explicit `--include-grp EUR` filter.
+
+The current production pipeline intentionally differs at this point: it uses
+the same complete Phase 3 files but supplies `--include-grp` with the group
+identifier `EUR`, yielding the intended 503-sample European reference
+without generating duplicated HAP/LEGEND/SAMPLE resources. The same group
+filter is applied during both SHAPEIT2 `-check` and production phasing so that
+alignment diagnostics and phasing use the identical reference subset.

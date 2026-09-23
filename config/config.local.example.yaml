@@ -20,6 +20,6 @@ local_paths:
   # Exact filename template used by the workflow; adapt to the maps already on your machine.
   shapeit2_b37_map_template: "/absolute/path/to/shapeit2_b37_maps/genetic_map_chr{chrom}_combined_b37.txt"
   # Templates must contain {chrom}, e.g. ".../1000GP_EUR.chr{chrom}.haplotypes.gz"
-  shapeit2_eur_reference_haps_template: "/absolute/path/to/1000GP_EUR.chr{chrom}.haplotypes.gz"
-  shapeit2_eur_reference_legend_template: "/absolute/path/to/1000GP_EUR.chr{chrom}.legend.gz"
-  shapeit2_eur_reference_sample: "/absolute/path/to/1000GP_EUR.sample"
+  shapeit2_reference_haps_template: "/absolute/path/to/1000GP_Phase3_chr{chrom}.hap.gz"
+  shapeit2_reference_legend_template: "/absolute/path/to/1000GP_Phase3_chr{chrom}.legend.gz"
+  shapeit2_reference_sample: "/absolute/path/to/1000GP_Phase3.sample"

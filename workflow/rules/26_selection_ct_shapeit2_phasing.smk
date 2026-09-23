@@ -11,15 +11,15 @@ def shapeit2_binary(wildcards):
 
 
 def shapeit2_ref_haps(wildcards):
-    return config["local_paths"]["shapeit2_eur_reference_haps_template"].format(chrom=wildcards.chrom)
+    return config["local_paths"]["shapeit2_reference_haps_template"].format(chrom=wildcards.chrom)
 
 
 def shapeit2_ref_legend(wildcards):
-    return config["local_paths"]["shapeit2_eur_reference_legend_template"].format(chrom=wildcards.chrom)
+    return config["local_paths"]["shapeit2_reference_legend_template"].format(chrom=wildcards.chrom)
 
 
 def shapeit2_ref_sample(wildcards):
-    return config["local_paths"]["shapeit2_eur_reference_sample"]
+    return config["local_paths"]["shapeit2_reference_sample"]
 
 
 def shapeit2_map(wildcards):
@@ -61,11 +61,13 @@ rule selection_ct_shapeit2_check:
         ref_haps=shapeit2_ref_haps,
         ref_legend=shapeit2_ref_legend,
         ref_sample=shapeit2_ref_sample,
-        map=shapeit2_map
+        map=shapeit2_map,
+        group_file="config/shapeit2_reference_groups.txt"
     output:
         log=SHAPEIT2_DIR + "/check/chr{chrom}.check.log",
         strand=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand",
-        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude"
+        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude",
+        group_file="config/shapeit2_reference_groups.txt"
     params:
         prefix=lambda wc: f"{SHAPEIT2_DIR}/check/chr{wc.chrom}.check"
     shell:
@@ -76,6 +78,7 @@ rule selection_ct_shapeit2_check:
             --input-vcf {input.vcf} \
             --input-map {input.map} \
             --input-ref {input.ref_haps} {input.ref_legend} {input.ref_sample} \
+            --include-grp {input.group_file} \
             --output-log {params.prefix}
 
         # SHAPEIT2 normally creates both files. Keep empty files explicit if
@@ -145,6 +148,7 @@ rule selection_ct_shapeit2_phase:
             --input-vcf {input.vcf} \
             --input-map {input.map} \
             --input-ref {input.ref_haps} {input.ref_legend} {input.ref_sample} \
+            --include-grp {input.group_file} \
             --exclude-snp {input.exclude} \
             --effective-size {params.ne} \
             --window {params.window} \
