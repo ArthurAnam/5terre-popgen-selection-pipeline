@@ -60,7 +60,6 @@ rule selection_ct_phasing_overlap_audit_chromosome:
         bcftools index -f "$shared_eur" 2>> {log}
 
         bcftools query -f '%CHROM\t%POS\n' "$ct" | sort -u > "$tmpdir/ct.pos"
-        bcftools query -f '%CHROM\t%POS\n' "$ref_full" | sort -u > "$tmpdir/full.pos"
         bcftools query -f '%CHROM\t%POS\n' "$ref_eur" | sort -u > "$tmpdir/eur.pos"
 
         ct_n=$(bcftools index -n "$ct")
