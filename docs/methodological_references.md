@@ -1185,3 +1185,28 @@ identifier `EUR`, yielding the intended 503-sample European reference
 without generating duplicated HAP/LEGEND/SAMPLE resources. The same group
 filter is applied during both SHAPEIT2 `-check` and production phasing so that
 alignment diagnostics and phasing use the identical reference subset.
+
+
+### SHAPEIT2 two-stage alignment check
+
+SHAPEIT2 reference-assisted phasing requires study variants to occur in the
+reference with compatible alleles. Its `-check` mode reports study-only and
+allele-incompatible sites in `.snp.strand` and writes their physical
+positions to `.snp.strand.exclude`. When such problems are found, SHAPEIT2
+terminates the diagnostic command non-zero; this is an expected control-flow
+condition rather than evidence that the reference panel itself is invalid.
+
+The workflow therefore implements the documented two-stage procedure. First,
+an unfiltered `-check` is run against the 1000G EUR subset. A non-zero return
+is accepted only if both diagnostic files are non-empty. Second, the generated
+exclusion list is passed back to SHAPEIT2 with `--exclude-snp` in a new
+`-check`. This second check must return zero. Production phasing has an
+explicit dependency on that per-chromosome PASS sentinel.
+
+The first observed chromosome under this workflow was chromosome 12:
+240,237 CT MAF>=0.05 SNPs were read, the EUR group filter correctly retained
+1,006 reference haplotypes (503 diploid individuals) and excluded 4,002
+non-EUR haplotypes, and SHAPEIT2 identified 3,333 study SNPs missing from the
+EUR reference plus 143 misaligned sites. These 3,476 positions are exactly the
+kind of variants the formal exclusion step is intended to remove before the
+clean second check and subsequent phasing.

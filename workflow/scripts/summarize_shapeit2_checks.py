@@ -67,6 +67,7 @@ def main():
         w.writerow(["retained_fraction",total_ret/total_input if total_input else 0.0])
         w.writerow(["minimum_chromosome_retained_fraction",min(r["retained_fraction"] for r in out_rows)])
         w.writerow(["maximum_chromosome_retained_fraction",max(r["retained_fraction"] for r in out_rows)])
+        w.writerow(["post_exclusion_shapeit2_check_all_chromosomes","PASS"])
         w.writerow(["review_status","REVIEW_BEFORE_PRODUCTION_PHASING"])
 
 if __name__ == "__main__":

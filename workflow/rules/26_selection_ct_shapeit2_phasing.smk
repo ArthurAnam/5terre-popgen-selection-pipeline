@@ -73,17 +73,63 @@ rule selection_ct_shapeit2_check:
         r"""
         set -euo pipefail
         mkdir -p {SHAPEIT2_DIR}/check
+
+        # In -check mode SHAPEIT2 deliberately exits non-zero when it detects
+        # missing/misaligned study SNPs. That is the expected diagnostic
+        # condition, provided the strand/exclusion files are produced.
+        set +e
         "{input.shapeit}" -check \
             --input-vcf {input.vcf} \
             --input-map {input.map} \
             --input-ref {input.ref_haps} {input.ref_legend} {input.ref_sample} \
             --include-grp {input.group_file} \
             --output-log {params.prefix}
+        rc=$?
+        set -e
 
-        # SHAPEIT2 normally creates both files. Keep empty files explicit if
-        # a chromosome has no alignment problems so downstream rules are stable.
-        [ -f {output.strand} ] || : > {output.strand}
-        [ -f {output.exclude} ] || : > {output.exclude}
+        if [ "$rc" -eq 0 ]; then
+            [ -f {output.strand} ] || : > {output.strand}
+            [ -f {output.exclude} ] || : > {output.exclude}
+        elif [ -s {output.exclude} ] && [ -s {output.strand} ]; then
+            echo "SHAPEIT2 -check reported alignment problems; exclusion list generated as expected." >> {output.log}
+        else
+            echo "ERROR: SHAPEIT2 -check failed without producing the expected diagnostic files (exit $rc)." >&2
+            exit "$rc"
+        fi
+        """
+
+
+rule selection_ct_shapeit2_check_after_exclude:
+    input:
+        shapeit=shapeit2_binary,
+        vcf=SHAPEIT2_DIR + "/input/chr{chrom}.ct.maf005.vcf.gz",
+        vcf_index=SHAPEIT2_DIR + "/input/chr{chrom}.ct.maf005.vcf.gz.tbi",
+        ref_haps=shapeit2_ref_haps,
+        ref_legend=shapeit2_ref_legend,
+        ref_sample=shapeit2_ref_sample,
+        map=shapeit2_map,
+        group_file="config/shapeit2_reference_groups.txt",
+        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude"
+    output:
+        log=SHAPEIT2_DIR + "/check_after_exclude/chr{chrom}.check_after_exclude.log",
+        ok=SHAPEIT2_DIR + "/check_after_exclude/chr{chrom}.check_after_exclude.ok"
+    params:
+        prefix=lambda wc: f"{SHAPEIT2_DIR}/check_after_exclude/chr{wc.chrom}.check_after_exclude"
+    shell:
+        r"""
+        set -euo pipefail
+        mkdir -p {SHAPEIT2_DIR}/check_after_exclude
+        rm -f {output.ok}
+
+        "{input.shapeit}" -check \
+            --input-vcf {input.vcf} \
+            --input-map {input.map} \
+            --input-ref {input.ref_haps} {input.ref_legend} {input.ref_sample} \
+            --include-grp {input.group_file} \
+            --exclude-snp {input.exclude} \
+            --output-log {params.prefix}
+
+        printf 'PASS\n' > {output.ok}
         """
 
 
@@ -92,6 +138,10 @@ rule summarize_selection_ct_shapeit2_check:
         preflight="results/selection/phasing/preflight/reference_overlap_by_chromosome.tsv",
         exclusions=expand(
             SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude",
+            chrom=SHAPEIT2_CHROMS,
+        ),
+        postcheck_ok=expand(
+            SHAPEIT2_DIR + "/check_after_exclude/chr{chrom}.check_after_exclude.ok",
             chrom=SHAPEIT2_CHROMS,
         ),
         script="workflow/scripts/summarize_shapeit2_checks.py"
@@ -126,6 +176,7 @@ rule selection_ct_shapeit2_phase:
         ref_sample=shapeit2_ref_sample,
         map=shapeit2_map,
         exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude",
+        postcheck_ok=SHAPEIT2_DIR + "/check_after_exclude/chr{chrom}.check_after_exclude.ok",
         group_file="config/shapeit2_reference_groups.txt"
     output:
         haps=SHAPEIT2_DIR + "/phased/chr{chrom}.ct.maf005.phased.haps.gz",

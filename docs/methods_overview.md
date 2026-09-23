@@ -527,3 +527,12 @@ Interpretation should therefore integrate:
 * local signal coherence
 * biological plausibility
 * technical reliability of the region
+
+
+The production workflow therefore requires a clean second SHAPEIT2 `-check`
+after applying the diagnostic exclusion list. A non-zero first check is not
+treated as a pipeline failure when SHAPEIT2 has generated both the detailed
+`.snp.strand` report and the corresponding `.snp.strand.exclude` file;
+any other non-zero termination remains fatal. The phasing rule depends on the
+per-chromosome post-exclusion PASS sentinel, preventing phasing from starting
+unless the reference alignment has been revalidated.
