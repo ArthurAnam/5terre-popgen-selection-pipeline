@@ -1210,3 +1210,62 @@ non-EUR haplotypes, and SHAPEIT2 identified 3,333 study SNPs missing from the
 EUR reference plus 143 misaligned sites. These 3,476 positions are exactly the
 kind of variants the formal exclusion step is intended to remove before the
 clean second check and subsequent phasing.
+
+
+### SHAPEIT2 conditioning-window choice (`--window 0.5`)
+
+The production CT phasing uses a 0.5-Mb SHAPEIT2 conditioning window. This is
+not derived from the LASSI LD-decay analysis and should not be interpreted as
+an estimate of the physical extent of LD in Cinque Terre. It is a model
+parameter controlling the local genomic interval over which SHAPEIT2 selects
+conditioning haplotypes.
+
+Primary software documentation:
+SHAPEIT2 documentation, "Model parameters: Window size W (--window)".
+The documentation states that the default is approximately 2 Mb for GWAS
+datasets, but that the developers' experiments suggest 0.5 Mb may give better
+results for sequence data; the option table likewise advises 0.5 Mb for
+genotypes derived from sequencing.
+
+Published methodological support:
+
+Delaneau O, Howie B, Cox AJ, Zagury J-F, Marchini J. 2013.
+**Haplotype Estimation Using Sequencing Reads.**
+*American Journal of Human Genetics* 93(4):687-696.
+doi:10.1016/j.ajhg.2013.09.002. PMID:24094745. PMCID:PMC3791270.
+
+Role in this project:
+- directly studies SHAPEIT2 in sequencing-derived genotype data;
+- includes high-coverage Illumina samples together with European 1000 Genomes
+  reference haplotypes/genotypes;
+- in the standard SHAPEIT2 experiment without phase-informative reads, uses
+  W=0.5 Mb and K=100;
+- therefore provides a close methodological precedent for a 0.5-Mb
+  conditioning window in sequence-derived human genotypes with European
+  reference support.
+
+Sharp K, Kretzschmar W, Delaneau O, Marchini J. 2016.
+**Phasing for medical sequencing using rare variants and large haplotype
+reference panels.**
+*Bioinformatics* 32(13):1974-1980.
+doi:10.1093/bioinformatics/btw065. PMID:27153703. PMCID:PMC4920110.
+
+Role in this project:
+- explicitly states that SHAPEIT2 had previously shown good performance with
+  a 0.5-Mb window for unphased genotypes derived from sequencing, citing the
+  earlier SHAPEIT2 work and its Supplementary Figure S3;
+- consequently uses 0.5 Mb throughout its reference-based sequencing phasing
+  experiments;
+- provides an independent later methodological use of the same window in the
+  context of sequencing-derived genotypes and external haplotype reference
+  panels.
+
+Project interpretation:
+- 0.5 Mb is adopted because it is the developers' sequence-data recommendation
+  and is supported by published SHAPEIT2 sequencing/reference-panel studies.
+- The choice is not tuned to the observed CT LD curve and is therefore
+  independent of the approximately 55-kb physical LD scale used only to
+  calibrate the SNP-count window for LASSI.
+- We do not claim that 0.5 Mb is a universally optimal phasing window for all
+  WGS datasets; rather, it is a literature-supported, software-recommended
+  setting that matches the data type and reference-assisted design used here.

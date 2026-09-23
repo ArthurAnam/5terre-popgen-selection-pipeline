@@ -749,7 +749,7 @@ selection:
       effective_population_size: 11418
       effective_population_size_rationale: "European/CEU value recommended in SHAPEIT2 documentation."
       window_mb: 0.5
-      window_rationale: "SHAPEIT2 documentation advises 0.5 Mb for sequence-derived genotypes rather than the 2-Mb GWAS default."
+      window_rationale: "Use 0.5 Mb because SHAPEIT2 documentation reports better performance for sequence-derived genotypes than the 2-Mb GWAS default; this setting is also used in Delaneau et al. 2013 (AJHG 93:687-696, doi:10.1016/j.ajhg.2013.09.002) and explicitly retained for sequencing-based reference phasing by Sharp et al. 2016 (Bioinformatics 32:1974-1980, doi:10.1093/bioinformatics/btw065)."
       states: 100
       burn: 7
       prune: 8

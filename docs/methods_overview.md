@@ -361,11 +361,18 @@ Study SNPs absent from the reference or showing incompatible alleles are
 excluded from the reference-assisted run according to the SHAPEIT2 alignment
 output.
 
-For sequence-derived genotypes, SHAPEIT2 recommends a 0.5-Mb conditioning
-window instead of the 2-Mb GWAS default. The production candidate therefore
-uses `--window 0.5`, `--effective-size 11418`, 100 conditioning states,
-and the documented default MCMC schedule (7 burn-in, 8 pruning and 20 main
-iterations). The `--no-mcmc` shortcut is not used because SHAPEIT2 recommends
+For sequence-derived genotypes, the SHAPEIT2 documentation recommends a
+0.5-Mb conditioning window rather than the 2-Mb default used for typical GWAS
+data, based on the developers' sequencing experiments. This choice is also
+supported by Delaneau et al. (2013, *American Journal of Human Genetics*),
+who used the standard SHAPEIT2 model with W=0.5 Mb when phasing high-coverage
+sequence genotypes together with a European 1000 Genomes reference, and by
+Sharp et al. (2016, *Bioinformatics*), who state that SHAPEIT2 had previously
+shown good performance at 0.5 Mb for unphased genotypes derived from sequencing
+and therefore used that window in their reference-based sequencing experiments.
+The production candidate therefore uses `--window 0.5`,
+`--effective-size 11418`, 100 conditioning states, and the documented
+default MCMC schedule (7 burn-in, 8 pruning and 20 main iterations). The `--no-mcmc` shortcut is not used because SHAPEIT2 recommends
 it only for much smaller study samples, typically fewer than 10 individuals.
 
 A fixed random seed and one SHAPEIT2 thread per chromosome are used for exact
