@@ -1316,3 +1316,12 @@ the previously configured state count until this benchmark is reviewed.
 The benchmark uses Snakemake's native benchmark recording and writes its
 phasing output under `results/selection/phasing/shapeit2/benchmark/`, with
 resource metrics under `benchmarks/selection/phasing/`.
+
+Observed result: the chr20 K=400, W=0.5 Mb, Ne=11,418, 7/8/20 MCMC,
+thread=1 run completed successfully on 111,416 retained CT SNPs in exactly
+2,400 seconds (40.0 minutes) according to SHAPEIT2. The log confirmed
+`400 states per window [400 H + 0 PM + 0 R + 0 COV]`, 35 MCMC iterations,
+and the fixed seed 15052011. This demonstrates that K=400 is computationally
+practical at chromosome scale on the current workstation. Peak memory and
+CPU utilization are recorded separately by the Snakemake benchmark TSV and
+are reviewed before the genome-wide production launch.

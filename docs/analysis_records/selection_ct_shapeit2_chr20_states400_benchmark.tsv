@@ -1,0 +1,17 @@
+metric	value
+chromosome	20
+retained_snps	111416
+states	400
+window_mb	0.5
+effective_population_size	11418
+burn	7
+prune	8
+main	20
+mcmc_iterations_total	35
+threads	1
+seed	15052011
+conditioning_state_breakdown	400H_0PM_0R_0COV
+shapeit2_runtime_seconds	2400
+shapeit2_runtime_minutes	40
+status	PASS
+memory_status	PENDING_BENCHMARK_TSV_REVIEW
