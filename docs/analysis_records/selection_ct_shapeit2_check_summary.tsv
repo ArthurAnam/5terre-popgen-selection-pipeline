@@ -1,0 +1,13 @@
+metric	value
+autosomes	22
+ct_maf005_snps	5007326
+missing_in_eur_reference	90392
+misaligned_to_eur_reference	2651
+shapeit2_actual_excluded	93043
+exclude_file_nonempty_lines	94923
+retained_for_phasing	4914283
+retained_fraction	0.9814186254300199
+minimum_chromosome_retained_fraction	0.9578043165080177
+maximum_chromosome_retained_fraction	0.9873842488475997
+post_exclusion_shapeit2_check_all_chromosomes	PASS
+review_status	PASSED_ALIGNMENT_AUDIT

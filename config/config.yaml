@@ -790,6 +790,9 @@ selection:
         interpretation: "The EUR reference provides allele-exact coverage for 97.53% of the CT MAF>=0.05 panel. The formal SHAPEIT2 -check remains authoritative because the overlap preflight counts only variants polymorphic within EUR."
       shapeit_check_required_before_production: true
       shapeit_check_strategy: "initial diagnostic -check -> exclude listed positions -> second -check must PASS -> phasing"
+      alignment_audit_status: "PASS"
+      retained_snps_after_shapeit2_check: 4914283
+      retained_fraction_after_shapeit2_check: 0.9814186254300199
       production_phasing_started: false
     population_handling:
       CT: "requires SHAPEIT2 phasing"

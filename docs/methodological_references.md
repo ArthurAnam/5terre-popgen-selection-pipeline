@@ -1269,3 +1269,30 @@ Project interpretation:
 - We do not claim that 0.5 Mb is a universally optimal phasing window for all
   WGS datasets; rather, it is a literature-supported, software-recommended
   setting that matches the data type and reference-assisted design used here.
+
+
+### Completed CT SHAPEIT2 alignment audit
+
+The formal two-stage SHAPEIT2 alignment audit has completed on all 22
+autosomes using the 1000 Genomes Phase 3 reference restricted internally to
+EUR (503 individuals; 1006 reference haplotypes).
+
+Genome-wide results:
+- CT MAF>=0.05 SNPs entering the audit: 5,007,326;
+- missing from the EUR reference: 90,392;
+- allele-misaligned between CT and EUR reference: 2,651;
+- actual SNPs excluded by SHAPEIT2 before phasing: 93,043;
+- SNPs retained for production phasing: 4,914,283;
+- retained fraction: 0.9814186254 (98.14%);
+- minimum chromosome-specific retained fraction: 0.9578043165 (chr21);
+- maximum chromosome-specific retained fraction: 0.9873842488 (chr4);
+- all 22 post-exclusion SHAPEIT2 `-check` runs completed successfully.
+
+The `.snp.strand.exclude` files contain 94,923 non-empty lines in total,
+which is slightly larger than the 93,043 variants actually excluded. The
+version-controlled audit therefore records SHAPEIT2's reported numbers of
+included/excluded study SNPs from the second check logs, rather than using raw
+line counts from the exclusion files as the authoritative variant count.
+
+This audit is considered passed and authorizes parameter benchmarking and
+subsequent production phasing.
