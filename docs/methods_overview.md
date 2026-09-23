@@ -356,8 +356,7 @@ fewer than approximately 100 individuals. The European/CEU effective
 population-size value recommended by SHAPEIT2, Ne=11,418, is therefore used.
 
 The target phasing panel contains biallelic CT SNPs with MAF>=0.05, matching
-the common-variant panel used for CT LASSI. A formal SHAPEIT2 `-check` step
-is run chromosome-by-chromosome against the EUR reference before phasing.
+the common-variant panel used for CT LASSI. A chromosome-wise overlap preflight is followed by a formal SHAPEIT2 `-check` step against the EUR reference before phasing.
 Study SNPs absent from the reference or showing incompatible alleles are
 excluded from the reference-assisted run according to the SHAPEIT2 alignment
 output.

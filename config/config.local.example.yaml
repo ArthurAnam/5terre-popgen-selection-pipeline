@@ -17,6 +17,8 @@ local_paths:
   # SHAPEIT2 v2.r900 resources for CT reference-assisted phasing.
   shapeit2_binary: "/absolute/path/to/shapeit"
   shapeit2_b37_map_dir: "/absolute/path/to/shapeit2_b37_maps"
+  # Exact filename template used by the workflow; adapt to the maps already on your machine.
+  shapeit2_b37_map_template: "/absolute/path/to/shapeit2_b37_maps/genetic_map_chr{chrom}_combined_b37.txt"
   # Templates must contain {chrom}, e.g. ".../1000GP_EUR.chr{chrom}.haplotypes.gz"
   shapeit2_eur_reference_haps_template: "/absolute/path/to/1000GP_EUR.chr{chrom}.haplotypes.gz"
   shapeit2_eur_reference_legend_template: "/absolute/path/to/1000GP_EUR.chr{chrom}.legend.gz"

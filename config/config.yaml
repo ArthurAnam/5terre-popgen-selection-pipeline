@@ -731,7 +731,7 @@ selection:
   phasing:
     method: "SHAPEIT2"
     software_version_target: "v2.r900"
-    status: "eur_reference_alignment_preflight_next"
+    status: "eur_reference_overlap_preflight_completed_shapeit2_check_next"
     purpose: "Phase the 46 Cinque Terre individuals for haplotype-based LASSI using the phased 1000 Genomes EUR reference panel; CEU, TSI and IBS already use published phased 1000G haplotypes."
     rationale: "SHAPEIT2 explicitly documents reference-assisted phasing as particularly useful for study datasets with fewer than 100 individuals. The CT cohort contains 46 individuals."
     marker_panel:
@@ -768,8 +768,25 @@ selection:
       reference_haps_template_key: "local_paths.shapeit2_eur_reference_haps_template"
       reference_legend_template_key: "local_paths.shapeit2_eur_reference_legend_template"
       reference_sample_key: "local_paths.shapeit2_eur_reference_sample"
+      genetic_map_template_key: "local_paths.shapeit2_b37_map_template"
     preflight:
       exact_eur_overlap_audit: true
+      status: "completed"
+      observed:
+        autosomes: 22
+        ct_maf005_snps: 5007326
+        ct_panel_count_match_all_chromosomes: "PASS"
+        eur_polymorphic_biallelic_snps: 22132890
+        exact_eur_polymorphic_matches: 4883824
+        fraction_ct_exact_eur_polymorphic: 0.9753357380765703
+        same_position_eur_polymorphic: 4884025
+        same_position_allele_mismatches: 201
+        ct_sites_without_exact_polymorphic_eur_match: 123502
+        minimum_chromosome_exact_fraction: 0.951719
+        minimum_chromosome: 21
+        maximum_chromosome_exact_fraction: 0.981391
+        maximum_chromosome: 2
+        interpretation: "The EUR reference provides allele-exact coverage for 97.53% of the CT MAF>=0.05 panel. The formal SHAPEIT2 -check remains authoritative because the overlap preflight counts only variants polymorphic within EUR."
       shapeit_check_required_before_production: true
       production_phasing_started: false
     population_handling:

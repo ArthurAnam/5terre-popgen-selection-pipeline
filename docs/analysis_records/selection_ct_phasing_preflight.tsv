@@ -1,0 +1,18 @@
+metric	value
+autosomes	22
+ct_maf005_bcftools_total	5007326
+ct_maf005_plink_total	5007326
+ct_panel_count_match_all_chromosomes	PASS
+eur_polymorphic_biallelic_snps_total	22132890
+exact_eur_polymorphic_total	4883824
+fraction_ct_maf005_exact_eur_polymorphic	0.9753357380765703
+same_position_eur_polymorphic_total	4884025
+same_position_allele_mismatch_eur_polymorphic	201
+ct_sites_without_exact_polymorphic_eur_match	123502
+minimum_chromosome_exact_fraction	0.951719
+minimum_chromosome	21
+maximum_chromosome_exact_fraction	0.981391
+maximum_chromosome	2
+reference_scope	1000G_EUR_FIXED
+effective_population_size	11418
+interpretation	High and chromosome-consistent overlap supports the fixed 1000G EUR SHAPEIT2 reference design; formal SHAPEIT2 -check remains authoritative for production exclusions.
