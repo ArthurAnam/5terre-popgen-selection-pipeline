@@ -199,7 +199,8 @@ rule selection_ct_shapeit2_phase:
         burn=lambda wc: config["selection"]["phasing"]["parameters"]["burn"],
         prune=lambda wc: config["selection"]["phasing"]["parameters"]["prune"],
         main=lambda wc: config["selection"]["phasing"]["parameters"]["main"],
-        seed=lambda wc: config["selection"]["phasing"]["parameters"]["seed"]
+        seed=lambda wc: config["selection"]["phasing"]["parameters"]["seed"],
+        log_prefix=lambda wc: f"{SHAPEIT2_DIR}/phased/chr{wc.chrom}.phase"
     threads: 1
     shell:
         r"""
@@ -220,8 +221,66 @@ rule selection_ct_shapeit2_phase:
             --thread {threads} \
             --seed {params.seed} \
             --output-max {output.haps} {output.sample} \
-            --output-log {output.log}
+            --output-log {params.log_prefix}
         """
+
+
+rule benchmark_selection_ct_shapeit2_chr20_states400:
+    input:
+        shapeit=shapeit2_binary,
+        vcf=SHAPEIT2_DIR + "/input/chr20.ct.maf005.vcf.gz",
+        ref_haps=lambda wc: config["local_paths"]["shapeit2_reference_haps_template"].format(chrom="20"),
+        ref_legend=lambda wc: config["local_paths"]["shapeit2_reference_legend_template"].format(chrom="20"),
+        ref_sample=shapeit2_ref_sample,
+        map=lambda wc: config["local_paths"]["shapeit2_b37_map_template"].format(chrom="20"),
+        exclude=SHAPEIT2_DIR + "/check/chr20.check.snp.strand.exclude",
+        postcheck_ok=SHAPEIT2_DIR + "/check_after_exclude/chr20.check_after_exclude.ok",
+        group_file="config/shapeit2_reference_groups.txt"
+    output:
+        haps=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phased.haps.gz",
+        sample=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phased.sample",
+        log=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phase.log"
+    params:
+        ne=lambda wc: config["selection"]["phasing"]["parameters"]["effective_population_size"],
+        window=lambda wc: config["selection"]["phasing"]["parameters"]["window_mb"],
+        states=lambda wc: config["selection"]["phasing"]["benchmark"]["states"],
+        burn=lambda wc: config["selection"]["phasing"]["parameters"]["burn"],
+        prune=lambda wc: config["selection"]["phasing"]["parameters"]["prune"],
+        main=lambda wc: config["selection"]["phasing"]["parameters"]["main"],
+        seed=lambda wc: config["selection"]["phasing"]["parameters"]["seed"],
+        log_prefix=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phase"
+    threads: 1
+    benchmark:
+        "benchmarks/selection/phasing/shapeit2_chr20_states400_thread1.tsv"
+    shell:
+        r"""
+        set -euo pipefail
+        mkdir -p {SHAPEIT2_DIR}/benchmark benchmarks/selection/phasing
+        "{input.shapeit}" \
+            --input-vcf {input.vcf} \
+            --input-map {input.map} \
+            --input-ref {input.ref_haps} {input.ref_legend} {input.ref_sample} \
+            --include-grp {input.group_file} \
+            --exclude-snp {input.exclude} \
+            --effective-size {params.ne} \
+            --window {params.window} \
+            --states {params.states} \
+            --burn {params.burn} \
+            --prune {params.prune} \
+            --main {params.main} \
+            --thread {threads} \
+            --seed {params.seed} \
+            --output-max {output.haps} {output.sample} \
+            --output-log {params.log_prefix}
+        """
+
+
+rule audit_selection_ct_shapeit2_chr20_states400_benchmark:
+    input:
+        haps=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phased.haps.gz",
+        sample=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phased.sample",
+        log=SHAPEIT2_DIR + "/benchmark/chr20.states400.thread1.phase.log",
+        benchmark="benchmarks/selection/phasing/shapeit2_chr20_states400_thread1.tsv"
 
 
 rule selection_ct_shapeit2_phasing:

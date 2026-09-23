@@ -757,7 +757,14 @@ selection:
       no_mcmc: false
       threads_per_chromosome: 1
       seed: 15052011
-      rationale: "Use documented SHAPEIT2 defaults for states and MCMC iterations, with the sequence-data window recommendation and a fixed seed. One thread per chromosome preserves exact reproducibility; Snakemake can parallelize chromosomes."
+      rationale: "Use documented SHAPEIT2 defaults for MCMC iterations, with the sequence-data window recommendation and a fixed seed. Production states remain provisional until the dedicated chr20 states=400 benchmark is reviewed. One thread per chromosome preserves exact reproducibility; Snakemake can parallelize chromosomes."
+    benchmark:
+      chromosome: 20
+      states: 400
+      window_mb: 0.5
+      threads: 1
+      purpose: "Measure runtime and memory for an accuracy-oriented K=400 candidate on chr20 without changing production outputs."
+      status: "pending"
     genetic_map:
       build: "GRCh37/b37"
       source: "SHAPEIT2-compatible genetic map"

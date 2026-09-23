@@ -1296,3 +1296,23 @@ line counts from the exclusion files as the authoritative variant count.
 
 This audit is considered passed and authorizes parameter benchmarking and
 subsequent production phasing.
+
+
+### SHAPEIT2 chr20 K=400 runtime benchmark
+
+Before changing the production conditioning-state count, the workflow performs
+a dedicated chromosome-20 benchmark with `--states 400`, `--window 0.5`,
+`--effective-size 11418`, the standard 7/8/20 burn/prune/main schedule, a
+fixed seed, and one SHAPEIT2 thread. Chromosome 20 is used because the formal
+alignment audit leaves 111,416 CT SNPs for phasing there, providing a
+representative but tractable chromosome for measuring computational cost.
+
+The benchmark is deliberately isolated from production outputs. Its purpose is
+to measure wall time and memory under K=400 and to confirm that the proposed
+accuracy-oriented setting is computationally practical. It is not used to
+select a parameter based on downstream LASSI results. Production remains at
+the previously configured state count until this benchmark is reviewed.
+
+The benchmark uses Snakemake's native benchmark recording and writes its
+phasing output under `results/selection/phasing/shapeit2/benchmark/`, with
+resource metrics under `benchmarks/selection/phasing/`.
