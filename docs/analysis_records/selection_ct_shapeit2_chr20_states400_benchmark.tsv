@@ -14,4 +14,14 @@ conditioning_state_breakdown	400H_0PM_0R_0COV
 shapeit2_runtime_seconds	2400
 shapeit2_runtime_minutes	40
 status	PASS
-memory_status	PENDING_BENCHMARK_TSV_REVIEW
+snakemake_wall_seconds	2399.23
+snakemake_wall_hms	0:39:59
+max_rss_mb	836.42
+max_vms_mb	839.29
+max_uss_mb	832.88
+max_pss_mb	833.02
+io_in_mb	202.43
+io_out_mb	4.80
+mean_load_percent	99.49
+cpu_time_seconds	2387.10
+memory_status	PASS

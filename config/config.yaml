@@ -764,10 +764,15 @@ selection:
       window_mb: 0.5
       threads: 1
       purpose: "Measure runtime and memory for an accuracy-oriented K=400 candidate on chr20 without changing production outputs."
-      status: "completed_runtime_pass_memory_pending_review"
+      status: "completed_runtime_and_memory_pass"
       observed_runtime_seconds: 2400
       observed_runtime_minutes: 40
       observed_chr20_snps_phased: 111416
+      observed_max_rss_mb: 836.42
+      observed_max_uss_mb: 832.88
+      observed_max_pss_mb: 833.02
+      observed_mean_load_percent: 99.49
+      observed_cpu_time_seconds: 2387.10
     genetic_map:
       build: "GRCh37/b37"
       source: "SHAPEIT2-compatible genetic map"

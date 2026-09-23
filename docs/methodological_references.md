@@ -1322,6 +1322,12 @@ thread=1 run completed successfully on 111,416 retained CT SNPs in exactly
 2,400 seconds (40.0 minutes) according to SHAPEIT2. The log confirmed
 `400 states per window [400 H + 0 PM + 0 R + 0 COV]`, 35 MCMC iterations,
 and the fixed seed 15052011. This demonstrates that K=400 is computationally
-practical at chromosome scale on the current workstation. Peak memory and
-CPU utilization are recorded separately by the Snakemake benchmark TSV and
-are reviewed before the genome-wide production launch.
+practical at chromosome scale on the current workstation. The Snakemake benchmark recorded max RSS 836.42 MB, max USS 832.88 MB,
+max PSS 833.02 MB, mean load 99.49%, and CPU time 2,387.10 s for 2,399.23 s
+wall time. Thus the single-thread run is strongly CPU-bound and uses less than
+1 GB resident memory. This supports keeping one SHAPEIT2 thread per chromosome
+for deterministic reproducibility while exploiting machine-level parallelism
+by running independent chromosomes concurrently through Snakemake. Practical
+concurrency should be chosen from the workstation's available CPU cores,
+memory, and thermal behavior rather than by increasing SHAPEIT2 threads within
+a chromosome.
