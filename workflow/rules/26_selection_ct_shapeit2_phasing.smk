@@ -66,8 +66,7 @@ rule selection_ct_shapeit2_check:
     output:
         log=SHAPEIT2_DIR + "/check/chr{chrom}.check.log",
         strand=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand",
-        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude",
-        group_file="config/shapeit2_reference_groups.txt"
+        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude"
     params:
         prefix=lambda wc: f"{SHAPEIT2_DIR}/check/chr{wc.chrom}.check"
     shell:
@@ -126,7 +125,8 @@ rule selection_ct_shapeit2_phase:
         ref_legend=shapeit2_ref_legend,
         ref_sample=shapeit2_ref_sample,
         map=shapeit2_map,
-        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude"
+        exclude=SHAPEIT2_DIR + "/check/chr{chrom}.check.snp.strand.exclude",
+        group_file="config/shapeit2_reference_groups.txt"
     output:
         haps=SHAPEIT2_DIR + "/phased/chr{chrom}.ct.maf005.phased.haps.gz",
         sample=SHAPEIT2_DIR + "/phased/chr{chrom}.ct.maf005.phased.sample",

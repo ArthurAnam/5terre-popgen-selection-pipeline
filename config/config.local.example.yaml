@@ -14,7 +14,7 @@ local_paths:
   onekg_phase3_sample_metadata: "/absolute/path/to/1000GP_Phase3.sample"
 
 
-  # SHAPEIT2 v2.r900 resources for CT reference-assisted phasing.
+  # SHAPEIT2 v2.r904 resources for CT reference-assisted phasing.
   shapeit2_binary: "/absolute/path/to/shapeit"
   shapeit2_b37_map_dir: "/absolute/path/to/shapeit2_b37_maps"
   # Exact filename template used by the workflow; adapt to the maps already on your machine.
