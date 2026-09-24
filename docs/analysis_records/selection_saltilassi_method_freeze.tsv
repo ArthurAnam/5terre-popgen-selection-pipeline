@@ -32,3 +32,5 @@ secondary_T_TSI_window	112/11
 secondary_T_IBS_window	116/12
 CEU_T_published_reference	Harris and DeGiorgio 2020 used 117/12
 production_scan_status	NOT_STARTED
+software_audit_contract	must PASS saltiLASSI Lambda primary via --salti plus LASSI T secondary via --lassi
+software_audit_config_dependency	config/config.yaml tracked as Snakemake input so method changes invalidate prior audit

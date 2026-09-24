@@ -1,10 +1,11 @@
 # ============================================================
-# Pinned lassip v1.2.1 software audit and blocking gate
+# Pinned lassip v1.2.1 software + method-configuration audit and blocking gate
 # ============================================================
 
 rule audit_selection_lassip_software:
     input:
-        script="workflow/scripts/audit_lassip_software.py"
+        script="workflow/scripts/audit_lassip_software.py",
+        config="config/config.yaml"
     output:
         audit="results/selection/lassi/preflight/lassip_software_audit.tsv"
     shell:
