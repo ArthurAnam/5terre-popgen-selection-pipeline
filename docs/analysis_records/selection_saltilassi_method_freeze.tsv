@@ -1,0 +1,34 @@
+metric	value
+freeze_status	PREPRODUCTION_METHOD_PARAMETERS_FROZEN
+primary_method	saltiLASSI Lambda
+secondary_method	LASSI T
+software	lassip v1.2.1
+software_commit	a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c
+input_phase	phased
+primary_K	10
+weight_model	D; exp(-i); lassip --lassi-choice 4
+distance_measure	physical bp
+max_extend_bp	100000
+null_HFS	population-specific unweighted mean K-truncated HFS across all autosomal analysis windows
+null_HFS_min_pK	0.001 for K=10
+marker_ascertainment	MAF>=0.05 within population
+CT_winsize_winstep	99/50
+CEU_winsize_winstep	116/58
+TSI_winsize_winstep	112/56
+IBS_winsize_winstep	116/58
+LD_primary_rule	d_LD,p = min{d: mean_r2_p(d) < (1/3)*mean_r2_p(1kb)}
+LD_1kb_operationalization	mean r2 for pairs separated by 0.5-1.5 kb
+LD_bin_width_kb	1
+LD_stable_crossing	five consecutive below-threshold bins; robustness diagnostic only
+mappability_metric	CRG100 100-mer alignability, GRCh37/hg19
+mappability_threshold	0.9
+CT_inference_framework	empirical outlier
+CT_primary_candidate_threshold	top 1% genome-wide Lambda
+CT_descriptive_thresholds	top 0.1%; top 5%
+CT_region_merge_rule	concatenate consecutive windows exceeding top-1% Lambda
+secondary_T_CT_window	99/10
+secondary_T_CEU_window	116/12
+secondary_T_TSI_window	112/11
+secondary_T_IBS_window	116/12
+CEU_T_published_reference	Harris and DeGiorgio 2020 used 117/12
+production_scan_status	NOT_STARTED

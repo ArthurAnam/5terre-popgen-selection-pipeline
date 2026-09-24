@@ -863,117 +863,93 @@ selection:
       remaining: []
 
   lassi:
-    method: "LASSI_T"
-    statistic: "T"
-    purpose: "Likelihood-based identification of candidate genomic regions whose haplotype-frequency spectrum is distorted relative to the genome-wide background."
-    window_definition: "derived_from_ld_decay"
-    scan_mode: "sliding_likelihood_window"
-
+    method: "saltiLASSI"
+    statistic: "Lambda"
+    purpose: "Primary spatially aware likelihood scan for selective-sweep candidates from phased haplotype-frequency spectra; original LASSI T is retained as a secondary benchmark."
+    scan_mode: "spatial_composite_likelihood"
     implementation:
       program: "lassip"
-      upstream_repository: "szpiech/lassip"
-      upstream_url: "https://github.com/szpiech/lassip"
       version: "1.2.1"
       commit: "a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c"
-      mode_flag: "--lassi"
-      salti_primary: false
-      rationale: "Use the maintained C++ lassip implementation of the original Harris & DeGiorgio 2020 LASSI T statistic. This preserves the intended LASSI method while avoiding the legacy 2019 Python-2.7-only LASSI_iterator.py package and permits direct phased-VCF input."
+      primary_mode_flag: "--salti"
+      secondary_mode_flag: "--lassi"
+      salti_primary: true
       local_source_dir_key: "local_paths.lassip_source_dir"
       local_binary_key: "local_paths.lassip_binary"
-
     primary_model:
+      phased: true
       k_truncation: 10
       lassi_choice: 4
-      phased: true
-      rationale: "The published human LASSI analysis used K=10 as the primary truncation, examined K=20 for softness sensitivity, and used weight-allocation scheme D; lassip exposes the corresponding primary implementation with --k 10 and --lassi-choice 4."
-      k20_sensitivity:
-        enabled: true
-        role: "softness_classification_sensitivity"
-        rationale: "K affects the resolution of inferred sweep softness m; the 2020 human analysis explicitly compared K=10 and K=20."
-      null_spectrum: "population-specific genome-wide mean K-truncated haplotype-frequency spectrum across autosomes"
+      weight_allocation_model: "D; sweeping-class mass proportional to exp(-i)"
+      distance_type: "bp"
+      max_extend_bp: 100000
+      max_extend_status: "frozen_at_lassip_default"
+      null_spectrum: "population-specific genome-wide unweighted mean K-truncated HFS across all autosomal analysis windows"
       null_spectrum_scope: "computed separately for CT, CEU, TSI and IBS"
+      null_min_pk: 0.001
       filter_level: 2
       max_hmiss: 0.20
       max_lmiss: 0.10
       match_tol: 0
-      filtering_note: "These lassip defaults are retained for safety; production input audits must verify the phased population-specific MAF>=0.05 panels so monomorphic/missing-data filtering does not silently alter the intended marker set."
-
-    likelihood_window_snps: "population_specific; CT=99, CEU=116, TSI=112, IBS=116"
-    likelihood_shift_snps: "population_specific; CT=10, CEU=12, TSI=11, IBS=12"
-    window_parameter_units: "SNP count, not kb"
-    window_calibration:
-      strategy: "population_specific"
-      status: "completed_and_frozen"
-      populations: ["CT", "CEU", "TSI", "IBS"]
-      principle: "Each population receives its own MAF>=0.05 LD-decay estimate and its own SNP-delimited winsize/winstep; no common window is imposed across populations."
-      step_rule: "round 10% of each population-specific winsize to nearest integer, minimum 1 SNP"
+    marker_panel:
+      maf_threshold: 0.05
+      status: "frozen_study_specific_common_variant_ascertainment"
+      note: "The 2022 empirical CEU/YRI saltiLASSI analysis retained all sample-polymorphic biallelic SNPs, whereas this study uses the pre-specified MAF>=0.05 panel. Absolute Lambda values are therefore not treated as directly comparable to the published CEU/YRI scores."
+    windowing:
+      units: "SNP count"
+      strategy: "reuse population-specific LD-derived LASSI windows as pre-specified local HFS scales"
+      salti_step_strategy: "approximately 50% of winsize"
+      salti_step_rationale: "The empirical human saltiLASSI application used winsize=201 and winstep=100. The approximately 50% overlap is transferred proportionally; this is a study design choice, not a universal recommendation."
+      CT: {winsize_snps: 99, winstep_snps: 50, physical_ld_scale_kb: 55.5}
+      CEU: {winsize_snps: 116, winstep_snps: 58, physical_ld_scale_kb: 53.5}
+      TSI: {winsize_snps: 112, winstep_snps: 56, physical_ld_scale_kb: 52.5}
+      IBS: {winsize_snps: 116, winstep_snps: 58, physical_ld_scale_kb: 53.5}
+    ld_calibration:
+      primary_definition: "first 1-kb bin whose mean r2 is below one third of the mean r2 for SNP pairs separated by 0.5-1.5 kb"
+      formula: "d_LD,p = min{d: mean_r2_p(d) < (1/3) * mean_r2_p(1kb)}"
+      stable_crossing_role: "robustness diagnostic only; first bin initiating five consecutive below-threshold bins"
+      stable_crossing_not_used_for_window: true
+      full_eur_context: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
+    mappability:
+      required: true
+      metric: "CRG100 / wgEncodeCrgMapabilityAlign100mer"
+      genome_build: "GRCh37/hg19"
+      threshold: 0.9
+      local_resource_key: "local_paths.crg100_bigwig"
+    inference:
       CT:
-        role: "focal_discovery_population"
-        physical_scale_kb: 55.5
-        stable_physical_scale_kb: 57.5
-        baseline_mean_r2: 0.4144855994950274
-        one_third_threshold_r2: 0.13816186648452627
-        n_anchors: 2200
-        median_snps_primary: 99.0
-        q1_snps_primary: 68.0
-        q3_snps_primary: 136.0
-        median_snps_stable: 103.0
-        selected_winsize_snps: 99
-        selected_winstep_snps: 10
-        status: "frozen"
-      CEU:
-        role: "empirical_LASSI_benchmark"
-        physical_scale_kb: 53.5
-        stable_physical_scale_kb: 53.5
-        baseline_mean_r2: 0.41264905618283076
-        one_third_threshold_r2: 0.13754968538052195
-        n_anchors: 2200
-        median_snps_primary: 116.0
-        q1_snps_primary: 78.75
-        q3_snps_primary: 156.0
-        selected_winsize_snps: 116
-        selected_winstep_snps: 12
-        status: "frozen"
-      TSI:
-        role: "Southern_European_proximate_comparator"
-        physical_scale_kb: 52.5
-        stable_physical_scale_kb: 52.5
-        baseline_mean_r2: 0.40857039026268993
-        one_third_threshold_r2: 0.1361901300739443
-        n_anchors: 2200
-        median_snps_primary: 112.0
-        q1_snps_primary: 77.0
-        q3_snps_primary: 154.0
-        selected_winsize_snps: 112
-        selected_winstep_snps: 11
-        status: "frozen"
-      IBS:
-        role: "Southern_European_proximate_comparator"
-        physical_scale_kb: 53.5
-        stable_physical_scale_kb: 53.5
-        baseline_mean_r2: 0.41134044457191504
-        one_third_threshold_r2: 0.13711348151026032
-        n_anchors: 2200
-        median_snps_primary: 116.0
-        q1_snps_primary: 78.75
-        q3_snps_primary: 156.0
-        selected_winsize_snps: 116
-        selected_winstep_snps: 12
-        status: "frozen"
-      interpretation: "Physical LD decay is highly similar across the four populations (52.5-55.5 kb), but the SNP count representing that physical scale differs because population-specific MAF>=0.05 panels have different marker densities. Population-specific winsizes are therefore retained."
-
+        threshold_framework: "empirical_outlier"
+        primary_candidate_threshold: "top 1% genome-wide Lambda"
+        descriptive_thresholds: ["top 0.1%", "top 5%"]
+        merge_rule: "concatenate consecutive windows exceeding the top-1% threshold"
+        terminology: "candidate/outlier regions; do not call simulated-demography significance"
+      comparators:
+        populations: ["CEU", "TSI", "IBS"]
+        threshold_framework: "population-specific empirical ranking"
+        note: "No cross-population comparison of absolute Lambda values or shared numeric thresholds."
+      recombination_caution: "Annotate strong candidates in low-recombination regions and interpret them with extra scrutiny because Lambda is a composite likelihood that ignores recombination."
+    secondary_lassi_T:
+      enabled: true
+      role: "methodological benchmark and continuity with Harris & DeGiorgio 2020"
+      model_D_choice: 4
+      K: 10
+      population_specific_windows:
+        CT: {winsize_snps: 99, winstep_snps: 10}
+        CEU: {winsize_snps: 116, winstep_snps: 12}
+        TSI: {winsize_snps: 112, winstep_snps: 11}
+        IBS: {winsize_snps: 116, winstep_snps: 12}
+      CEU_benchmark_note: "The independently calibrated CEU 116/12 window is close to the published 117/12 human LASSI scan and supports qualitative locus/ranking comparison. It is not an exact score replication because this study uses MAF>=0.05 ascertainment."
     software_preflight:
       required: true
       expected_version: "1.2.1"
       expected_commit: "a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c"
       expected_repository: "szpiech/lassip"
       gate_target: "gate_selection_lassip_software"
-
     parameters_to_refine:
       remaining:
-        - "production phased-VCF input generation and marker-set audit"
-        - "runtime benchmark"
-        - "post-scan significance/candidate-region definition"
+        - "obtain and checksum the GRCh37 CRG100 resource"
+        - "production phased-VCF generation and exact marker/missingness audit"
+        - "single CT chr20 runtime/RAM/output-size benchmark for the frozen saltiLASSI setting"
 
 
 # ============================================================
@@ -983,7 +959,7 @@ selection:
 lassi_postprocessing:
   description: "Post-processing, ranking, and annotation of candidate genomic regions."
 
-  primary_output: "candidate_regions_deviating_from_neutrality"
+  primary_output: "saltiLASSI_candidate_outlier_regions"
 
   candidate_region_definition:
     allow_single_high_scoring_windows: true
@@ -995,8 +971,8 @@ lassi_postprocessing:
   ranking:
     enabled: true
     criteria:
-      - "maximum LASSI score"
-      - "mean LASSI score"
+      - "maximum saltiLASSI Lambda"
+      - "mean saltiLASSI Lambda"
       - "local signal coherence"
       - "genomic span"
       - "functional genomic context"
@@ -1008,10 +984,12 @@ lassi_postprocessing:
     soft_sweep: "m > 1"
 
   mappability_filtering:
-    enabled: false
-    status: "secondary_or_sensitivity_filter_if_used"
+    enabled: true
+    status: "required_preproduction_filter"
     candidate_metric: "mean CRG100 score"
     candidate_threshold: 0.9
+    genome_build: "GRCh37/hg19"
+    local_resource_key: "local_paths.crg100_bigwig"
 
 
 # ============================================================

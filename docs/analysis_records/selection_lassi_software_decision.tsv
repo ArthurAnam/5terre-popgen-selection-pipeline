@@ -28,3 +28,10 @@ CEU_role	empirical LASSI benchmark and Northern-European reference; not a positi
 software_gate_target	gate_selection_lassip_software
 production_scan_status	NOT_STARTED
 next_step	Build the pinned lassip commit locally, configure machine-specific paths, pass software audit/gate, then prepare and audit phased population-specific VCF inputs.
+primary_method_after_review	saltiLASSI Lambda
+secondary_method_after_review	LASSI T
+primary_distance_type	bp
+primary_max_extend_bp	100000
+mappability_required	YES; mean CRG100 >=0.9
+CT_inference	empirical outlier; top 1% Lambda primary candidate threshold
+CEU_T_benchmark	116/12 study calibration versus 117/12 published; qualitative locus/ranking comparison only

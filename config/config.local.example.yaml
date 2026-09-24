@@ -29,3 +29,7 @@ local_paths:
   # Clone szpiech/lassip and pin it to commit a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c.
   lassip_source_dir: "/absolute/path/to/lassip"
   lassip_binary: "/absolute/path/to/lassip/src/lassip"
+
+
+  # GRCh37/hg19 CRG 100-mer alignability/mappability track for saltiLASSI.
+  crg100_bigwig: "/absolute/path/to/wgEncodeCrgMapabilityAlign100mer.bigWig"
