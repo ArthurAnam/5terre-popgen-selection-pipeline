@@ -33,6 +33,7 @@ tempCodeRunnerFile.py
 .snakemake/
 snakemake_tmp/
 *.snakemake.log
+*_run.log
 
 # Machine-specific configuration
 config/config.local.yaml

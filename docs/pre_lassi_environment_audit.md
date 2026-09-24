@@ -25,6 +25,12 @@ Machine-specific reports are written under `results/provenance/` and remain
 ignored by Git. After review, only portable conclusions should be copied into
 `docs/analysis_records/`.
 
+Top-level `*_run.log` files are treated as ephemeral command transcripts and are
+ignored by Git; reproducible conclusions belong in versioned analysis records,
+not in ad-hoc execution logs. Software checks also tolerate tools such as KING
+that print a parseable version banner but return a non-zero status for their
+`--version` invocation.
+
 LASSI software visibility is deliberately a `WARN`, not a hard failure, at
 this stage. The official LASSI package/version/scripts must be installed and
 frozen only after the current machine/software/file audit has been interpreted

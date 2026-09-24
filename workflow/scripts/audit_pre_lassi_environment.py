@@ -110,7 +110,21 @@ software("tabix", ["tabix","--version"])
 software("bgzip", ["bgzip","--version"])
 software("plink1", ["plink","--version"])
 software("plink2", ["plink2","--version"])
-software("king", ["king","--version"])
+king_exe = shutil.which("king")
+if not king_exe:
+    record("software_king", "FAIL", "command not found: king")
+else:
+    king_r = run(["king","--version"])
+    king_text = " ".join(king_r.stdout.splitlines()[:3])
+    king_version = re.search(r"\bKING\s+([0-9]+(?:\.[0-9]+)+)", king_text)
+    if king_version:
+        record("software_king", "PASS", f"{king_exe} ; KING {king_version.group(1)}")
+    else:
+        record(
+            "software_king",
+            "PASS" if king_r.returncode == 0 else "WARN",
+            king_text or king_exe,
+        )
 software("gzip", ["gzip","--version"])
 
 if shutil.which("smartpca"):
@@ -237,7 +251,7 @@ with open(MANIFEST,"w",newline="") as fh:
 record("ct_maf005_input_count", "PASS" if maf_total == 5007326 else "FAIL", maf_total)
 record("critical_manifest", "PASS" if all(r[2] and r[3] and r[4] for r in manifest_rows) else "FAIL", str(MANIFEST))
 
-dry = run(["snakemake","-n","--quiet","audit_selection_ct_shapeit2_phasing"])
+dry = run(["snakemake","-n","audit_selection_ct_shapeit2_phasing"])
 record("phasing_audit_dag_current", "PASS" if dry.returncode == 0 else "FAIL", " ".join(dry.stdout.splitlines()[-3:]))
 
 broken = []
