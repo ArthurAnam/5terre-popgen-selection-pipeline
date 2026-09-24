@@ -86,7 +86,7 @@ Regions overlapping poorly mappable or otherwise problematic genomic intervals m
 
 Following the strategy adopted in the original LASSI framework, candidate windows overlapping regions of low alignability and mappability may be filtered using CRG100 scores.
 
-Previous exploratory analyses excluded windows overlapping genomic regions with mean CRG100 score < 0.9.
+Previous exploratory outputs include candidate subsets filtered at mean CRG100 > 0.8; these historical exploratory thresholds are not carried forward as the production criterion. The saltiLASSI production workflow uses the pre-specified mean CRG100 >= 0.9 threshold.
 
 This filtering step is intended to reduce false positive signals arising from technically unreliable genomic regions, rather than to impose biological assumptions about selection.
 
