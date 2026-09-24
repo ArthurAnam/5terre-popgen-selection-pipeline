@@ -39,7 +39,7 @@ def lassi_ref_source_index(wildcards):
 
 rule selection_lassi_ct_popfile:
     input:
-        samples="results/selection/phasing/audit/sample_order.txt"
+        samples="results/selection/phasing/shapeit2/audit/sample_order.txt"
     output:
         popfile=LASSI_INPUT_DIR + "/CT/CT.pop.txt"
     shell:
@@ -77,7 +77,7 @@ rule selection_lassi_ct_phased_vcf:
         haps="results/selection/phasing/shapeit2/phased/chr{chrom}.ct.maf005.phased.haps.gz",
         sample="results/selection/phasing/shapeit2/phased/chr{chrom}.ct.maf005.phased.sample",
         source_vcf="results/selection/phasing/shapeit2/input/chr{chrom}.ct.maf005.vcf.gz",
-        post_audit="results/selection/phasing/audit/postphasing_audit_summary.tsv",
+        post_audit="results/selection/phasing/shapeit2/audit/phasing_audit_summary.tsv",
         converter="workflow/scripts/shapeit_haps_to_vcf.py"
     output:
         vcf=LASSI_INPUT_DIR + "/CT/chr{chrom}.CT.maf005.phased.vcf.gz"
