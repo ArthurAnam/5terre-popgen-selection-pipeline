@@ -34,3 +34,6 @@ CEU_T_published_reference	Harris and DeGiorgio 2020 used 117/12
 production_scan_status	NOT_STARTED
 software_audit_contract	must PASS saltiLASSI Lambda primary via --salti plus LASSI T secondary via --lassi
 software_audit_config_dependency	config/config.yaml tracked as Snakemake input so method changes invalidate prior audit
+lassip_software_gate_result	PASS
+lassip_software_gate_tested_commit	28d50e93bc9e690beea71003c9195acb891c0dfe
+lassip_binary_sha256	ebaf380d74e5ef09347204e02c679b1b6fe7660bac9cca6d537173523d688c44

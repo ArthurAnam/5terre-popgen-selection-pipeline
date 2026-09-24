@@ -32,4 +32,6 @@ local_paths:
 
 
   # GRCh37/hg19 CRG 100-mer alignability/mappability track for saltiLASSI.
+  # Official UCSC file: wgEncodeCrgMapabilityAlign100mer.bigWig
+  # Expected MD5: a1b1a8c99431fedf6a3b4baef028cca4
   crg100_bigwig: "/absolute/path/to/wgEncodeCrgMapabilityAlign100mer.bigWig"

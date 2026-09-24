@@ -916,6 +916,11 @@ selection:
       genome_build: "GRCh37/hg19"
       threshold: 0.9
       local_resource_key: "local_paths.crg100_bigwig"
+      source: "UCSC ENCODE Mappability track"
+      source_url: "https://hgdownload.soe.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeMapability/wgEncodeCrgMapabilityAlign100mer.bigWig"
+      expected_filename: "wgEncodeCrgMapabilityAlign100mer.bigWig"
+      expected_md5: "a1b1a8c99431fedf6a3b4baef028cca4"
+      ucsc_accession: "wgEncodeEH000317"
     inference:
       CT:
         threshold_framework: "empirical_outlier"
