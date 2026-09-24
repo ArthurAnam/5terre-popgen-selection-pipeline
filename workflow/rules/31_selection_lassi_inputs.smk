@@ -41,13 +41,13 @@ rule selection_lassi_ct_popfile:
     input:
         samples="results/selection/phasing/audit/sample_order.txt"
     output:
-        pop=LASSI_INPUT_DIR + "/CT/CT.pop.txt"
+        popfile=LASSI_INPUT_DIR + "/CT/CT.pop.txt"
     shell:
         r"""
         set -euo pipefail
-        mkdir -p $(dirname {output.pop})
-        awk 'NF {{print $1, "CT"}}' {input.samples} > {output.pop}
-        [ "$(wc -l < {output.pop})" -eq 46 ]
+        mkdir -p $(dirname {output.popfile})
+        awk 'NF {{print $1, "CT"}}' {input.samples} > {output.popfile}
+        [ "$(wc -l < {output.popfile})" -eq 46 ]
         """
 
 
@@ -55,7 +55,7 @@ rule selection_lassi_reference_popfile:
     input:
         metadata="results/reference/1kg_eur/metadata/eur_samples.tsv"
     output:
-        pop=LASSI_INPUT_DIR + "/{population}/{population}.pop.txt",
+        popfile=LASSI_INPUT_DIR + "/{population}/{population}.pop.txt",
         samples=LASSI_INPUT_DIR + "/{population}/{population}.samples.txt"
     params:
         expected=lambda wc: config["datasets"]["reference_1kg_eur"]["populations"]["expected_counts"][wc.population]
@@ -64,9 +64,9 @@ rule selection_lassi_reference_popfile:
     shell:
         r"""
         set -euo pipefail
-        mkdir -p $(dirname {output.pop})
+        mkdir -p $(dirname {output.popfile})
         awk -F '\t' -v pop="{wildcards.population}" 'NR>1 && $2==pop {{print $1}}' {input.metadata} > {output.samples}
-        awk -v pop="{wildcards.population}" 'NF {{print $1, pop}}' {output.samples} > {output.pop}
+        awk -v pop="{wildcards.population}" 'NF {{print $1, pop}}' {output.samples} > {output.popfile}
         n=$(wc -l < {output.samples})
         [ "$n" -eq "{params.expected}" ] || {{ echo "ERROR: {wildcards.population}: expected {params.expected} samples, found $n" >&2; exit 1; }}
         """
@@ -121,7 +121,7 @@ rule audit_selection_lassi_ct_input:
             LASSI_INPUT_DIR + "/CT/chr{chrom}.CT.maf005.phased.vcf.gz",
             chrom=LASSI_INPUT_CHROMS,
         ),
-        pop=LASSI_INPUT_DIR + "/CT/CT.pop.txt",
+        popfile=LASSI_INPUT_DIR + "/CT/CT.pop.txt",
         script="workflow/scripts/audit_lassi_input_vcf.py"
     output:
         summary=LASSI_INPUT_AUDIT_DIR + "/CT/input_summary.tsv",
@@ -135,7 +135,7 @@ rule audit_selection_lassi_ct_input:
     shell:
         r"""
         set -euo pipefail
-        python {input.script}             --population CT             --expected-samples {params.expected}             --pop-file {input.pop}             --vcfs {input.vcfs}             --maf-threshold {params.maf}             --max-site-missing 0.05             --summary-out {output.summary}             --by-chrom-out {output.by_chrom}             --panel-bim-out {output.bim}
+        python {input.script}             --population CT             --expected-samples {params.expected}             --pop-file {input.popfile}             --vcfs {input.vcfs}             --maf-threshold {params.maf}             --max-site-missing 0.05             --summary-out {output.summary}             --by-chrom-out {output.by_chrom}             --panel-bim-out {output.bim}
         """
 
 
@@ -145,7 +145,7 @@ rule audit_selection_lassi_reference_input:
             f"{LASSI_INPUT_DIR}/{wc.population}/chr{chrom}.{wc.population}.maf005.phased.vcf.gz"
             for chrom in LASSI_INPUT_CHROMS
         ],
-        pop=LASSI_INPUT_DIR + "/{population}/{population}.pop.txt",
+        popfile=LASSI_INPUT_DIR + "/{population}/{population}.pop.txt",
         expected_bim="results/selection/ld_decay/reference/{population}/{population}.maf005.bim",
         script="workflow/scripts/audit_lassi_input_vcf.py"
     output:
@@ -162,7 +162,7 @@ rule audit_selection_lassi_reference_input:
     shell:
         r"""
         set -euo pipefail
-        python {input.script}             --population {wildcards.population}             --expected-samples {params.expected}             --pop-file {input.pop}             --vcfs {input.vcfs}             --maf-threshold {params.maf}             --max-site-missing 0.05             --require-maf             --expected-bim {input.expected_bim}             --summary-out {output.summary}             --by-chrom-out {output.by_chrom}             --panel-bim-out {output.bim}
+        python {input.script}             --population {wildcards.population}             --expected-samples {params.expected}             --pop-file {input.popfile}             --vcfs {input.vcfs}             --maf-threshold {params.maf}             --max-site-missing 0.05             --require-maf             --expected-bim {input.expected_bim}             --summary-out {output.summary}             --by-chrom-out {output.by_chrom}             --panel-bim-out {output.bim}
         """
 
 
