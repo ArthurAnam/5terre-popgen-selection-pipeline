@@ -15,8 +15,7 @@ input_missing_skipped	24467
 genotype_dosage_mismatches	0
 phase_log_core_failures	0
 all_logs_seed_parsed	PASS
-all_logs_thread1_parsed	REVIEW
-thread1_review_interpretation	Production Snakemake rule enforced threads=1; parser did not match expected log wording.
+all_logs_thread1_parsed	PASS
 all_logs_window05_parsed	PASS
 all_logs_Ne11418_parsed	PASS
 sum_shapeit2_runtime_seconds	337728

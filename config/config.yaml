@@ -731,7 +731,7 @@ selection:
   phasing:
     method: "SHAPEIT2"
     software_version_target: "v2.r904"
-    status: "production_phasing_completed_post_phasing_audit_pending"
+    status: "production_phasing_completed_post_phasing_audit_pass"
     purpose: "Phase the 46 Cinque Terre individuals for haplotype-based LASSI using the phased 1000 Genomes EUR reference panel; CEU, TSI and IBS already use published phased 1000G haplotypes."
     rationale: "SHAPEIT2 explicitly documents reference-assisted phasing as particularly useful for study datasets with fewer than 100 individuals. The CT cohort contains 46 individuals."
     marker_panel:
@@ -816,7 +816,7 @@ selection:
       production_elapsed_hms: "12:08:31"
     post_phasing_audit:
       enabled: true
-      status: "pending_local_execution"
+      status: "PASS"
       scope: "all_22_autosomes"
       gzip_crc_integrity: true
       sample_count_and_order_consistency: true
@@ -830,6 +830,24 @@ selection:
       expected_samples: 46
       expected_haplotypes_per_site: 92
       expected_total_phased_snps: 4914283
+      observed_total_phased_snps: 4914283
+      observed_samples: 46
+      observed_haplotypes_per_site: 92
+      site_identity_mismatches: 0
+      nonbinary_values: 0
+      duplicate_exact_sites: 0
+      duplicate_positions: 0
+      out_of_order_positions: 0
+      nonmissing_genotypes_compared_exhaustively: 226032551
+      input_missing_genotypes_skipped: 24467
+      genotype_dosage_mismatches: 0
+      phase_log_core_failures: 0
+      seed_log_parse: "PASS"
+      thread1_log_parse: "PASS"
+      window05_log_parse: "PASS"
+      ne11418_log_parse: "PASS"
+      chr20_repeatability: "PASS_identical_decompressed_HAPS_and_SAMPLE"
+      lassi_structural_readiness: "PASS"
       limitation: "Internal consistency cannot estimate switch-error/phasing accuracy without independent truth or an external-method sensitivity analysis."
     population_handling:
       CT: "requires SHAPEIT2 phasing"
@@ -842,7 +860,7 @@ selection:
       window: null
       states: null
       mcmc_iterations: null
-      remaining: ["review post-phasing internal-consistency audit before LASSI input construction"]
+      remaining: []
 
   lassi:
     method: "LASSI"

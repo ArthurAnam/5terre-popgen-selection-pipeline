@@ -1401,3 +1401,32 @@ These checks establish technical integrity, genotype conservation and
 repeatability. They do not estimate switch error or statistical phasing
 accuracy, which would require independent phase truth (for example trios or a
 truth set) or a prespecified external-method sensitivity analysis.
+
+
+### Completed post-phasing internal-consistency audit
+
+The production CT SHAPEIT2 panel passed the post-phasing audit across all 22
+autosomes. The observed total of 4,914,283 phased SNPs exactly matched the
+count retained by the formal SHAPEIT2 alignment audit. All chromosomes
+contained 46 study samples and 92 haplotypes per site. No site-identity
+mismatches, non-binary haplotype values, duplicate exact sites, duplicate
+physical positions, or out-of-order coordinates were detected.
+
+Genotype conservation was checked exhaustively at all phased sites. A total of
+226,032,551 non-missing source VCF genotype calls were compared with diploid
+dosages reconstructed from the two SHAPEIT2 haplotypes; zero dosage mismatches
+were observed. A further 24,467 source genotype calls were missing and were
+therefore not used for genotype-conservation comparison.
+
+All core production-log checks passed, including parsing of seed 15052011,
+one thread per chromosome, the 0.5-Mb window and Ne=11,418.
+
+Chromosome 20 provided an empirical repeatability test. The production and
+states-400 benchmark HAPS files had identical decompressed SHA256 content and
+the SAMPLE files were also identical, giving a repeatability PASS for the
+fixed-seed, single-thread production configuration.
+
+The phased CT panel is structurally ready for LASSI input construction. These
+checks validate integrity, genotype conservation and repeatability; they do
+not estimate switch error or absolute phase accuracy in the absence of
+independent phase truth.
