@@ -76,7 +76,7 @@ def logcheck(path,snps,n,ref):
     t=Path(path).read_text(errors='replace')
     core=[re.search(r'Running time:\s*\d+\s*seconds',t),'Main iteration [20/20]' in t,'Normalising graphs' in t,'Solving haplotypes' in t,re.search(rf'\b{snps}\s+SNPs included\b',t),re.search(rf'\b{n}\s+samples\b',t),re.search(rf'\b{ref}\s+reference haplotypes\b',t),('400 H' in t or re.search(r'\b400\s+states per window\b',t))]
     rt=re.search(r'Running time:\s*(\d+)\s*seconds',t)
-    extra=[re.search(r'Seed\s*[:=]\s*15052011\b',t,re.I),re.search(r'\b1\s+thread\b',t,re.I),re.search(r'(?:window|windows)[^\n]*\b0\.5\s*Mb\b',t,re.I),re.search(r'(?:effective population|\bNe\b)[^\n]*\b11418\b',t,re.I)]
+    extra=[re.search(r'Seed\s*[:=]\s*15052011\b',t,re.I),re.search(r'\b1\s+threads?\b',t,re.I),re.search(r'(?:window|windows)[^\n]*\b0\.5\s*Mb\b',t,re.I),re.search(r'(?:effective population|\bNe\b)[^\n]*\b11418\b',t,re.I)]
     return all(core),int(rt.group(1)) if rt else 0,[bool(x) for x in extra]
 def main():
     p=argparse.ArgumentParser()
