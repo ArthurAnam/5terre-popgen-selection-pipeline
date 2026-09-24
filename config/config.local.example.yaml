@@ -23,3 +23,9 @@ local_paths:
   shapeit2_reference_haps_template: "/absolute/path/to/1000GP_Phase3_chr{chrom}.hap.gz"
   shapeit2_reference_legend_template: "/absolute/path/to/1000GP_Phase3_chr{chrom}.legend.gz"
   shapeit2_reference_sample: "/absolute/path/to/1000GP_Phase3.sample"
+
+
+  # Maintained implementation of the original LASSI T statistic.
+  # Clone szpiech/lassip and pin it to commit a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c.
+  lassip_source_dir: "/absolute/path/to/lassip"
+  lassip_binary: "/absolute/path/to/lassip/src/lassip"

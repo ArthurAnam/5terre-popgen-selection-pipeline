@@ -1,0 +1,27 @@
+metric	value
+decision_status	FROZEN_SOFTWARE_IMPLEMENTATION_PENDING_LOCAL_BUILD_AUDIT
+statistical_method	LASSI T statistic (Harris and DeGiorgio 2020)
+primary_or_sensitivity	primary
+saltiLASSI_primary	NO
+implementation	lassip
+implementation_repository	szpiech/lassip
+implementation_version	1.2.1
+implementation_commit	a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c
+implementation_mode	--lassi
+implementation_reason	Maintained C++ implementation includes the original LASSI T statistic, accepts phased VCF directly, and avoids the unsupported Python-2.7-only 2019 LASSI_iterator.py runtime while preserving the intended statistical method.
+legacy_package_status	not selected for production; retained only as historical/original software reference
+input_type	phased VCF
+primary_K	10
+K20_sensitivity	YES; softness-classification sensitivity
+primary_lassi_choice	4
+primary_lassi_choice_basis	Published human LASSI analyses used weight-allocation scheme D; lassip v1.2.1 exposes choice 4 as its LASSI default.
+null_spectrum	population-specific genome-wide mean K-truncated HFS across autosomes
+window_units	SNP count
+CT_winsize_winstep	99/10
+CEU_winsize_winstep	116/12
+TSI_winsize_winstep	112/11
+IBS_winsize_winstep	116/12
+CEU_role	empirical LASSI benchmark and Northern-European reference; not a positive control
+software_gate_target	gate_selection_lassip_software
+production_scan_status	NOT_STARTED
+next_step	Build the pinned lassip commit locally, configure machine-specific paths, pass software audit/gate, then prepare and audit phased population-specific VCF inputs.

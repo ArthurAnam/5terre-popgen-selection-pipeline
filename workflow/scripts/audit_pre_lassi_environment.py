@@ -307,12 +307,22 @@ for path,cmd in snapshots:
     path.write_text(r.stdout)
     record(path.stem+"_snapshot", "PASS" if r.returncode == 0 and path.stat().st_size else "WARN", str(path))
 
-# LASSI is deliberately a warning until its official script package is frozen.
-lassi = shutil.which("LASSI_iterator.py")
-if lassi:
-    record("lassi_software_visibility","PASS",lassi)
+# Selected LASSI implementation: lassip v1.2.1, pinned in config/config.yaml.
+lassip_cfg = lp.get("lassip_binary", "")
+lassip = Path(lassip_cfg) if lassip_cfg else None
+if lassip and lassip.is_file() and os.access(lassip, os.X_OK):
+    r = run([str(lassip), "--help"])
+    banner = " ".join(r.stdout.splitlines()[:4])
+    if "lassip v1.2.1" in r.stdout:
+        record("lassi_software_visibility", "PASS", f"{lassip} ; lassip v1.2.1")
+    else:
+        record("lassi_software_visibility", "FAIL", banner or str(lassip))
 else:
-    record("lassi_software_visibility","WARN","not yet configured; freeze official LASSI package before production scan")
+    record(
+        "lassi_software_visibility",
+        "WARN",
+        "lassip v1.2.1 selected but local binary is not yet configured; run the dedicated software preflight before production scans",
+    )
 
 record("audit_failures","INFO",fails)
 record("audit_warnings","INFO",warns)

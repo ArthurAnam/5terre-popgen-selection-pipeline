@@ -863,10 +863,40 @@ selection:
       remaining: []
 
   lassi:
-    method: "LASSI"
-    purpose: "Likelihood-based identification of candidate genomic regions deviating from neutral expectations."
+    method: "LASSI_T"
+    statistic: "T"
+    purpose: "Likelihood-based identification of candidate genomic regions whose haplotype-frequency spectrum is distorted relative to the genome-wide background."
     window_definition: "derived_from_ld_decay"
     scan_mode: "sliding_likelihood_window"
+
+    implementation:
+      program: "lassip"
+      upstream_repository: "szpiech/lassip"
+      upstream_url: "https://github.com/szpiech/lassip"
+      version: "1.2.1"
+      commit: "a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c"
+      mode_flag: "--lassi"
+      salti_primary: false
+      rationale: "Use the maintained C++ lassip implementation of the original Harris & DeGiorgio 2020 LASSI T statistic. This preserves the intended LASSI method while avoiding the legacy 2019 Python-2.7-only LASSI_iterator.py package and permits direct phased-VCF input."
+      local_source_dir_key: "local_paths.lassip_source_dir"
+      local_binary_key: "local_paths.lassip_binary"
+
+    primary_model:
+      k_truncation: 10
+      lassi_choice: 4
+      phased: true
+      rationale: "The published human LASSI analysis used K=10 as the primary truncation, examined K=20 for softness sensitivity, and used weight-allocation scheme D; lassip exposes the corresponding primary implementation with --k 10 and --lassi-choice 4."
+      k20_sensitivity:
+        enabled: true
+        role: "softness_classification_sensitivity"
+        rationale: "K affects the resolution of inferred sweep softness m; the 2020 human analysis explicitly compared K=10 and K=20."
+      null_spectrum: "population-specific genome-wide mean K-truncated haplotype-frequency spectrum across autosomes"
+      null_spectrum_scope: "computed separately for CT, CEU, TSI and IBS"
+      filter_level: 2
+      max_hmiss: 0.20
+      max_lmiss: 0.10
+      match_tol: 0
+      filtering_note: "These lassip defaults are retained for safety; production input audits must verify the phased population-specific MAF>=0.05 panels so monomorphic/missing-data filtering does not silently alter the intended marker set."
 
     likelihood_window_snps: "population_specific; CT=99, CEU=116, TSI=112, IBS=116"
     likelihood_shift_snps: "population_specific; CT=10, CEU=12, TSI=11, IBS=12"
@@ -931,9 +961,19 @@ selection:
         selected_winstep_snps: 12
         status: "frozen"
       interpretation: "Physical LD decay is highly similar across the four populations (52.5-55.5 kb), but the SNP count representing that physical scale differs because population-specific MAF>=0.05 panels have different marker densities. Population-specific winsizes are therefore retained."
+
+    software_preflight:
+      required: true
+      expected_version: "1.2.1"
+      expected_commit: "a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c"
+      expected_repository: "szpiech/lassip"
+      gate_target: "gate_selection_lassip_software"
+
     parameters_to_refine:
-      grid_size: null
-      selection_model: null
+      remaining:
+        - "production phased-VCF input generation and marker-set audit"
+        - "runtime benchmark"
+        - "post-scan significance/candidate-region definition"
 
 
 # ============================================================
