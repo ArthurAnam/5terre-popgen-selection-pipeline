@@ -70,14 +70,22 @@ rule selection_reference_maf005_panel:
         for vcf in {input.vcfs}; do
             i=$((i+1))
             out="$tmpdir/chr$i"
+            filtered="$tmpdir/chr$i.nonpal.maf005.vcf.gz"
+
+            bcftools view \
+                -S {input.samples} \
+                -m2 -M2 -v snps \
+                -Ou "$vcf" 2>> {log} \
+            | bcftools +fill-tags -Ou -- -t AF,F_MISSING 2>> {log} \
+            | bcftools view \
+                -e 'INFO/F_MISSING>0.05 || INFO/AF<0.05 || INFO/AF>0.95 || ((REF="A" && ALT="T") || (REF="T" && ALT="A") || (REF="C" && ALT="G") || (REF="G" && ALT="C"))' \
+                -Oz -o "$filtered" 2>> {log}
+
             plink2 \
                 --threads {threads} \
-                --vcf "$vcf" \
-                --keep {input.samples} \
+                --vcf "$filtered" \
                 --snps-only just-acgt \
                 --max-alleles 2 \
-                --geno 0.05 \
-                --maf 0.05 \
                 --set-all-var-ids '@:#:$r:$a' \
                 --make-bed \
                 --out "$out" \
