@@ -809,7 +809,11 @@ selection:
       retained_snps_after_shapeit2_check: 4914283
       retained_fraction_after_shapeit2_check: 0.9814186254300199
       production_states_status: "frozen_at_400_after_chr20_benchmark"
-      production_phasing_started: false
+      production_phasing_started: true
+      production_phasing_status: "completed_all_22_autosomes"
+      production_phasing_completed_date: "2026-09-24"
+      production_elapsed_seconds: 43711.076032
+      production_elapsed_hms: "12:08:31"
     population_handling:
       CT: "requires SHAPEIT2 phasing"
       CEU: "use published 1000 Genomes Phase 3 phased haplotypes"

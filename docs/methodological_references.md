@@ -1348,3 +1348,23 @@ Genome-wide execution remains one SHAPEIT2 thread per chromosome for exact
 seed reproducibility. Parallelism is delegated to Snakemake by running
 independent chromosomes concurrently, avoiding within-chromosome
 multithreading while efficiently using the workstation's available CPU cores.
+
+
+### Completed CT SHAPEIT2 production phasing
+
+Genome-wide CT phasing completed successfully across all 22 autosomes using
+SHAPEIT2 v2.r904 with the frozen production settings: 1000 Genomes Phase 3 EUR
+reference (1,006 reference haplotypes), Ne=11,418, W=0.5 Mb, K=400 Hamming-
+selected conditioning states, 7 burn-in, 8 pruning and 20 main MCMC iterations,
+one SHAPEIT2 thread per chromosome, and seed 15052011.
+
+The 22 chromosome jobs were executed concurrently through Snakemake with a
+global `--cores 10` limit. The aggregate target completed 23/23 workflow
+steps successfully on 2026-09-24. Total wall-clock time for the genome-wide
+production invocation was 12:08:31.076032. All expected chromosome-level
+HAP/SAMPLE outputs and SHAPEIT2 phase logs were present at completion.
+
+This completion establishes the phased CT common-variant panel as the source
+for downstream LASSI input construction. No additional re-phasing is required
+before LASSI preprocessing unless a later sensitivity analysis is explicitly
+introduced.
