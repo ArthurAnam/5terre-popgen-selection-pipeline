@@ -116,6 +116,11 @@ data/**
 *.phased
 *.shapeit*
 
+# Genome annotation / track files
+*.bigWig
+*.bigwig
+*.bw
+
 # Reference genome files
 *.fa
 *.fa.gz
