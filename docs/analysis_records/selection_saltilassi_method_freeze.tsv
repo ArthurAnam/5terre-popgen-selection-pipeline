@@ -37,3 +37,6 @@ software_audit_config_dependency	config/config.yaml tracked as Snakemake input s
 lassip_software_gate_result	PASS
 lassip_software_gate_tested_commit	28d50e93bc9e690beea71003c9195acb891c0dfe
 lassip_binary_sha256	ebaf380d74e5ef09347204e02c679b1b6fe7660bac9cca6d537173523d688c44
+historical_CRG_MIN	0.80; prior exploratory HIGHCONF cutoff
+historical_CRG_STRONG	0.90; prior stricter CRG label
+production_CRG_threshold	0.90; new saltiLASSI production criterion
