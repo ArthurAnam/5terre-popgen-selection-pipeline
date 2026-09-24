@@ -731,7 +731,7 @@ selection:
   phasing:
     method: "SHAPEIT2"
     software_version_target: "v2.r904"
-    status: "eur_reference_overlap_preflight_completed_shapeit2_check_next"
+    status: "production_phasing_completed_post_phasing_audit_pending"
     purpose: "Phase the 46 Cinque Terre individuals for haplotype-based LASSI using the phased 1000 Genomes EUR reference panel; CEU, TSI and IBS already use published phased 1000G haplotypes."
     rationale: "SHAPEIT2 explicitly documents reference-assisted phasing as particularly useful for study datasets with fewer than 100 individuals. The CT cohort contains 46 individuals."
     marker_panel:
@@ -814,6 +814,23 @@ selection:
       production_phasing_completed_date: "2026-09-24"
       production_elapsed_seconds: 43711.076032
       production_elapsed_hms: "12:08:31"
+    post_phasing_audit:
+      enabled: true
+      status: "pending_local_execution"
+      scope: "all_22_autosomes"
+      gzip_crc_integrity: true
+      sample_count_and_order_consistency: true
+      exact_phased_site_count_vs_shapeit2_check: true
+      phased_site_identity_and_order: true
+      binary_haplotype_encoding: true
+      duplicate_site_and_position_detection: true
+      exhaustive_nonmissing_genotype_dosage_concordance: true
+      phase_log_completion_and_parameter_audit: true
+      chr20_same_seed_single_thread_repeatability: true
+      expected_samples: 46
+      expected_haplotypes_per_site: 92
+      expected_total_phased_snps: 4914283
+      limitation: "Internal consistency cannot estimate switch-error/phasing accuracy without independent truth or an external-method sensitivity analysis."
     population_handling:
       CT: "requires SHAPEIT2 phasing"
       CEU: "use published 1000 Genomes Phase 3 phased haplotypes"
@@ -825,7 +842,7 @@ selection:
       window: null
       states: null
       mcmc_iterations: null
-      remaining: ["confirm local SHAPEIT2 EUR reference and map paths", "review -check exclusions before production phasing"]
+      remaining: ["review post-phasing internal-consistency audit before LASSI input construction"]
 
   lassi:
     method: "LASSI"

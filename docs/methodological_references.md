@@ -1368,3 +1368,36 @@ This completion establishes the phased CT common-variant panel as the source
 for downstream LASSI input construction. No additional re-phasing is required
 before LASSI preprocessing unless a later sensitivity analysis is explicitly
 introduced.
+
+
+## Post-phasing SHAPEIT2 production audit
+
+Before the phased CT panel is accepted as the production input for LASSI, the
+workflow performs an exhaustive internal-consistency audit across all 22
+autosomes. The audit verifies gzip/CRC integrity, 46-sample identity and order
+against each chromosome-specific input VCF, 92 binary haplotype states per
+site, chromosome/position ordering, absence of duplicate phased sites and
+physical positions, and exact per-chromosome and genome-wide site counts
+against the completed two-stage SHAPEIT2 alignment audit.
+
+Genotype preservation is checked exhaustively rather than by spot sampling:
+for every phased site, the two SHAPEIT2 haplotypes are collapsed back to an
+unphased dosage and compared with every non-missing source VCF genotype.
+Allele swaps and non-palindromic strand complements are handled explicitly.
+Any dosage mismatch is treated as an audit failure.
+
+The chromosome-20 K=400 benchmark and chromosome-20 production run used the
+same study input, EUR reference restriction, map, seed, one-thread execution,
+window, effective population size and MCMC settings. Their decompressed HAPS
+content and SAMPLE files are therefore compared as an empirical repeatability
+test of the frozen single-thread seeded workflow.
+
+The audit also checks each production phase log for completed main iterations,
+graph normalization, haplotype solving, the expected SNP/sample/reference
+counts and the K=400 model, while separately recording whether seed, thread,
+0.5-Mb window and Ne=11,418 are parsed from every log.
+
+These checks establish technical integrity, genotype conservation and
+repeatability. They do not estimate switch error or statistical phasing
+accuracy, which would require independent phase truth (for example trios or a
+truth set) or a prespecified external-method sensitivity analysis.
