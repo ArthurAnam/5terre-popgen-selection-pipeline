@@ -49,6 +49,7 @@ include: "workflow/rules/22_interactive_figures.smk"
 include: "workflow/rules/25_selection_ct_phasing_preflight.smk"
 include: "workflow/rules/26_selection_ct_shapeit2_phasing.smk"
 include: "workflow/rules/27_selection_ct_phasing_audit.smk"
+include: "workflow/rules/28_pre_lassi_environment_audit.smk"
 include: "workflow/rules/99_provenance.smk"
 
 
