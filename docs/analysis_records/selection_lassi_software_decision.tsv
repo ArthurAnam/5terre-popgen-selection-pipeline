@@ -12,9 +12,12 @@ implementation_reason	Maintained C++ implementation includes the original LASSI 
 legacy_package_status	not selected for production; retained only as historical/original software reference
 input_type	phased VCF
 primary_K	10
+primary_K_basis	Final Harris and DeGiorgio 2020 analyses primarily used K=10; K=20 was additionally examined for human-model analyses and materially affects inferred sweep softness m.
 K20_sensitivity	YES; softness-classification sensitivity
 primary_lassi_choice	4
-primary_lassi_choice_basis	Published human LASSI analyses used weight-allocation scheme D; lassip v1.2.1 exposes choice 4 as its LASSI default.
+legacy_equivalent_out_option	3
+weight_allocation_model	D; weight proportional to exp(-i) across sweeping haplotype classes
+primary_lassi_choice_basis	Harris and DeGiorgio used scheme D as their primary model; the legacy manual reports its equivalent option 3 as giving the greatest detection power and sweep-classification accuracy in simulations, with differences among models described as marginal. lassip v1.2.1 maps the same exp(-i) weighting to --lassi-choice 4.
 null_spectrum	population-specific genome-wide mean K-truncated HFS across autosomes
 window_units	SNP count
 CT_winsize_winstep	99/10

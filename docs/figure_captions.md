@@ -59,11 +59,13 @@ This converts to a median 116 SNPs and winsize/winstep 116/12.
 
 ## Population-specific LD decay comparison
 
-Comparison of CT, CEU, TSI and IBS MAF>=0.05 LD-decay curves. The selected
-one-third-baseline crossings are 55.5, 53.5, 52.5 and 53.5 kb, respectively.
-Although the physical decay scales are similar, their empirical SNP-delimited
-LASSI windows differ (99, 116, 112 and 116 SNPs), reflecting population-specific
-marker density after within-population MAF filtering.
+Comparison of CT plus all five 1000 Genomes EUR populations (CEU, FIN, GBR,
+IBS and TSI) under the same MAF>=0.05 LD-decay protocol. First one-third-baseline
+crossings are 55.5 kb (CT), 53.5 kb (CEU), 55.5 kb (FIN), 55.5 kb (GBR),
+53.5 kb (IBS) and 52.5 kb (TSI). CT, CEU, TSI and IBS define the
+population-specific LASSI windows (99, 116, 112 and 116 SNPs, respectively);
+FIN and GBR are retained as European LD context only and are not primary LASSI
+scan populations.
 
 
 ## FIN LD decay, MAF >=0.05
