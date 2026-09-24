@@ -24,3 +24,18 @@ rule audit_pre_lassi_environment:
         test -s {output.conda_explicit}
         test -s {output.conda_history}
         """
+
+# The diagnostic audit above always preserves a completed report. This separate
+# gate is the blocking target to depend on before any production LASSI scan.
+rule gate_pre_lassi_environment:
+    input:
+        summary="results/provenance/pre_lassi_environment_audit.tsv",
+        script="workflow/scripts/gate_pre_lassi_environment.py"
+    output:
+        ok="results/provenance/pre_lassi_environment_gate.ok"
+    shell:
+        r"""
+        set -euo pipefail
+        python {input.script} {input.summary} {output.ok}
+        test -s {output.ok}
+        """

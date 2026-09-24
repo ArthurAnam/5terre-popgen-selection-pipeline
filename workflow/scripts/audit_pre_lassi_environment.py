@@ -310,4 +310,7 @@ with open(OUT,"w",newline="") as fh:
     w.writerows(rows)
 DETAIL.write_text("\n".join(details))
 
-sys.exit(0 if fails == 0 else 1)
+# This target is diagnostic: preserve completed reports even when checks FAIL.
+# Unexpected Python exceptions still propagate as non-zero exits. The separate
+# gate_pre_lassi_environment target enforces the recorded overall status.
+sys.exit(0)
