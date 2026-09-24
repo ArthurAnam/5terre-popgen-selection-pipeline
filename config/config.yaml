@@ -899,6 +899,7 @@ selection:
       units: "SNP count"
       strategy: "reuse population-specific LD-derived LASSI windows as pre-specified local HFS scales"
       salti_step_strategy: "approximately 50% of winsize"
+      salti_step_fraction: 0.5
       salti_step_rationale: "The empirical human saltiLASSI application used winsize=201 and winstep=100. The approximately 50% overlap is transferred proportionally; this is a study design choice, not a universal recommendation."
       CT: {winsize_snps: 99, winstep_snps: 50, physical_ld_scale_kb: 55.5}
       CEU: {winsize_snps: 116, winstep_snps: 58, physical_ld_scale_kb: 53.5}
@@ -952,7 +953,6 @@ selection:
       gate_target: "gate_selection_lassip_software"
     parameters_to_refine:
       remaining:
-        - "obtain and checksum the GRCh37 CRG100 resource"
         - "production phased-VCF generation and exact marker/missingness audit"
         - "single CT chr20 runtime/RAM/output-size benchmark for the frozen saltiLASSI setting"
 

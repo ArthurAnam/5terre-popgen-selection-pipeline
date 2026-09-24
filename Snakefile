@@ -52,6 +52,7 @@ include: "workflow/rules/27_selection_ct_phasing_audit.smk"
 include: "workflow/rules/28_pre_lassi_environment_audit.smk"
 include: "workflow/rules/29_selection_lassip_software.smk"
 include: "workflow/rules/30_selection_crg100_resource.smk"
+include: "workflow/rules/31_selection_lassi_inputs.smk"
 include: "workflow/rules/99_provenance.smk"
 
 

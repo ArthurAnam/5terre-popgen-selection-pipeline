@@ -68,6 +68,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--bim", required=True)
     p.add_argument("--anchors", required=True)
+    p.add_argument("--anchor-bim", default=None, help="Optional BIM used only to resolve anchor IDs/coordinates; defaults to --bim.")
     p.add_argument("--primary-width-kb", type=float, required=True)
     p.add_argument("--stable-width-kb", type=float, required=True)
     p.add_argument("--step-fraction", type=float, required=True)
@@ -77,7 +78,11 @@ def main():
     args = p.parse_args()
 
     by_chr, id_map = read_bim(args.bim)
-    anchors = read_anchors(args.anchors, id_map)
+    if args.anchor_bim:
+        _, anchor_id_map = read_bim(args.anchor_bim)
+    else:
+        anchor_id_map = id_map
+    anchors = read_anchors(args.anchors, anchor_id_map)
 
     primary_bp = args.primary_width_kb * 1000.0
     stable_bp = args.stable_width_kb * 1000.0
