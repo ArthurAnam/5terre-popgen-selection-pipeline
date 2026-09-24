@@ -40,3 +40,8 @@ lassip_binary_sha256	ebaf380d74e5ef09347204e02c679b1b6fe7660bac9cca6d537173523d6
 historical_CRG_MIN	0.80; prior exploratory HIGHCONF cutoff
 historical_CRG_STRONG	0.90; prior stricter CRG label
 production_CRG_threshold	0.90; new saltiLASSI production criterion
+crg100_resource_gate_result	PASS
+crg100_resource_gate_tested_commit	c7a78a04f0174c788c4247922505be7f18ad50b5
+crg100_verified_resource	UCSC hg19 wgEncodeCrgMapabilityAlign100mer.bigWig
+crg100_verified_md5	a1b1a8c99431fedf6a3b4baef028cca4
+crg100_verified_size_bytes	103405272
