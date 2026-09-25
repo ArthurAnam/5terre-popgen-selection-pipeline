@@ -1,0 +1,15 @@
+metric	value
+matched_samples	549
+components_compared	10
+mean_abs_same_pc_correlation_first3	0.9983407551496453
+minimum_abs_same_pc_correlation_first3	0.997073851221697
+mean_abs_same_pc_correlation_first10	0.7016479270232102
+minimum_abs_same_pc_correlation_first10	0.12563572048965715
+same_index_is_best_match_count_first10	6
+max_population_centroid_shift_PC1_PC3	0.0052179179987774885
+PC1_abs_correlation	0.9997245994593977
+PC1_aligned_rmse	0.0010016107246409896
+PC2_abs_correlation	0.998223814767841
+PC2_aligned_rmse	0.0025437770061848765
+PC3_abs_correlation	0.997073851221697
+PC3_aligned_rmse	0.003265015753231898
