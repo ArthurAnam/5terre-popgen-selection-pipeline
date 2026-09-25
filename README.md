@@ -26,7 +26,7 @@ No additional arbitrary QUAL, DP, GQ, or allele-balance hard filters are imposed
 
 ## 1000 Genomes EUR reference
 
-The 1000 Genomes Project Phase 3 EUR panel (CEU, FIN, GBR, IBS and TSI; n=503) is used as the European reference. All five populations are included in PCA, ROH and LD-decay analyses, while CEU, TSI and IBS are additionally used as LASSI comparison populations. The 1000G data undergo the project downstream QC before analysis.
+The 1000 Genomes Project Phase 3 EUR panel (CEU, FIN, GBR, IBS and TSI; n=503) is used as the European reference. All five populations are included in PCA, ROH, pairwise FST and LD-decay analyses, while CEU, TSI and IBS are additionally used as LASSI comparison populations. The 1000G data undergo the project downstream QC before analysis.
 
 ## Population-genomic analyses
 

@@ -69,6 +69,12 @@ Joint CT + EUR PCA:
 
 The first three PCs are essentially unchanged by the high-LD-region sensitivity.
 
+## Pairwise FST
+
+Genome-wide pairwise differentiation among CT, CEU, FIN, GBR, IBS and TSI is estimated with the Hudson FST estimator in PLINK2. The analysis uses the joint MAF>=0.05, high-LD-masked and LD-pruned PCA panel (287,815 SNPs). Standard errors are obtained by block jackknife using 500-SNP blocks.
+
+FST is used as a descriptive complement to PCA. The former average-linkage clustering of pairwise FST values is not retained as a paper analysis.
+
 ## Runs of homozygosity
 
 Primary ROH analysis:

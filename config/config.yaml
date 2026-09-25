@@ -210,6 +210,13 @@ population_structure:
       fastmode: "NO"
       numchrom: 22
 
+  fst:
+    method: "hudson"
+    panel: "joint_maf0.05_highld_masked_ldpruned"
+    expected_samples: 549
+    expected_variants: 287815
+    blocksize_variants: 500
+
   roh:
     method: "PLINK --homozyg"
     maf_threshold: 0.05
