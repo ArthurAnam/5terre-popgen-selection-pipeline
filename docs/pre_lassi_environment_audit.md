@@ -1,49 +1,32 @@
-# Pre-LASSI environment audit
+# Pre-LASSI environment and software gates
 
-The pre-LASSI environment check is intentionally split into two Snakemake
-targets:
+The pre-LASSI checks are split into diagnostic audits and blocking gates so that failed diagnostics remain available for inspection rather than being deleted as failed Snakemake outputs.
 
-- `audit_pre_lassi_environment` generates and preserves the full diagnostic
-  report. A completed audit exits successfully even when individual checks are
-  recorded as `FAIL`, so Snakemake cannot delete the evidence needed to
-  diagnose the failure.
-- `gate_pre_lassi_environment` reads the preserved audit summary and is the
-  blocking target. It exits non-zero unless
-  `overall_pre_lassi_environment_status=PASS`.
+## Environment audit
 
-Unexpected Python exceptions in the diagnostic generator still propagate as
-real job failures; only *recorded analytical/environmental FAIL states* are
-decoupled from report generation.
+`audit_pre_lassi_environment` records repository state, active software, critical local phasing/reference files, gzip integrity, machine resources and Conda snapshots.
 
-The audit covers Git/repository integrity, critical local analytical files, the
-software actually visible in the active environment, SHAPEIT2 reference/map
-resources, and machine resources (CPU, RAM, swap and disk). It also writes
-local Conda snapshots and SHA256 fingerprints for the chromosome-level phasing
-outputs.
+`gate_pre_lassi_environment` is the blocking target and passes only when the recorded environment conditions are acceptable.
 
-Machine-specific reports are written under `results/provenance/` and remain
-ignored by Git. After review, only portable conclusions should be copied into
-`docs/analysis_records/`.
+Machine-specific reports live under `results/provenance/` and are not committed. Portable conclusions are copied into `docs/analysis_records/`.
 
-Top-level `*_run.log` files are treated as ephemeral command transcripts and are
-ignored by Git; reproducible conclusions belong in versioned analysis records,
-not in ad-hoc execution logs. Software checks also tolerate tools such as KING
-that print a parseable version banner but return a non-zero status for their
-`--version` invocation.
+The completed environment audit/gate is part of provenance for the current phased CT dataset.
 
-LASSI software visibility is deliberately a `WARN`, not a hard failure, at
-this stage. The official LASSI package/version/scripts must be installed and
-frozen only after the current machine/software/file audit has been interpreted
-and closed. No production LASSI scan should depend directly on the diagnostic
-target; future production scans must depend on `gate_pre_lassi_environment`.
+## lassip software gate
 
-Recommended review sequence:
+The earlier environment audit intentionally treated legacy `LASSI_iterator.py` visibility as a warning because the production implementation had not yet been frozen. That warning is historical and must not be interpreted as the current software state.
 
-1. Run `audit_pre_lassi_environment`.
-2. Inspect every `FAIL` and `WARN` in
-   `results/provenance/pre_lassi_environment_audit.tsv`, plus the details,
-   manifest and Conda snapshots.
-3. Resolve or explicitly document each issue.
-4. Run `gate_pre_lassi_environment` only when the audit is expected to pass.
-5. Freeze the production LASSI software, inputs and parameters only after the
-   gate passes.
+Production software is now frozen separately as:
+
+* `lassip` v1.2.1
+* commit `a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c`
+* saltiLASSI Lambda primary via `--salti`
+* original LASSI T secondary via `--lassi`
+
+The dedicated lassip software gate has passed and its binary SHA256 is recorded in `docs/analysis_records/selection_saltilassi_method_freeze.tsv`.
+
+## CRG100 resource gate
+
+The production hg19 CRG100 BigWig is also handled by a dedicated audit/gate. The resource gate verifies the expected file, checksum and BigWig signature before downstream use.
+
+No production scan should bypass these gates.

@@ -1,110 +1,97 @@
 # Selection strategy
 
-## Conceptual framework
+## Scope
 
-The primary objective of the selection branch is to identify genomic regions showing patterns of variation incompatible with neutral expectations and potentially consistent with selective processes.
+The selection branch is focused on the Cinque Terre population, with CEU, TSI and IBS used as production comparison populations. FIN and GBR are retained only for European LD context.
 
-Candidate regions are therefore interpreted as signals of deviation from neutrality rather than definitive evidence of adaptive loci or causal functional variants.
+The primary statistic is **saltiLASSI Lambda**. Original **LASSI T** is secondary and is used for continuity/benchmarking.
 
----
-
-## Candidate region definition
-
-Candidate regions are identified from genome-wide LASSI likelihood profiles generated on phased haplotype data.
-
-Candidate regions are interpreted by considering both high-scoring windows and local consistency of the surrounding signal, since the true selective target may not necessarily coincide with the single highest-scoring genomic window.
-
-Candidate regions may consist of either:
-
-* single isolated high-scoring windows
-* clusters of consecutive high-scoring windows
-
-provided that neighboring windows remain within a biologically plausible genomic distance.
-
-Candidate region merging therefore considers both local signal continuity and maximum genomic distance (kb) between neighboring windows.
-
-The identification strategy combines:
-
-* likelihood score magnitude
-* local spatial coherence across neighboring windows
-* overlap between adjacent windows
-* biological interpretability
-
-Current open methodological decisions include:
-
-* genome-wide vs chromosome-wise thresholding
-* empirical percentile thresholds
-* definition of candidate region boundaries
-* handling of overlapping windows
-* maximum distance (kb) allowed for candidate region merging
-* minimum genomic span required for candidate regions
-* ranking strategy for candidate regions
-
-The current working strategy is based on empirical ranking of high-scoring windows, with additional consideration of overlap consistency and biological plausibility.
-
-Previous exploratory analyses used:
-
-* top 1% empirical thresholds
-* thresholds calibrated from simulations reported in the original LASSI publication
-* comparison with populations showing partially similar effective population size decay patterns
-
-These decisions remain subject to refinement during the final analysis phase.
+Candidate regions are interpreted as empirical genomic outliers compatible with selective processes, not as definitive adaptive loci or causal variants.
 
 ---
 
-## Candidate signal robustness
+## Production marker panels
 
-High-scoring LASSI windows will be evaluated not only by their likelihood score, but also by the spatial stability of the surrounding signal.
+Production CT/CEU/TSI/IBS selection panels are:
 
-Particular attention will be given to the relationship between genomic span and signal intensity. Narrow isolated peaks may reflect stochastic variation or local LD patterns, but they may also represent older or spatially restricted selective events.
+* autosomal
+* biallelic SNPs
+* phased
+* unpruned
+* MAF>=0.05 within the population
+* A/T and C/G strand-ambiguous SNPs excluded
 
-For this reason, candidate regions will be assessed using:
+CT already satisfies the strand-ambiguity rule through core QC. CEU/TSI/IBS are being recalibrated under the same rule so that the marker policy used for LD-window calibration matches the marker policy used for the scan.
 
-* LASSI score magnitude
+A separate CEU Harris & DeGiorgio (2020) benchmark is allowed to use a paper-matched ascertainment distinct from the production panel. It is a methodological benchmark, not the production CEU comparator.
+
+---
+
+## Window calibration
+
+The primary physical LD scale is the first 1-kb bin whose mean hard-call r2 is below one third of the mean r2 for pairs separated by 0.5-1.5 kb.
+
+The five-consecutive-bin crossing is a stability diagnostic only.
+
+For CT:
+
+* pre-phasing MAF>=0.05 panel: 5,007,326 SNPs
+* primary LD scale: 55.5 kb
+* pre-phasing median at that scale: 99 SNPs
+* exact phased scan panel: 4,914,283 SNPs
+* exact phased median at 55.5 kb: 97 SNPs
+* current salti step candidate: 49 SNPs
+
+Therefore 99 remains provenance for the original calibration; 97/49 is the current exact-input candidate and must be formally re-frozen before production.
+
+Previously reported CEU 116, TSI 112 and IBS 116 SNP windows predate the production A/T/C/G exclusion and are not production-valid until recalculated.
+
+---
+
+## Candidate threshold and region definition
+
+CT uses an empirical-outlier framework:
+
+* primary threshold: top 1% genome-wide Lambda
+* descriptive thresholds: top 0.1% and top 5%
+* region definition: merge consecutive windows exceeding the primary threshold
+
+Candidate calling is intentionally independent of gene annotation or biological plausibility. Functional information is added only after population-genetic candidate regions have been defined.
+
+Population comparisons use population-specific rankings and locus concordance rather than a common absolute Lambda threshold.
+
+---
+
+## Signal robustness
+
+For each candidate region, inspect:
+
+* maximum and mean Lambda
+* local score profile
 * genomic span
-* maximum distance (kb) allowed for candidate region merging
-* overlap consistency across adjacent windows
-* local signal continuity
-* genomic accessibility / mappability
-* functional genomic context
+* number of contributing windows
+* local recombination context
+* mappability/accessibility
+* concordance with secondary LASSI T where informative
 
-The persistence of elevated likelihood scores across consecutive overlapping windows may provide additional support for the local stability of the signal, despite the partial non-independence introduced by the sliding-window design.
+The number of overlapping windows is not treated as an independent measure of statistical support because neighboring sliding windows are partially non-independent.
 
-The distribution of candidate region widths will be inspected to distinguish broad, spatially coherent signals from isolated narrow peaks.
-
-The number of overlapping windows will not be interpreted as an independent measure of robustness, since it is strongly influenced by SNP density and window construction strategy.
-
-Very narrow candidate regions will not be automatically discarded, since selective signals may differ substantially in genomic extent depending on recombination patterns, sweep age, local genomic architecture, and demographic history.
+Low-recombination regions receive additional scrutiny because extended LD can broaden composite-likelihood signals.
 
 ---
 
-## Genomic accessibility and problematic regions
+## CRG100 mappability
 
-Candidate regions will be evaluated in relation to genomic accessibility and mappability.
+The production resource is the GRCh37/hg19 UCSC ENCODE CRG100 100-mer alignability BigWig (`wgEncodeCrgMapabilityAlign100mer.bigWig`), whose checksum/resource gate has passed.
 
-Regions overlapping poorly mappable or otherwise problematic genomic intervals may produce unreliable signals due to mapping uncertainty, phasing errors, local alignment ambiguity, or variant calling artifacts.
+The production threshold is **mean CRG100 >=0.9**.
 
-Following the strategy adopted in the original LASSI framework, candidate windows overlapping regions of low alignability and mappability may be filtered using CRG100 scores.
+Historical exploratory analyses used `CRG_MIN=0.80` for HIGHCONF and separately defined `CRG_STRONG=0.90`; those values are provenance only.
 
-Previous exploratory outputs used mean CRG100 > 0.8 as the operational HIGHCONF cutoff and separately defined CRG_STRONG = 0.9. These historical thresholds are retained as provenance only. The saltiLASSI production workflow uses the pre-specified mean CRG100 >= 0.9 criterion.
-
-This filtering step is intended to reduce false positive signals arising from technically unreliable genomic regions, rather than to impose biological assumptions about selection.
-
-Problematic regions may therefore be:
-
-* excluded before final candidate prioritization
-* retained but flagged as lower-confidence candidates
-
-depending on the final prioritization strategy.
+Before the production filter is encoded, the exact operational unit used for the mean CRG100 calculation (for example the precise scan-window/core interval) must be verified against the saltiLASSI empirical procedure. The threshold is frozen; the interval/application point is not yet frozen.
 
 ---
 
 ## Functional interpretation
 
-Functional enrichment analyses are intended as exploratory biological contextualization rather than definitive evidence of adaptive mechanisms.
-
-ORA and/or network-based approaches may therefore be used to identify biological processes potentially enriched among genes overlapping candidate regions, while acknowledging the limitations introduced by linkage disequilibrium, gene density variation, annotation incompleteness, and uncertainty in causal target identification.
-
-Pathway-level enrichment patterns may be compatible with distributed adaptive processes acting across multiple loci, although no formal test of polygenic adaptation is performed.
-
-Functional interpretation will consequently be considered complementary to the primary population-genetic evidence rather than an independent validation of selection.
+Functional annotation and enrichment are exploratory biological contextualization only. They do not enter candidate calling and are not independent validation of selection.

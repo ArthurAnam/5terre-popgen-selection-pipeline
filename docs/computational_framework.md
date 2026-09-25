@@ -79,25 +79,33 @@ Delaneau, O., Zagury, J. F., & Marchini, J. (2013). Improved whole-chromosome ph
 
 ---
 
-## LASSI
+## lassip: saltiLASSI and original LASSI
 
 Purpose:
-Likelihood-based identification of candidate genomic regions showing deviations from neutral expectations in phased haplotype data.
+Likelihood-based haplotype-frequency-spectrum scans for selective-sweep candidates.
 
-Main functionalities used:
+Pinned implementation:
 
-* sliding-window likelihood scanning
-* candidate region detection
-* region-level prioritization
-* secondary interpretation of the LASSI `m` parameter
+* `lassip` v1.2.1
+* commit `a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c`
 
-The main output of the LASSI branch is a set of candidate genomic regions, not definitive proof of adaptive loci or causal variants.
+Primary functionality used:
 
-The `m` parameter may provide additional interpretation of the sweep model, including hard-sweep-like and soft-sweep-like signals, but this classification is treated as secondary to candidate region definition and prioritization.
+* saltiLASSI spatial composite-likelihood statistic Lambda (`--salti`)
 
-Citation:
+Secondary functionality used:
 
-Harris, A. M., & DeGiorgio, M. (2020). A likelihood approach for uncovering selective sweep signatures from haplotype data. *Molecular Biology and Evolution, 37*(10), 3023–3046. https://doi.org/10.1093/molbev/msaa115
+* original LASSI likelihood-ratio statistic T (`--lassi`)
+
+The production model uses phased input, K=10 and Harris & DeGiorgio Model D; in lassip v1.2.1 this maps to `--lassi-choice 4`.
+
+The scan identifies candidate/outlier regions for downstream interpretation; it does not by itself prove adaptation or identify causal variants.
+
+Citations:
+
+Harris, A. M., & DeGiorgio, M. (2020). A likelihood approach for uncovering selective sweep signatures from haplotype data. *Molecular Biology and Evolution, 37*(10), 3023-3046. https://doi.org/10.1093/molbev/msaa115
+
+DeGiorgio, M., & Szpiech, Z. A. (2022). A spatially aware likelihood test to detect sweeps from haplotype distributions. *PLOS Genetics, 18*, e1010134. https://doi.org/10.1371/journal.pgen.1010134
 
 ---
 

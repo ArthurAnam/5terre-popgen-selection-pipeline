@@ -34,8 +34,9 @@ datasets:
     description: "Target population under study"
     data_type: "WGS"
     input_sample_count: 50
-    expected_post_qc_sample_count: null
+    expected_post_qc_sample_count: 46
     historical_post_qc_sample_count_to_verify: 46
+    verified_post_qc_sample_count: 46
     mean_depth: "approximately 30x"
     vcf: null
     upstream_processing:
@@ -642,14 +643,14 @@ population_structure:
 # ============================================================
 
 selection:
-  description: "Haplotype-based selection scan focused on the Cinque Terre population, with selected comparison populations under evaluation."
+  description: "Haplotype-based selection scan focused on Cinque Terre, with CEU, TSI and IBS as the frozen production comparison set."
 
   primary_focus_dataset: "Cinque Terre"
 
   scan_design:
     primary_focus: "Cinque Terre"
     comparative_lassi_scans_allowed: true
-    notes: "Cinque Terre remains the primary biological focus, but selected external populations may also be scanned or used for comparative interpretation depending on the final analytical design."
+    notes: "Cinque Terre is the focal discovery population. CEU, TSI and IBS are production comparators; FIN and GBR are LD-context only. A separate CEU paper-oriented LASSI-T benchmark is kept distinct from the production CEU scan."
 
   external_populations:
     role: "comparative_scan_or_reference_interpretation"
@@ -893,18 +894,38 @@ selection:
       match_tol: 0
     marker_panel:
       maf_threshold: 0.05
-      status: "frozen_study_specific_common_variant_ascertainment"
-      note: "The 2022 empirical CEU/YRI saltiLASSI analysis retained all sample-polymorphic biallelic SNPs, whereas this study uses the pre-specified MAF>=0.05 panel. Absolute Lambda values are therefore not treated as directly comparable to the published CEU/YRI scores."
+      exclude_strand_ambiguous: true
+      strand_ambiguous_classes: ["A/T", "C/G"]
+      production_populations: ["CT", "CEU", "TSI", "IBS"]
+      status: "production_marker_policy_frozen_window_recalibration_in_progress"
+      note: "Production scans use within-population MAF>=0.05 and exclude A/T and C/G SNPs. This differs from the published empirical CEU/YRI ascertainment, so absolute scores are not assumed directly comparable. A separate CEU paper-oriented T benchmark may use paper-matched ascertainment."
     windowing:
       units: "SNP count"
-      strategy: "reuse population-specific LD-derived LASSI windows as pre-specified local HFS scales"
+      strategy: "translate population-specific physical LD scale to the exact production scan marker panel"
+      status: "pending_final_refreeze_after_exact_marker_panel_audits"
       salti_step_strategy: "approximately 50% of winsize"
       salti_step_fraction: 0.5
       salti_step_rationale: "The empirical human saltiLASSI application used winsize=201 and winstep=100. The approximately 50% overlap is transferred proportionally; this is a study design choice, not a universal recommendation."
-      CT: {winsize_snps: 99, winstep_snps: 50, physical_ld_scale_kb: 55.5}
-      CEU: {winsize_snps: 116, winstep_snps: 58, physical_ld_scale_kb: 53.5}
-      TSI: {winsize_snps: 112, winstep_snps: 56, physical_ld_scale_kb: 52.5}
-      IBS: {winsize_snps: 116, winstep_snps: 58, physical_ld_scale_kb: 53.5}
+      CT:
+        physical_ld_scale_kb: 55.5
+        prephasing_winsize_snps: 99
+        prephasing_winstep_snps: 50
+        exact_phased_sites: 4914283
+        exact_phased_winsize_candidate_snps: 97
+        exact_phased_winstep_candidate_snps: 49
+        production_status: "candidate_pending_formal_refreeze"
+      CEU:
+        previous_pre_nonpal_winsize_snps: 116
+        previous_pre_nonpal_winstep_snps: 58
+        production_status: "pending_recalibration_after_AT_CG_exclusion"
+      TSI:
+        previous_pre_nonpal_winsize_snps: 112
+        previous_pre_nonpal_winstep_snps: 56
+        production_status: "pending_recalibration_after_AT_CG_exclusion"
+      IBS:
+        previous_pre_nonpal_winsize_snps: 116
+        previous_pre_nonpal_winstep_snps: 58
+        production_status: "pending_recalibration_after_AT_CG_exclusion"
     ld_calibration:
       primary_definition: "first 1-kb bin whose mean r2 is below one third of the mean r2 for SNP pairs separated by 0.5-1.5 kb"
       formula: "d_LD,p = min{d: mean_r2_p(d) < (1/3) * mean_r2_p(1kb)}"

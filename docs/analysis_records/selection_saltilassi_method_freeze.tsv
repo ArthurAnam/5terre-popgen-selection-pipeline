@@ -45,3 +45,14 @@ crg100_resource_gate_tested_commit	c7a78a04f0174c788c4247922505be7f18ad50b5
 crg100_verified_resource	UCSC hg19 wgEncodeCrgMapabilityAlign100mer.bigWig
 crg100_verified_md5	a1b1a8c99431fedf6a3b4baef028cca4
 crg100_verified_size_bytes	103405272
+window_freeze_status_update_2026-09-25	WINDOW_COMPONENT_REOPENED_AFTER_EXACT_INPUT_PANEL_AUDIT; model-level settings remain frozen
+production_marker_palindromic_policy	exclude A/T and C/G SNPs in CT, CEU, TSI and IBS production selection panels
+CT_lassip_input_audit	PASS; 22 autosomes; 46 samples; 4914283 sites; missing=0; unphased=0; nonbinary=0; duplicate=0; order_failures=0
+CT_exact_phased_primary_width_kb	55.5
+CT_exact_phased_primary_median_snps	97
+CT_exact_phased_primary_mean_snps	101.55090909090909
+CT_exact_phased_primary_IQR_snps	66-134
+CT_exact_phased_salti_candidate	97/49; pending formal production re-freeze
+CT_exact_phased_stable_diagnostic	57.5 kb; median 101 SNP
+reference_previous_window_status	CEU 116/58; TSI 112/56; IBS 116/58 are pre-A/T-C/G-removal calibration values and require recalibration
+CEU_T_benchmark_design	separate paper-oriented Harris-DeGiorgio-2020 benchmark; do not mix with production matched CEU scan
