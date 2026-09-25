@@ -29,13 +29,25 @@ rule audit_pre_lassi_environment:
 # gate is the blocking target to depend on before any production LASSI scan.
 rule gate_pre_lassi_environment:
     input:
-        summary="results/provenance/pre_lassi_environment_audit.tsv",
-        script="workflow/scripts/gate_pre_lassi_environment.py"
+        summary="results/provenance/pre_lassi_environment_audit.tsv"
     output:
         ok="results/provenance/pre_lassi_environment_gate.ok"
     shell:
         r"""
         set -euo pipefail
-        python {input.script} {input.summary} {output.ok}
-        test -s {output.ok}
+
+        status=$(awk -F '\t' '$1=="overall_pre_lassi_environment_status" {print $2; exit}' {input.summary})
+        if [ "$status" != "PASS" ]; then
+            echo "pre-LASSI environment gate: FAIL or missing overall PASS status" >&2
+            awk -F '\t' 'NR>1 && $2=="FAIL" {print "  FAIL\t"$1"\t"$3}' {input.summary} >&2 || true
+            exit 1
+        fi
+        n_fail=$(awk -F '\t' 'NR>1 && $2=="FAIL" {n++} END {print n+0}' {input.summary})
+        [ "$n_fail" -eq 0 ] || {
+            echo "pre-LASSI environment gate: inconsistent audit; FAIL rows present" >&2
+            exit 1
+        }
+
+        printf 'PASS\n' > {output.ok}
+        echo "pre-LASSI environment gate: PASS"
         """
