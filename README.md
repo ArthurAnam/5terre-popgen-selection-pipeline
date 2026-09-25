@@ -1,144 +1,136 @@
 # Cinque Terre Population Genomics & Selection Pipeline
 
-Reproducible Snakemake workflow for population-genomic analyses and haplotype-based selection scans focused on the Cinque Terre WGS cohort.
-
----
-
-## Overview
-
-The repository contains the version-controlled analysis workflow for:
-
-* input verification and population-genomics QC
-* 1000 Genomes EUR harmonization and European reference analyses
-* PCA, relatedness and runs of homozygosity
-* LD-decay calibration
-* reference-assisted SHAPEIT2 phasing of Cinque Terre
-* saltiLASSI selection scans, with original LASSI T retained as a secondary benchmark
-* candidate/outlier-region definition and downstream functional contextualization
-
-Variant calling, joint genotyping, SNP/biallelic selection and VQSR were performed upstream and are not repeated here.
-
----
+Reproducible Snakemake workflow for population-genomic analyses and haplotype-based selection scans in the Cinque Terre WGS cohort.
 
 ## Target dataset
 
-**Verified delivered dataset (`all_samples_snp.vcf.gz`):**
+The target dataset is the Cinque Terre WGS cohort.
 
-* 50 WGS samples
-* 11,490,646 SNPs
-* 0 INDELs
-* 0 multiallelic sites
-* all records `FILTER=PASS`
-* indexed contigs `1-22`, `X`, `Y`
-* GRCh37.p13 / hs37d5 upstream provenance
+- 50 WGS samples (all males)
+- 11,490,646 SNPs
+- Chromosomes `1-22` for downstream analyses
+- GRCh37.p13 / hs37d5
 
-Sample-level QC reproduces and documents the exclusion of four reviewed outliers, leaving **46 samples** for downstream analyses.
+The workflow starts from 50 individuals. Sample-level QC reproduces and documents the exclusion of four reviewed outliers, leaving **46 samples** for downstream population-genomic analyses.
 
-The final autosomal Cinque Terre core-QC dataset contains **9,000,246 SNPs**. The MAF>=0.05 selection/phasing input contains **5,007,326 SNPs** before the formal SHAPEIT2 reference-alignment check.
+Variant calling, joint genotyping, SNP/biallelic selection, and VQSR were performed upstream and are not repeated within this workflow. Their provenance is documented in `docs/upstream_variant_calling_provenance.md`.
 
----
+## Target QC
 
-## Reference and comparison datasets
+The final autosomal CT core-QC dataset contains:
 
-The current European reference framework uses the **503-sample 1000 Genomes Phase 3 EUR panel**:
+- 46 samples
+- 9,000,246 SNPs
+- strand-ambiguous A/T and C/G SNPs removed
+- site missingness <=5%
+- individual missingness <=5%
+- chromosome-wise HWE filtering with Bonferroni threshold `0.05 / n_tested_chr`
 
-* CEU: 99
-* FIN: 99
-* GBR: 91
-* IBS: 107
-* TSI: 107
+No additional arbitrary QUAL, DP, GQ, or allele-balance hard filters are imposed after the reviewed sample exclusions.
 
-For the production selection comparison, the frozen population set is **CEU, TSI and IBS**. FIN and GBR are retained as European LD context only.
+## 1000 Genomes EUR reference
 
-Production selection panels are population-specific and use MAF>=0.05 with strand-ambiguous A/T and C/G SNPs excluded. CEU will additionally have a separate methodological benchmark designed to approximate the Harris & DeGiorgio (2020) empirical LASSI-T setup; that benchmark is not the production CEU comparator.
+The 1000 Genomes Phase 3 EUR panel contains 503 individuals:
 
-Italian WGS reference cohorts remain a possible future extension for broader population-structure comparisons and are not required for the current selection branch.
+- CEU: 99
+- FIN: 99
+- GBR: 91
+- IBS: 107
+- TSI: 107
 
----
+The panel is used for European context, CT phasing support, and population-specific selection comparisons.
 
-## Current analytical state
+For production selection scans:
 
-Completed and audited:
+- CEU, TSI, and IBS are comparison populations
+- FIN and GBR are LD-context populations only
+- production marker panels use within-population MAF >=0.05
+- A/T and C/G SNPs are removed
 
-* target sample and variant QC
-* chromosome-wise HWE filtering
-* KING relatedness audit
-* CT + 1000G EUR harmonization
-* joint PCA and high-LD-region sensitivity
-* ROH/fROH analyses
-* CT and EUR LD-decay audits
-* SHAPEIT2 production phasing of all 22 CT autosomes
-* exhaustive post-phasing structural/genotype audit
-* pre-LASSI environment and lassip software gates
-* CRG100 resource gate
-* exact CT phased-input audit for lassip
+CEU also has a separate paper-oriented LASSI-T benchmark, distinct from the production CEU comparison.
 
-The CT phased lassip input contains **4,914,283 SNPs** across 46 individuals. Recounting SNP density at the primary 55.5-kb LD scale gives a median of **97 SNPs** (49-SNP half-window step candidate), so the older pre-phasing 99-SNP value is retained only as provenance until the production window is formally re-frozen.
+## Population-genomic analyses
 
-CEU/TSI/IBS LD-derived SNP windows are being recalibrated after applying the same production A/T and C/G exclusion used for CT. No production saltiLASSI genome-wide scan has been started yet.
+Implemented analyses include:
 
----
+- KING relatedness
+- joint CT + EUR PCA
+- runs of homozygosity and fROH
+- ROH burden and length distribution
+- population-specific LD decay
+- SHAPEIT2 phasing
+- saltiLASSI / LASSI selection scans
 
-## Core QC principles
+## Phasing
 
-For Cinque Terre:
+CT is phased with SHAPEIT2 v2.r904 using the 1000 Genomes Phase 3 EUR reference.
 
-* autosomes 1-22
-* A/T and C/G SNPs removed
-* monomorphic sites removed
-* site missingness >5% removed
-* individual missingness >5% evaluated iteratively with cohort-dependent site metrics recomputed after sample removal
-* chromosome-wise HWE Bonferroni threshold: `0.05 / n_tested_chr`
-* no additional arbitrary QUAL, DP, GQ or allele-balance hard filters after the reviewed sample exclusions
+- CT MAF >=0.05 input: 5,007,326 SNPs
+- SNPs retained after SHAPEIT2 reference alignment: 4,914,283
+- retained samples: 46
+- phased haplotypes: 92
+- post-phasing genotype audit: PASS
 
-The delivered VCF was already restricted upstream to PASS biallelic SNPs; this is verified, not claimed as a new downstream filtering step.
-
----
-
-## Selection design
+## Selection scan
 
 Primary method:
 
-* **saltiLASSI Lambda** using `lassip` v1.2.1
+- **saltiLASSI Lambda**
 
 Secondary method:
 
-* **original LASSI T** from the same maintained implementation
+- **original LASSI T**
 
-Frozen model-level settings include phased input, K=10, Model D (`--lassi-choice 4` in lassip v1.2.1), physical-distance mode and `--max-extend-bp 100000`.
+Implementation:
 
-CT inference uses an empirical-outlier framework: top 1% genome-wide Lambda is the primary candidate threshold; top 0.1% and top 5% are descriptive. Consecutive above-threshold windows are merged into candidate/outlier regions. These are not described as simulation-based significant regions.
+- `lassip` v1.2.1
+- commit `a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c`
+- K=10
+- Model D / `--lassi-choice 4`
+- physical-distance mode
+- `--max-extend-bp 100000`
 
-The production CRG100 threshold is 0.9. The exact interval/unit on which mean CRG100 is applied is being verified before the production filter is encoded.
+For CT, the primary LD scale is 55.5 kb. On the exact phased scan panel this corresponds to a median of **97 SNPs**, giving a current saltiLASSI step candidate of **49 SNPs**.
 
----
+CEU, TSI, and IBS windows are being recalibrated after applying the same A/T and C/G exclusion used for CT.
+
+The CT primary candidate threshold is the top 1% of genome-wide Lambda. Top 0.1% and top 5% are descriptive.
+
+## Mappability
+
+The production CRG100 resource is:
+
+`wgEncodeCrgMapabilityAlign100mer.bigWig`
+
+- build: hg19 / GRCh37
+- expected MD5: `a1b1a8c99431fedf6a3b4baef028cca4`
+- production threshold: mean CRG100 >=0.9
+
+The exact interval used to calculate the mean CRG100 is being verified before the production filter is encoded.
 
 ## Repository structure
 
 ```text
-config/         central configuration
-docs/           methods, provenance and analysis records
-workflow/       Snakemake rules and scripts
-envs/           software environment definitions
-results/        generated outputs
-logs/           execution logs
-benchmarks/     runtime/resource benchmarks
-resources/      project-contained external resources where appropriate
+config/       pipeline configuration
+docs/         methods and provenance
+workflow/     Snakemake rules and scripts
+envs/         software environments
+results/      generated outputs
+logs/         execution logs
+benchmarks/   runtime benchmarks
+resources/    external project resources
 ```
 
-Machine-specific paths belong in `config/config.local.yaml`, which is intentionally not version-controlled. Large genomic resources and generated results are not committed.
+Machine-specific paths belong in `config/config.local.yaml`, which is not version-controlled.
 
----
+## Documentation
 
-## Main documentation
+- `docs/upstream_variant_calling_provenance.md`
+- `docs/target_qc_plan.md`
+- `docs/methods_overview.md`
+- `docs/pipeline_diagram.md`
+- `docs/selection_strategy.md`
+- `docs/selection_saltilassi_methodology.md`
+- `docs/analysis_records/`
 
-* `docs/upstream_variant_calling_provenance.md`
-* `docs/target_qc_plan.md`
-* `docs/methods_overview.md`
-* `docs/pipeline_diagram.md`
-* `docs/selection_strategy.md`
-* `docs/selection_saltilassi_methodology.md`
-* `docs/pre_lassi_environment_audit.md`
-* `docs/analysis_records/`
-
-Historical exploratory outputs are retained only as provenance and must not silently override the current post-16-September-2026 workflow decisions.
+Historical exploratory runs are retained as provenance only and do not override the current workflow.
