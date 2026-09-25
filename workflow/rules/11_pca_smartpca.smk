@@ -26,8 +26,7 @@ wildcard_constraints:
 rule prepare_pca_sample_annotations:
     input:
         psam=PCA_HARMONIZED_PREFIX + ".psam",
-        eur_metadata="results/reference/1kg_eur/metadata/eur_samples.tsv",
-        script="workflow/scripts/prepare_pca_sample_annotations.py"
+        eur_metadata="results/reference/1kg_eur/metadata/eur_samples.tsv"
     output:
         annotations=PCA_SAMPLE_ANNOTATIONS,
         counts=PCA_SAMPLE_COUNTS
@@ -35,20 +34,100 @@ rule prepare_pca_sample_annotations:
         expected_total=lambda wildcards: config["population_structure"]["pca"]["expected_joint_samples"],
         expected_eur=lambda wildcards: config["datasets"]["reference_1kg_eur"]["populations"]["expected_total_eur_samples"],
         expected_ct=46
-    conda:
-        "../../envs/pipeline.yaml"
     shell:
         r"""
         set -euo pipefail
         mkdir -p {PCA_SMARTPCA_DIR}
-        python {input.script} \
-            --psam {input.psam} \
-            --eur-metadata {input.eur_metadata} \
-            --expected-total {params.expected_total} \
-            --expected-eur {params.expected_eur} \
-            --expected-ct {params.expected_ct} \
-            --annotations-out {output.annotations} \
-            --counts-out {output.counts}
+
+        awk '
+        BEGIN {{ FS="[ \t]+"; OFS="\t" }}
+        FNR==NR {{
+            if (FNR==1) {{
+                for (i=1; i<=NF; i++) {{
+                    if ($i=="ID") id_col=i
+                    if ($i=="POP") pop_col=i
+                }}
+                if (!id_col || !pop_col) {{
+                    print "ERROR: EUR metadata lacks ID/POP columns" > "/dev/stderr"
+                    exit 2
+                }}
+                next
+            }}
+            id=$id_col
+            if (id in eur) {{
+                print "ERROR: duplicate EUR metadata ID: " id > "/dev/stderr"
+                exit 3
+            }}
+            eur[id]=$pop_col
+            next
+        }}
+        FNR==1 {{
+            for (i=1; i<=NF; i++) {{
+                h=$i
+                sub(/^#/, "", h)
+                if (h=="IID") iid_col=i
+            }}
+            if (!iid_col) {{
+                print "ERROR: PSAM header lacks IID" > "/dev/stderr"
+                exit 4
+            }}
+            print "sample_id","population","source"
+            next
+        }}
+        {{
+            iid=$iid_col
+            if (iid in seen) {{
+                print "ERROR: duplicate PSAM IID: " iid > "/dev/stderr"
+                exit 5
+            }}
+            seen[iid]=1
+            if (iid in eur) {{
+                p=eur[iid]
+                source="1000G_EUR"
+                n_eur++
+            }} else {{
+                p="CT"
+                source="Cinque_Terre"
+                n_ct++
+            }}
+            if (!(p=="CT" || p=="CEU" || p=="FIN" || p=="GBR" || p=="IBS" || p=="TSI")) {{
+                print "ERROR: unexpected population label: " p > "/dev/stderr"
+                exit 6
+            }}
+            print iid,p,source
+            n_total++
+        }}
+        END {{
+            for (id in eur) {{
+                if (!(id in seen)) {{
+                    print "ERROR: EUR metadata sample absent from PSAM: " id > "/dev/stderr"
+                    bad=1
+                }}
+            }}
+            if (n_total != {params.expected_total}) {{
+                print "ERROR: expected {params.expected_total} total samples, found " n_total > "/dev/stderr"
+                bad=1
+            }}
+            if (n_eur != {params.expected_eur}) {{
+                print "ERROR: expected {params.expected_eur} EUR samples, found " n_eur > "/dev/stderr"
+                bad=1
+            }}
+            if (n_ct != {params.expected_ct}) {{
+                print "ERROR: expected {params.expected_ct} CT samples, found " n_ct > "/dev/stderr"
+                bad=1
+            }}
+            if (bad) exit 7
+        }}
+        ' {input.eur_metadata} {input.psam} > {output.annotations}
+
+        {{
+            printf 'population\tn_samples\n'
+            for pop in CT CEU FIN GBR IBS TSI; do
+                n=$(awk -F '\t' -v p="$pop" 'NR>1 && $2==p {{n++}} END {{print n+0}}' {output.annotations})
+                printf '%s\t%s\n' "$pop" "$n"
+            done
+            printf 'TOTAL\t%s\n' "{params.expected_total}"
+        }} > {output.counts}
         """
 
 
@@ -57,8 +136,7 @@ rule make_smartpca_plink_input:
         pgen=lambda wildcards: pca_smartpca_panel_prefix(wildcards) + ".pgen",
         pvar=lambda wildcards: pca_smartpca_panel_prefix(wildcards) + ".pvar",
         psam=lambda wildcards: pca_smartpca_panel_prefix(wildcards) + ".psam",
-        annotations=PCA_SAMPLE_ANNOTATIONS,
-        script="workflow/scripts/label_smartpca_fam.py"
+        annotations=PCA_SAMPLE_ANNOTATIONS
     output:
         bed=temp(PCA_SMARTPCA_DIR + "/{pca_panel}/input.bed"),
         bim=temp(PCA_SMARTPCA_DIR + "/{pca_panel}/input.bim"),
@@ -75,7 +153,7 @@ rule make_smartpca_plink_input:
         set -euo pipefail
         mkdir -p {PCA_SMARTPCA_DIR}/{wildcards.pca_panel} logs/population_structure/pca/smartpca
 
-        tmp_prefix="{PCA_SMARTPCA_DIR}/{wildcards.pca_panel}/.plink_input.$$"
+        tmp_prefix="{PCA_SMARTPCA_DIR}/{wildcards.pca_panel}/.plink_input.$"
         trap 'rm -f "$tmp_prefix".*' EXIT
 
         plink2 \
@@ -85,10 +163,39 @@ rule make_smartpca_plink_input:
             --out "$tmp_prefix" \
             > {log} 2>&1
 
-        python {input.script} \
-            --fam "$tmp_prefix.fam" \
-            --annotations {input.annotations} \
-            --output-fam {output.fam}
+        awk '
+        BEGIN {{ FS="[ \t]+"; OFS="\t" }}
+        FNR==NR {{
+            if (FNR>1) pop[$1]=$2
+            next
+        }}
+        {{
+            if (NF < 6) {{
+                print "ERROR: malformed PLINK FAM row" > "/dev/stderr"
+                exit 2
+            }}
+            iid=$2
+            if (!(iid in pop)) {{
+                print "ERROR: no population annotation for FAM sample " iid > "/dev/stderr"
+                exit 3
+            }}
+            if (iid in seen) {{
+                print "ERROR: duplicate FAM sample " iid > "/dev/stderr"
+                exit 4
+            }}
+            seen[iid]=1
+            print $1,$2,$3,$4,$5,pop[iid]
+        }}
+        END {{
+            for (iid in pop) {{
+                if (!(iid in seen)) {{
+                    print "ERROR: annotated sample absent from FAM: " iid > "/dev/stderr"
+                    bad=1
+                }}
+            }}
+            if (bad) exit 5
+        }}
+        ' {input.annotations} "$tmp_prefix.fam" > {output.fam}
 
         mv "$tmp_prefix.bed" {output.bed}
         mv "$tmp_prefix.bim" {output.bim}
