@@ -228,9 +228,9 @@ population_structure:
       homozyg_snp: 50
       homozyg_kb: 1500
       homozyg_density: 50
-      homozyg_gap: 500
-      homozyg_window_missing: 5
-      homozyg_window_het: 1
+      homozyg_gap: 250
+      homozyg_window_missing: 1
+      homozyg_window_het: 2
       homozyg_window_threshold: 0.05
       froh_denominator_bp: 2770000000
 

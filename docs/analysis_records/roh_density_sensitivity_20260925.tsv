@@ -1,0 +1,15 @@
+metric	value
+production_density_limit_kb_per_snp	50
+production_roh_count	3933
+observed_mean_density_kb_per_snp	0.865337
+observed_median_density_kb_per_snp	0.658
+observed_p95_density_kb_per_snp	1.4774
+observed_p99_density_kb_per_snp	5.56696
+observed_p99_9_density_kb_per_snp	10.229624
+observed_max_density_kb_per_snp	11.383
+density100_roh_count	3933
+density1000_roh_count	3933
+density100_exact_segment_identity	TRUE
+density1000_exact_segment_identity	TRUE
+production_density50_binding	FALSE
+decision	retain_50_as_nonbinding_guardrail

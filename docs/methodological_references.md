@@ -732,95 +732,263 @@ less restrictive and does not require every differentiated SNP to be common in
 every reference population. The all-population MAF>=0.05 intersection remains
 a prespecified sensitivity analysis.
 
-#### Frozen production ROH definition and FROH
+#### Final production ROH definition and FROH
 
-The production call uses the joint MAF>=0.05, unpruned marker panel with a
-50-SNP sliding window, a minimum of 50 SNP per called ROH, a minimum physical
-length of 1.5 Mb, density <=50 kb/SNP, gap <=500 kb, <=5 missing calls per
-window, <=1 heterozygous call per window, and window hit threshold 0.05.
+The final production ROH definition was frozen on 25 September 2026 after
+dataset-specific sensitivity analyses of missing-genotype tolerance,
+heterozygote tolerance, maximum inter-marker gap, MAF ascertainment and
+LD pruning.
 
-The distinction between the two SNP-count parameters is explicit:
-`--homozyg-window-snp 50` defines the size of the moving scan window, whereas
-`--homozyg-snp 50` requires each final called ROH to contain at least 50 SNPs.
-In this dense WGS-derived panel, the 1.5-Mb physical threshold is the dominant
-biological scale and the 50-SNP final-run minimum is mainly a technical floor.
+Earlier ROH candidate settings documented above are retained as methodological
+provenance but are superseded by this final calibration.
 
-PLINK distinguishes the local scanning-window heterozygote limit
-(`--homozyg-window-het`) from the whole-run heterozygote cap
-(`--homozyg-het`). The production analysis leaves `--homozyg-het` unset:
-a fixed whole-run cap would become increasingly stringent as segment length
-increases, while one heterozygote per 50-SNP scanning window provides local
-tolerance for isolated genotype errors.
+The production marker panel contains 549 individuals (46 Cinque Terre and
+503 1000 Genomes Phase 3 EUR individuals) and 4,878,327 autosomal SNPs after
+joint MAF >=0.05 filtering. The same marker panel is used for all six
+populations. No LD pruning is applied for the primary ROH call.
 
-Primary FROH is the summed physical length of all autosomal ROH >=1.5 Mb divided
-by 2.77e9 bp. This 2.77-Gb denominator is the total SNP-mappable autosomal
-distance used in prior human FROH studies. The project's ~2.794-Gb
-terminal-marker span is not used because it was defined for marker-density
-auditing and bridges marker-free intervals rather than estimating a callable
-autosomal denominator.
+The final PLINK 1.9 `--homozyg` settings are:
 
-Production summaries retain continuous ROH lengths and additionally report
-1.5-<5 Mb and >=5 Mb classes. These bins are descriptive: the primary phenotype
-remains FROH based on all ROH >=1.5 Mb.
+- `--homozyg-window-snp 50`
+- `--homozyg-snp 50`
+- `--homozyg-kb 1500`
+- `--homozyg-density 50`
+- `--homozyg-gap 250`
+- `--homozyg-window-missing 1`
+- `--homozyg-window-het 2`
+- `--homozyg-window-threshold 0.05`
 
-#### Completed production ROH and FROH
+No global `--homozyg-het` limit is imposed.
 
-The frozen production workflow completed on all 549 individuals and yielded
-2,885 ROH >=1.5 Mb, of which 234 were >=5 Mb. The segment count is internally
-consistent with the summed population-level N_ROH values.
+The distinction between the two SNP-count parameters is explicit.
+`--homozyg-window-snp 50` specifies the local sliding-window size, whereas
+`--homozyg-snp 50` is a minimum SNP count for the final called segment.
+The latter is non-binding in the final dense WGS-derived panel: under the
+final gap=250 kb configuration the smallest observed ROH contains well above
+50 SNPs. A Lencz/Purfield-style minimum-marker calculation gave a diagnostic
+value of approximately 64 SNPs, but this value was not imposed as an
+additional threshold because the calculation assumes properties that do not
+fully represent the LD structure of the present WGS panel. The empirical final
+callset demonstrates that the 50-SNP technical floor does not determine the
+called segments.
 
-CT has the highest mean primary FROH (0.01321; mean total ROH 36.58 Mb), followed
-by FIN (0.00701; 19.41 Mb), IBS (0.00492; 13.63 Mb), GBR (0.00431; 11.94 Mb),
-CEU (0.00311; 8.62 Mb) and TSI (0.00294; 8.14 Mb). However, CT median FROH
-(0.00734) is very close to FIN (0.00703), so the CT-vs-FIN contrast is not
-well described as a simple uniform upward shift.
+A minimum physical length of 1.5 Mb remains the primary biological ROH
+definition. ROH >=5 Mb are additionally summarized as a secondary
+length-specific endpoint because the sensitivity analyses showed that the
+long-ROH burden is especially stable and is informative about the long-run
+component of autozygosity.
 
-The length composition is more distinctive. CT has a median of one ROH >=5 Mb
-and mean long-ROH burden of 18.36 Mb, whereas every reference population has a
-median of zero >=5-Mb ROH. On average, ROH >=5 Mb account for ~50.2% of the CT
-total >=1.5-Mb burden, compared with ~12.0% in FIN, 14.1% in CEU, 20.3% in GBR,
-22.9% in TSI and 27.6% in IBS. This pattern is consistent with a stronger
-recent-autozygosity component in at least a subset of CT individuals, but that
-interpretation must be based on the individual distribution rather than the
-population mean alone.
+##### Missing-genotype tolerance
 
-The distribution analysis used FROH>=1.5 Mb as the primary endpoint and
-FROH>=5 Mb as a secondary length-specific endpoint. CT was compared separately
-with each EUR reference population using two-sided Mann-Whitney tests, Holm
-correction across the five prespecified CT-vs-reference contrasts within each
-endpoint, and Cliff's delta as a distributional effect-size measure.
+The production setting permits at most one missing genotype per 50-SNP
+sliding window.
 
-#### Completed ROH/FROH population-distribution analysis
+A direct sensitivity comparison of 0, 1 and 5 missing calls per window showed
+that the effect was confined primarily to the Cinque Terre samples because the
+retained 1000 Genomes EUR panel has no missing genotypes at the harmonized
+sites, whereas CT retains a very small amount of missingness.
 
-For primary FROH>=1.5 Mb, CT is clearly shifted upward relative to CEU
-(Holm-adjusted p=2.76e-9; Cliff's delta=0.638), GBR (5.29e-6; delta=0.501),
-IBS (8.88e-6; delta=0.469) and TSI (5.27e-10; delta=0.659). In contrast,
-CT versus FIN is not significant after Holm correction (p=0.143) and has only
-a small positive distributional effect (delta=0.152). This agrees with the
-nearly identical CT and FIN medians and shows that the higher CT mean total
-FROH is driven partly by the upper tail rather than by a uniform population
-shift.
+Allowing zero missing calls fragmented some CT ROH. Allowing one versus five
+missing calls produced only a small change in CT total burden. The final
+choice of one missing call per window therefore provides limited tolerance for
+the observed CT missingness without retaining the substantially more permissive
+PLINK default of five.
 
-For FROH contributed specifically by ROH>=5 Mb, CT is higher than every
-reference population, including FIN. Holm-adjusted p-values range from
-1.58e-7 (CT vs FIN) to 8.95e-15 (CT vs CEU), with Cliff's delta ranging from
-0.461 to 0.597. The CT-vs-FIN contrast is therefore qualitatively different
-for very long ROH than for total >=1.5-Mb FROH.
+##### Heterozygote tolerance
 
-The presence/absence pattern is also informative descriptively: 29/46 CT
-individuals (63.0%) have at least one ROH >=5 Mb, compared with 26/99 FIN
-(26.3%), 21/107 IBS (19.6%), 14/107 TSI (13.1%), 10/91 GBR (11.0%) and
-3/99 CEU (3.0%). These proportions are reported descriptively here and are not
-used as an additional inferential endpoint, avoiding unnecessary post-hoc
-multiple testing.
+The production setting permits at most two heterozygous calls per 50-SNP
+sliding window.
 
-Overall, the ROH analysis supports a specific interpretation: CT does not show
-a clear uniform excess of total autozygosity relative to FIN, but it does show
-a pronounced excess of very long ROH. This is consistent with a stronger
-recent-autozygosity component in a subset of CT individuals. ROH length is only
-an indirect demographic clock, so this result is not treated as a direct
-estimate of generations since shared ancestry or as proof of a specific
-historical event.
+Sensitivity analyses from zero through four tolerated heterozygotes showed a
+large increase from zero to one and from one to two, followed by progressively
+smaller gains in long-ROH burden. Detailed inspection demonstrated that
+`window-het=1` can fragment extremely long, overwhelmingly homozygous regions.
+
+For example, in NA20585 on chromosome 8, the setting with one tolerated
+heterozygote split a region into several adjacent ROH, whereas
+`window-het=2` reconstructed a single approximately 37.7-Mb tract containing
+61,804 SNPs and only 41 heterozygotes overall
+(PHET approximately 0.00066). Similar behavior was observed in other audited
+long segments.
+
+In contrast, the higher-PHET segments introduced under `window-het=2` in CT
+were concentrated among short ROH close to the 1.5-Mb lower boundary.
+Among CT segments with PHET >=0.02 under this setting, none reached 5 Mb.
+The >=5-Mb burden therefore showed substantially greater stability than the
+short-ROH component.
+
+A global `--homozyg-het` limit is intentionally not used. A fixed absolute
+number of heterozygotes across the complete ROH would become increasingly
+stringent with segment length and could reject very long segments that remain
+overwhelmingly homozygous. Local heterozygote control is instead imposed by
+the sliding-window criterion.
+
+##### Maximum mean SNP density
+
+The production setting retains `--homozyg-density 50`, corresponding to a
+maximum mean spacing of 50 kb per SNP within a called ROH.
+
+This threshold is empirically non-binding in the final WGS-derived callset.
+Among the 3,933 production ROH, the median observed DENSITY value is
+0.658 kb/SNP, the 95th percentile is 1.4774 kb/SNP, the 99th percentile is
+5.567 kb/SNP and the maximum is 11.383 kb/SNP.
+
+A direct sensitivity analysis reran the otherwise identical final production
+call with `--homozyg-density 100` and `--homozyg-density 1000`. Both runs
+returned exactly 3,933 ROH, and the complete segment identities
+(FID, IID, chromosome, start, end and SNP count) were identical to the
+density=50 production call.
+
+Therefore `--homozyg-density 50` is retained as a technical guardrail rather
+than a parameter determining segment inclusion in the present dataset. The
+observed marker density of all final ROH lies comfortably inside this limit.
+
+##### Maximum inter-marker gap
+
+The final maximum gap is 250 kb.
+
+A fresh sensitivity analysis compared 100, 250 and 500 kb while holding the
+final missingness and heterozygote settings fixed. In CT, mean total ROH burden
+was approximately 39.39, 40.37 and 41.42 Mb for gap thresholds of 100, 250 and
+500 kb, respectively. Mean burden from ROH >=5 Mb was approximately 18.23,
+18.53 and 18.66 Mb.
+
+Thus 250 kb retains almost all of the long-ROH burden recovered at 500 kb,
+while avoiding frequent bridging across 250-500-kb marker-sparse intervals.
+The 500-kb setting produced hundreds of segments containing an internal gap
+above 250 kb, including recurrent calls in known marker-sparse/pericentromeric
+regions. Conversely, 100 kb was sufficiently restrictive to fragment some
+otherwise highly homozygous long tracts.
+
+The 250-kb value is therefore an empirical compromise between fragmentation
+and bridging rather than an imported generic default.
+
+##### MAF-scope sensitivity
+
+Joint MAF >=0.05 is used for the primary cross-population marker panel.
+
+The final-parameter sensitivity compared three marker definitions:
+
+1. joint MAF >=0.05 across all 549 individuals;
+2. the intersection of SNPs having MAF >=0.05 separately in CT, CEU, FIN,
+   GBR, IBS and TSI;
+3. the harmonized panel without a MAF filter.
+
+The primary joint-MAF panel contains 4,878,327 SNPs. The strict six-population
+intersection contains 4,142,839 SNPs, while the no-MAF harmonized panel
+contains 7,548,844 SNPs.
+
+Within CT, total ROH burden was highly concordant with the joint-MAF result:
+Pearson r=0.9986 for the strict all-population intersection and r=0.9982 for
+the no-MAF panel. For burden contributed by ROH >=5 Mb, the corresponding
+Pearson correlations were 0.9980 and 0.9943.
+
+Mean CT burden from ROH >=5 Mb was 18.53 Mb with joint MAF >=0.05,
+18.83 Mb with the strict all-population intersection and 17.54 Mb without a
+MAF filter.
+
+These results show that the main long-ROH pattern is not created by the chosen
+MAF ascertainment. Joint MAF >=0.05 is retained as primary because it provides
+one common marker panel for all individuals without requiring every
+differentiated locus to be common independently in all six populations.
+
+##### LD-pruning sensitivity
+
+No LD pruning is used in the primary ROH analysis.
+
+A final sensitivity applied the VIF-based procedures considered by
+Howrigan et al. (2011): light pruning with `--indep 50 5 10` and moderate
+pruning with `--indep 50 5 2`.
+
+The unpruned joint-MAF panel contains 4,878,327 SNPs. Light VIF pruning retains
+814,440 SNPs and moderate VIF pruning retains 426,484 SNPs.
+
+With a fixed 50-SNP PLINK sliding window, this thinning changes the physical
+scale of the scan substantially. The median physical span of a consecutive
+50-SNP window is approximately:
+
+- 23.2 kb in the unpruned panel;
+- 144.3 kb after light VIF pruning;
+- 282.7 kb after moderate VIF pruning.
+
+The corresponding 95th percentiles are approximately 54.3, 321.1 and
+560.6 kb.
+
+Thus LD pruning in this WGS-density dataset is not merely removal of correlated
+markers; with fixed marker-count windows it also changes the physical scale of
+the ROH algorithm.
+
+Nevertheless, individual CT burden remains highly correlated with the unpruned
+analysis. For total ROH burden, Pearson r is 0.9978 under light pruning and
+0.9958 under moderate pruning. For ROH >=5 Mb, Pearson r is 0.9878 and 0.9872,
+respectively.
+
+Absolute long-ROH burden increases rather than decreases monotonically with
+pruning: mean CT burden from ROH >=5 Mb is 18.53 Mb unpruned, 20.92 Mb after
+light pruning and 22.57 Mb after moderate pruning. This demonstrates that
+marker thinning alters segment definition and is not intrinsically a more
+conservative ROH procedure in this dataset.
+
+The unpruned WGS-derived panel is therefore retained for production, while the
+VIF-pruned calls serve as methodological sensitivity analyses.
+
+##### FROH definition
+
+Primary FROH is calculated as the summed physical length of all autosomal
+ROH >=1.5 Mb divided by 2.77e9 bp.
+
+The same denominator is used for every individual and population. ROH lengths
+are retained continuously, and an additional FROH based only on ROH >=5 Mb is
+reported as a secondary length-specific endpoint.
+
+#### Final production ROH and FROH results
+
+The final production workflow completed successfully on all 549 individuals
+and produced 3,933 ROH >=1.5 Mb.
+
+For CT (n=46):
+
+- mean N_ROH >=1.5 Mb = 10.87;
+- median N_ROH >=1.5 Mb = 9;
+- mean total ROH burden >=1.5 Mb = 40.37 Mb;
+- median total burden >=1.5 Mb = 25.74 Mb;
+- mean FROH >=1.5 Mb = 0.01457;
+- median FROH >=1.5 Mb = 0.00929;
+- mean number of ROH >=5 Mb = 2.00;
+- median number of ROH >=5 Mb = 1;
+- mean burden from ROH >=5 Mb = 18.53 Mb;
+- median burden from ROH >=5 Mb = 6.30 Mb;
+- mean FROH >=5 Mb = 0.00669;
+- median FROH >=5 Mb = 0.00228.
+
+Mean total ROH burden >=1.5 Mb in the reference populations is 13.05 Mb in
+CEU, 24.51 Mb in FIN, 16.92 Mb in GBR, 18.13 Mb in IBS and 12.13 Mb in TSI.
+
+The distribution analysis uses two-sided Mann-Whitney tests for each
+prespecified CT-versus-reference comparison, Holm correction across the five
+comparisons separately within each endpoint, and Cliff's delta as an effect
+size.
+
+For primary FROH >=1.5 Mb, CT differs from CEU
+(Holm-adjusted p=2.88e-8; Cliff's delta=0.598), GBR
+(p=2.90e-5; delta=0.461), IBS (p=2.90e-5; delta=0.452) and TSI
+(p=6.06e-10; delta=0.657). CT versus FIN is not significant after Holm
+correction (p=0.215; delta=0.128).
+
+For FROH contributed specifically by ROH >=5 Mb, CT differs from all five
+reference populations, including FIN. The Holm-adjusted p-values are
+2.60e-14 for CEU, 2.27e-5 for FIN, 1.34e-8 for GBR, 2.11e-6 for IBS and
+9.40e-9 for TSI.
+
+The distinction between the two endpoints is biologically relevant to the
+interpretation: the total >=1.5-Mb FROH distribution does not show a clear
+uniform CT-versus-FIN shift, whereas the very-long-ROH component is elevated
+in CT relative to FIN as well as to the other EUR reference populations.
+
+These results support interpretation of the CT signal as having a particularly
+strong long-ROH component. ROH length is an indirect marker of demographic
+history, however, and the analysis is not used to infer a precise number of
+generations or to attribute the pattern to a single historical event.
 
 
 ### Howrigan et al. 2011: specific ROH parameter implications

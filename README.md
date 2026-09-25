@@ -38,6 +38,26 @@ The 1000 Genomes Project Phase 3 EUR panel (CEU, FIN, GBR, IBS and TSI; n=503) i
 - SHAPEIT2 phasing
 - saltiLASSI / LASSI selection scans
 
+## Runs of homozygosity
+
+Final ROH production uses the joint CT + 1000G EUR common-marker panel:
+
+- 549 individuals
+- 4,878,327 SNPs after joint MAF >=0.05
+- no LD pruning
+- minimum ROH length: 1.5 Mb
+- 50-SNP sliding windows
+- minimum 50 SNPs per called ROH
+- maximum density: 50 kb/SNP
+- maximum internal gap: 250 kb
+- <=1 missing and <=2 heterozygous calls per 50-SNP window
+- no global `--homozyg-het` cap
+- FROH denominator: 2.77e9 bp
+
+The final production call contains 3,933 ROH. Parameter choices were evaluated
+with explicit missingness, heterozygote, gap, MAF-scope and LD-pruning
+sensitivity analyses.
+
 ## Phasing
 
 CT is phased with SHAPEIT2 v2.r904 using the 1000 Genomes Phase 3 EUR reference.

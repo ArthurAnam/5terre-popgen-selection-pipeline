@@ -79,21 +79,35 @@ FST is used as a descriptive complement to PCA. The former average-linkage clust
 
 Primary ROH analysis:
 
-- joint CT + EUR panel
-- MAF >=0.05
+- joint CT + EUR panel: 549 individuals
+- joint MAF >=0.05: 4,878,327 SNPs
 - no LD pruning
 - PLINK `--homozyg`
-- minimum 50 SNPs
+- 50-SNP sliding windows
+- minimum 50 SNPs per called ROH
 - minimum length 1.5 Mb
-- maximum density 50 kb/SNP
-- maximum gap 500 kb
-- <=5 missing calls per window
-- <=1 heterozygous call per window
+- maximum density 50 kb/SNP (empirically non-binding; observed maximum 11.383 kb/SNP)
+- maximum internal gap 250 kb
+- <=1 missing call per 50-SNP window
+- <=2 heterozygous calls per 50-SNP window
 - window threshold 0.05
+- no global `--homozyg-het` cap
 
 Primary fROH denominator:
 
 - 2.77e9 bp
+
+Final production:
+
+- 3,933 ROH >=1.5 Mb
+- CT mean total ROH burden: 40.37 Mb
+- CT mean FROH >=1.5 Mb: 0.01457
+- CT mean ROH burden >=5 Mb: 18.53 Mb
+- CT mean FROH >=5 Mb: 0.00669
+
+Parameter choice was supported by explicit sensitivity analyses of missing
+genotypes, heterozygote tolerance, maximum internal gap, MAF scope and LD
+pruning. The >=5-Mb burden is retained as a secondary length-specific endpoint.
 
 ## LD decay
 
