@@ -1,0 +1,28 @@
+metric	observed_value	interpretation
+cohort	after reviewed exclusion of TSBC6060, TSBC6389, TSBD8047 and TSBD8199; n=46	post-sample-QC cohort used for variant/genotype quality review
+DP_n_observations	11348962	deterministic autosomal genotype-field exploration
+DP_median	30	coverage centered at approximately the expected 30x
+DP_q05_q95	17-42	central 90% of sampled genotype depths
+DP_mean	30.111792	no cohort-wide residual low-depth pattern after sample exclusions
+GQ_n_observations	11327657	deterministic autosomal genotype-field exploration
+GQ_median	90	high central genotype quality
+GQ_q05_q95	41-99	low-quality calls confined to a minority tail rather than a cohort-wide shift
+GQ_mean	82.101122	no additional fixed GQ threshold imposed
+HET_ALT_FRACTION_n	2095322	heterozygous calls with allele-depth information
+HET_ALT_FRACTION_median	0.5	heterozygous allele balance centered at the expected 0.5
+HET_ALT_FRACTION_IQR	0.42372881-0.56666667	central heterozygous allele-balance distribution
+HET_ALT_FRACTION_q05_q95	0.30434783-0.66666667	descriptive only; no fixed AB cutoff imposed
+HET_ABS_BALANCE_DEVIATION_median	0.071428571	median absolute deviation from 0.5
+HET_ABS_BALANCE_DEVIATION_q95	0.22857143	descriptive tail retained rather than hard-masked
+individual_missingness_min	0.00153167	0.153167%
+individual_missingness_max	0.00222369	0.222369%; far below 5% exclusion threshold
+individuals_above_5pct_missingness	0	no retained individual removed for missingness
+core_starting_autosomal_sites	11136875	post-sample-QC autosomal starting panel
+core_removed_palindromic_AT_CG	1709976	core project QC filter
+core_after_palindromic	9426899	remaining sites
+core_removed_monomorphic	358854	monomorphic after retained-cohort recalculation
+core_after_monomorphic	9068045	remaining sites
+core_removed_site_missingness_gt_0_05	61730	>5% site missingness filter
+core_after_first_dynamic_site_pass	9006315	remaining sites after first dynamic site pass
+DP_GQ_AB_hard_filter_decision	NONE	post-VQSR/post-sample-QC distributions did not justify additional arbitrary genotype-level thresholds
+QUAL_hard_filter_decision	NONE	QUAL inspected descriptively; numerical summary to be imported from current variant-QC output before final documentation freeze

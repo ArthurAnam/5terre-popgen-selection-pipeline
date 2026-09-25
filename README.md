@@ -26,21 +26,7 @@ No additional arbitrary QUAL, DP, GQ, or allele-balance hard filters are imposed
 
 ## 1000 Genomes EUR reference
 
-- 503 individuals total
-- CEU: 99
-- FIN: 99
-- GBR: 91
-- IBS: 107
-- TSI: 107
-
-Production selection scans:
-
-- CEU, TSI, and IBS are comparison populations
-- FIN and GBR are LD-context populations only
-- production marker panels use within-population MAF >=0.05
-- A/T and C/G SNPs are removed
-
-CEU also has a separate paper-oriented LASSI-T benchmark, distinct from the production CEU comparison.
+The 1000 Genomes Project Phase 3 EUR panel (CEU, FIN, GBR, IBS and TSI; n=503) is used as the European reference. All five populations are included in PCA, ROH and LD-decay analyses, while CEU, TSI and IBS are additionally used as LASSI comparison populations. The 1000G data undergo the project downstream QC before analysis.
 
 ## Population-genomic analyses
 

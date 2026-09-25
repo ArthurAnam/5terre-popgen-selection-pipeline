@@ -34,7 +34,13 @@ These will be summarized descriptively before any decision about genotype-level 
 
 ## Exploration before any additional hard filter
 
-QUAL and current cohort-level missingness/frequency summaries are explored first without filtering. FORMAT-level DP, GQ and AD are explored separately because they describe genotype calls. No VQSR-specific field is used as a new downstream filter, and no external threshold is copied automatically.
+After exclusion of the four reviewed sample-level outliers, genotype quality was examined descriptively before deciding whether any additional DP, GQ or allele-balance hard filters were justified.
+
+Across the deterministic autosomal genotype subset, DP had median 30x (5th-95th percentile 17-42x; mean 30.11), GQ had median 90 (5th-95th percentile 41-99; mean 82.10), and the heterozygous alternate-allele fraction was centered at 0.50 (IQR 0.424-0.567). The median absolute deviation of heterozygous allele balance from 0.5 was 0.071. Exact whole-autosome individual missingness among the 46 retained samples ranged from 0.153% to 0.222%, with no sample approaching the 5% threshold.
+
+These distributions did not indicate a residual cohort-wide quality problem requiring additional arbitrary genotype-level hard thresholds. DP, GQ and allele balance were therefore retained as diagnostic evidence rather than converted into additional filtering criteria. Site-level QUAL was also examined descriptively; its numerical summary is recorded separately once imported from the current run output.
+
+No VQSR bookkeeping field is reused as a downstream hard filter, and no external DP/GQ/allele-balance threshold is copied automatically.
 
 ## HWE
 
