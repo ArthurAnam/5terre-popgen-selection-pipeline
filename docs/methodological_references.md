@@ -317,6 +317,33 @@ CEU 0.157634 -> 0.157442; FIN 0.175689 -> 0.175663; GBR 0.161689 -> 0.162084;
 IBS 0.160217 -> 0.160247; TSI 0.160447 -> 0.160297. These differences are
 small relative to the corresponding centroid distances.
 
+
+A complementary Procrustes analysis was performed specifically on the
+two-dimensional PC1-PC2 configurations. The comparison used the same 549
+matched individuals and allowed translation, isotropic scaling and an
+orthogonal rotation/reflection before quantifying residual disagreement.
+
+The standardized Procrustes disparity was 0.0020483. The fitted masked-to-
+unmasked scale was 0.998956 and the optimal orthogonal transformation had
+determinant +1, so no reflection was required. The coordinate RMSE after
+alignment was 0.001931. Median, 95th-percentile and maximum individual
+Euclidean displacements were 0.002099, 0.004855 and 0.008184, respectively.
+
+CT showed a small coherent displacement rather than evidence of PCA
+reorganization: its mean displacement was 0.002729 and its PC1-PC2 centroid
+shift was 0.002412. The CT median individual displacement was 0.002178, close
+to the global median of 0.002099. The largest individual displacement was
+observed for TSBC6015 (0.008184), but similarly sized changes occurred in
+multiple reference populations and no sample exclusion or PCA recalculation is
+triggered by this descriptive sensitivity analysis.
+
+Together with the PC-specific correlations and centroid-distance comparison,
+the Procrustes result supports the conclusion that the leading population
+structure is robust to predefined high-LD-region masking. The masked and
+unmasked solutions are not claimed to be numerically identical; the relevant
+conclusion is that masking causes only small coordinate changes without
+substantially altering the relative PC1-PC2 population configuration.
+
 The higher PCs are less stable one-to-one. PC4-PC6 remain strongly correlated
 with their same-index counterparts, but PCs 7-10 show lower same-index
 correlations and cross-match to neighboring PCs. This pattern is consistent

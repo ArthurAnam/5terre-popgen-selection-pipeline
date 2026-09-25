@@ -68,6 +68,10 @@ Joint CT + EUR PCA:
 - high-LD-region sensitivity panel: 287,815 SNPs
 
 The first three PCs are essentially unchanged by the high-LD-region sensitivity.
+For PC1-PC2, a matched-sample Procrustes comparison of the masked and unmasked
+solutions gives a standardized disparity of 0.00205 and a post-alignment
+coordinate RMSE of 0.00193 across all 549 individuals, supporting robustness
+of the leading two-dimensional population structure to high-LD-region masking.
 
 ## Pairwise FST
 

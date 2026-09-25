@@ -260,3 +260,35 @@ rule compare_joint_pca_panels:
         PCA_COMPARISON_DIR + "/pc3_masked_vs_unmasked.png",
         PCA_COMPARISON_DIR + "/pc1_pc2_side_by_side.png",
         PCA_COMPARISON_DIR + "/pc2_pc3_side_by_side.png",
+        PCA_COMPARISON_DIR + "/procrustes_pc1_pc2_summary.tsv",
+        PCA_COMPARISON_DIR + "/procrustes_pc1_pc2_displacements.tsv",
+
+
+# ============================================================
+# PC1-PC2 Procrustes robustness: high-LD masked vs unmasked PCA
+# ============================================================
+
+rule procrustes_joint_pca_pc12:
+    input:
+        unmasked=PCA_SMARTPCA_DIR + "/unmasked/pca_coordinates.tsv",
+        masked=PCA_SMARTPCA_DIR + "/highld_masked/pca_coordinates.tsv",
+        script="workflow/scripts/procrustes_pca_pc12.py"
+    output:
+        summary=PCA_COMPARISON_DIR + "/procrustes_pc1_pc2_summary.tsv",
+        displacements=PCA_COMPARISON_DIR + "/procrustes_pc1_pc2_displacements.tsv"
+    params:
+        expected_samples=lambda wildcards: config["population_structure"]["pca"]["expected_joint_samples"]
+    conda:
+        "../../envs/pipeline.yaml"
+    shell:
+        r"""
+        set -euo pipefail
+        mkdir -p {PCA_COMPARISON_DIR}
+
+        python {input.script} \
+            --unmasked {input.unmasked} \
+            --masked {input.masked} \
+            --expected-samples {params.expected_samples} \
+            --summary-out {output.summary} \
+            --displacements-out {output.displacements}
+        """
