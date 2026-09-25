@@ -44,24 +44,24 @@ rule prepare_roh_production_panel:
         n_variants=$(wc -l < "$tmp_prefix.bim")
         n_samples=$(wc -l < "$tmp_prefix.fam")
 
-        [ "$n_variants" -eq "{params.expected_variants}" ] || {
+        [ "$n_variants" -eq "{params.expected_variants}" ] || {{
             echo "ERROR: expected {params.expected_variants} ROH markers, found $n_variants" >&2
             exit 1
-        }
-        [ "$n_samples" -eq "{params.expected_samples}" ] || {
+        }}
+        [ "$n_samples" -eq "{params.expected_samples}" ] || {{
             echo "ERROR: expected {params.expected_samples} ROH samples, found $n_samples" >&2
             exit 1
-        }
+        }}
 
         mv "$tmp_prefix.bed" {output.bed}
         mv "$tmp_prefix.bim" {output.bim}
         mv "$tmp_prefix.fam" {output.fam}
 
-        {
+        {{
             printf 'metric\tvalue\n'
             printf 'maf_threshold\t%s\n' "{params.maf}"
             printf 'variants\t%s\n' "$n_variants"
             printf 'samples\t%s\n' "$n_samples"
             printf 'ld_pruning\tNO\n'
-        } > {output.summary}
+        }} > {output.summary}
         """
