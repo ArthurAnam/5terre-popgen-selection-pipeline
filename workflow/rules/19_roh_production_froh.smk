@@ -14,6 +14,15 @@ rule run_roh_production:
         hom=ROH_PROD_PREFIX + ".hom",
         indiv=ROH_PROD_PREFIX + ".hom.indiv",
         summary=ROH_PROD_PREFIX + ".hom.summary"
+    params:
+        window_snp=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_window_snp"],
+        min_snp=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_snp"],
+        min_kb=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_kb"],
+        density=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_density"],
+        gap=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_gap"],
+        window_missing=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_window_missing"],
+        window_het=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_window_het"],
+        window_threshold=lambda wc: config["population_structure"]["roh"]["production"]["homozyg_window_threshold"]
     log:
         "logs/roh/production/primary_roh.log"
     conda:
@@ -26,14 +35,14 @@ rule run_roh_production:
         plink \
             --bfile {ROH_COMMON_BED_PREFIX} \
             --homozyg \
-            --homozyg-window-snp 50 \
-            --homozyg-snp 50 \
-            --homozyg-kb 1500 \
-            --homozyg-density 50 \
-            --homozyg-gap 500 \
-            --homozyg-window-missing 5 \
-            --homozyg-window-het 1 \
-            --homozyg-window-threshold 0.05 \
+            --homozyg-window-snp {params.window_snp} \
+            --homozyg-snp {params.min_snp} \
+            --homozyg-kb {params.min_kb} \
+            --homozyg-density {params.density} \
+            --homozyg-gap {params.gap} \
+            --homozyg-window-missing {params.window_missing} \
+            --homozyg-window-het {params.window_het} \
+            --homozyg-window-threshold {params.window_threshold} \
             --out {ROH_PROD_PREFIX} \
             > {log} 2>&1
         """
@@ -50,8 +59,8 @@ rule summarize_roh_production:
         population=ROH_PROD_DIR + "/population_roh_froh_summary.tsv",
         readme=ROH_PROD_DIR + "/README.txt"
     params:
-        denominator_bp=2770000000,
-        expected_samples=lambda wildcards: config["population_structure"]["roh"]["expected_joint_samples"]
+        denominator_bp=lambda wc: config["population_structure"]["roh"]["production"]["froh_denominator_bp"],
+        expected_samples=lambda wc: config["population_structure"]["roh"]["expected_joint_samples"]
     conda:
         "../../envs/pipeline.yaml"
     shell:

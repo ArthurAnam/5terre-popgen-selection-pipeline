@@ -184,82 +184,24 @@ relatedness:
 # ============================================================
 
 population_structure:
-  description: "Analyses aimed at describing genetic structure, relatedness, and autozygosity in the Cinque Terre population within an Italian and European context."
-
   target_dataset: "Cinque Terre"
-
-  main_comparative_framework:
-    - "North Italy WGS reference cohort"
-    - "South Italy WGS reference cohort"
-
-  secondary_reference_context:
-    - "1000 Genomes Project EUR"
-
-  harmonize_datasets: true
-
-  analyses:
-    pca: true
-    roh: true
-    froh: true
-    roh_sum: true
-    roh_length_distribution: true
-    king_kinship_and_ibs0: true
-
-  excluded_analyses:
-    admixture: true
-    fst: true
-    ancestry_proportions: true
-    population_grouping_inference: true
+  european_reference: "1000 Genomes Project Phase 3 EUR"
 
   pca:
     method: "smartpca"
-    purpose: "Ancestry placement and fine-scale population structure."
-    parameter_status: "joint_pca_preprocessing_and_smartpca_execution_fixed"
-    analysis_mode: "joint"
-    expected_joint_samples: 549
-    expected_harmonized_variants: 7548844
     maf_threshold: 0.05
     maf_scope: "joint_harmonized_ct_plus_1kg_eur"
-    filter_order: ["maf", "ld_pruning"]
-    ld_pruning: true
-    ld_pruning_scope: "joint_harmonized_ct_plus_1kg_eur"
+    expected_joint_samples: 549
+    expected_harmonized_variants: 7548844
+
     pruning:
       tool: "PLINK2 --indep-pairwise"
       window_snps: 50
       step_snps: 5
       r2_threshold: 0.2
       indep_order: 1
-      rationale: "Match the 50-SNV, 5-SNV-step, r2>0.2 strategy used by Sazzini et al. 2020; PLINK2 --indep-order 1 is set explicitly to reproduce PLINK 1.x pruning order rather than the newer PLINK2 default."
-    observed_unmasked_preprocessing:
-      harmonized_input_variants: 7548844
-      harmonized_input_samples: 549
-      variants_after_maf: 4878327
-      variants_removed_by_maf: 2670517
-      variants_removed_by_ld_pruning: 4582952
-      variants_after_ld_pruning: 295375
-      pca_preprocessed_samples: 549
-      pca_preprocessed_variants: 295375
-    high_ld_sensitivity:
-      enabled: true
-      run_both_masked_and_unmasked: true
-      presentation_status: "primary_PC1_PC3_robust_to_mask_pending_visual_review"
-      region_file: "config/pca_high_ld_regions_grch37.bed1"
-      region_build: "GRCh37"
-      region_count: 18
-      region_catalog_source: "Grinde et al. 2024 literature-review catalog, build-37 file"
-      masked_filter_order: ["maf", "predefined_high_ld_mask", "ld_pruning"]
-      rationale: "Run an otherwise identical PCA-preprocessing sensitivity branch with a predefined GRCh37 high-LD mask; do not select regions from the observed Cinque Terre PCA."
-    observed_high_ld_preprocessing:
-      high_ld_region_count: 18
-      variants_removed_by_high_ld_mask: 147894
-      variants_entering_masked_ld_pruning: 4730433
-      variants_removed_by_masked_ld_pruning: 4442618
-      variants_after_ld_pruning: 287815
-      difference_vs_unmasked_final_variants: -7560
-      pca_preprocessed_samples: 549
+
     smartpca:
-      run_both_preprocessing_panels: true
-      panels: ["unmasked", "highld_masked"]
       n_components: 10
       numoutlieriter: 0
       usenorm: "YES"
@@ -267,376 +209,23 @@ population_structure:
       familynames: "NO"
       fastmode: "NO"
       numchrom: 22
-      rationale: "Joint PCA on all 549 individuals. Automatic outlier removal is disabled so biologically real population extremes are not silently excluded. Ten PCs are retained for inspection; the publication panels will be selected after reviewing the full output."
-    observed_joint_smartpca:
-      samples: 549
-      unmasked:
-        PC1_eigenvalue: 4.173998
-        PC1_variance_percent: 0.7616784588
-        PC2_eigenvalue: 2.085995
-        PC2_variance_percent: 0.3806560177
-        PC3_eigenvalue: 1.692304
-        PC3_variance_percent: 0.3088145952
-      highld_masked:
-        PC1_eigenvalue: 4.142286
-        PC1_variance_percent: 0.7558916031
-        PC2_eigenvalue: 2.072798
-        PC2_variance_percent: 0.3782478088
-        PC3_eigenvalue: 1.680901
-        PC3_variance_percent: 0.3067337580
-      comparison_status: "completed_first3_robust_higher_pcs_less_stable"
-      coordinate_comparison:
-        matched_samples: 549
-        mean_abs_same_pc_correlation_first3: 0.9983407551
-        minimum_abs_same_pc_correlation_first3: 0.9970738512
-        PC1_abs_correlation: 0.9997245995
-        PC2_abs_correlation: 0.9982238148
-        PC3_abs_correlation: 0.9970738512
-        mean_abs_same_pc_correlation_first10: 0.7016479270
-        minimum_abs_same_pc_correlation_first10: 0.1256357205
-        same_index_is_best_match_count_first10: 6
-        max_population_centroid_shift_PC1_PC3: 0.0052179180
-        interpretation: "PC1-PC3 are highly concordant between masked and unmasked analyses; higher PCs show reordering/rotation and should not be treated as one-to-one stable components without further inspection."
-    n_components: 10
-
-  exploratory_population_grouping:
-    enabled: true
-    status: "exploratory_not_for_automatic_population_merging"
-    populations: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
-    marker_panel: "joint_maf0.05_highld_masked_ldpruned"
-    marker_count: 287815
-    fst:
-      tool: "PLINK2 --fst"
-      method: "hudson"
-    clustering:
-      method: "average_linkage"
-      distance: "pairwise_hudson_fst"
-      negative_fst_for_clustering: "truncate_to_zero"
-    interpretation: "Quick diagnostic only. No population labels are merged automatically."
-    observed_pairwise_fst:
-      CEU_GBR: 0.00031653
-      IBS_TSI: 0.0015252
-      CEU_IBS: 0.00230597
-      GBR_IBS: 0.0025142
-      CEU_TSI: 0.00346362
-      GBR_TSI: 0.00385377
-      CT_TSI: 0.0053019
-      CT_IBS: 0.00603848
-      CEU_FIN: 0.00618549
-      FIN_GBR: 0.00659861
-      CEU_CT: 0.0077535
-      CT_GBR: 0.00813886
-      FIN_IBS: 0.010168
-      FIN_TSI: 0.0116828
-      CT_FIN: 0.0158024
-    observed_average_linkage:
-      step1: "CEU+GBR at 0.00031653"
-      step2: "IBS+TSI at 0.0015252"
-      step3: "(CEU+GBR)+(IBS+TSI) at 0.00303439"
-      step4: "CT joins CEU+GBR+IBS+TSI at 0.006808185"
-      step5: "FIN joins all remaining groups at 0.01008746"
-    observed_interpretation: "Closest reference pair is CEU-GBR, followed by IBS-TSI. CT is closest to TSI then IBS, but remains separate in the average-linkage hierarchy until after the two reference pairs have merged."
 
   roh:
     method: "PLINK --homozyg"
-    purpose: "Runs of homozygosity burden, segment length distribution, and autozygosity."
-    parameter_status: "production_roh_froh_and_distribution_analysis_completed"
     maf_threshold: 0.05
-    maf_scope: "joint_harmonized_ct_plus_1kg_eur"
-    maf_scope_status: "joint_maf0.05_frozen_primary_all_population_maf0.05_intersection_retained_as_sensitivity"
     expected_joint_samples: 549
     expected_joint_maf0.05_variants: 4878327
-    ld_pruning: "unpruned_primary_candidate_supported_by_light_vif_sensitivity"
-    pruning: null
-    ld_sensitivity:
-      enabled: true
-      status: "light_vif_panel_density_audit_completed"
-      primary_candidate:
-        panel: "joint_maf0.05_unpruned"
-        role: "population_history_and_froh_primary_candidate"
-        rationale: "Preserve the physical ROH signal in the primary candidate analysis; long physical-length thresholds are intended to reduce background-LD-driven short homozygous tracts."
-      light_vif:
-        panel: "joint_maf0.05_light_vif"
-        tool: "PLINK1.9 --indep"
-        window_snps: 50
-        step_snps: 5
-        vif_threshold: 10
-        approximate_single_predictor_r2: 0.9
-        role: "methodological_sensitivity"
-        rationale: "Reproduce the light VIF pruning strategy evaluated by Howrigan et al. 2011 rather than translating it into a different pairwise-r2 algorithm."
-      reuse_pca_pruning: false
-      pca_pruning_not_reused_rationale: "PCA and ROH have different inferential goals. PCA requires strong reduction of correlated markers, whereas ROH detection must balance redundant LD against removal of genuine homozygous tracts. The PCA r2=0.2 panel is therefore not reused for ROH."
-      observed_light_vif_density_audit:
-        retained_variants: 814440
-        autosomes: 22
-        sum_terminal_marker_spans_bp: 2793742747
-        markers_per_mb_across_terminal_marker_spans: 291.5229044888148
-        mean_intermarker_gap_bp_genomewide: 3430.3548362143274
-        maximum_intermarker_gap_bp_genomewide: 21133173
-        total_intermarker_gaps: 814418
-        gaps_gt_50kb: 567
-        gaps_gt_100kb: 207
-        gaps_gt_250kb: 65
-        gaps_gt_500kb: 35
-        gaps_gt_1000kb: 21
-      next_decision: "Run a prespecified long-ROH sensitivity comparison between an unpruned population-history framework and a light-VIF Howrigan-derived framework."
-    candidate_calling_framework:
-      comparison_min_roh_kb: 1500
-      status: "prespecified_sensitivity_before_production_freeze"
-      rationale: "Both frameworks are compared only for ROH >=1.5 Mb so the biological scale is held constant while LD treatment and historically linked PLINK settings differ."
-      primary_population_history:
-        panel: "joint_maf0.05_unpruned"
-        homozyg_window_snp: 50
-        homozyg_snp: 50
-        homozyg_kb: 1500
-        homozyg_density: 50
-        homozyg_gap: 1000
-        homozyg_window_missing: 5
-        homozyg_window_het: 1
-        homozyg_window_threshold: 0.05
-        role: "primary_candidate"
-      light_vif_howrigan:
-        panel: "joint_maf0.05_light_vif"
-        preprocessing: "PLINK1.9 --indep 50 5 10"
-        homozyg_window_snp: 65
-        homozyg_snp: 65
-        homozyg_kb: 10
-        homozyg_density: 200
-        homozyg_gap: 500
-        homozyg_window_missing: 3
-        homozyg_window_het: 0
-        homozyg_window_threshold: 0.05
-        postprocess_min_roh_kb: 1500
-        role: "methodological_sensitivity"
-      froh_status: "deferred_until_roh_definition_and_denominator_are_frozen"
-      observed_call_sensitivity:
-        status: "completed"
-        interpretation: "CT has the highest mean long-ROH burden in both frameworks. Light-VIF reduces absolute burden in all populations but preserves the CT individual ranking extremely strongly."
-        primary_population_history_mean_total_roh_mb:
-          CT: 37.549617043478264
-          FIN: 20.601735363636365
-          IBS: 14.415328186915888
-          GBR: 12.912042274725275
-          CEU: 9.433073777777778
-          TSI: 8.886029233644859
-        light_vif_mean_total_roh_mb:
-          CT: 28.192754413043478
-          FIN: 7.047810898989899
-          IBS: 4.790818682242991
-          GBR: 3.9999806483516482
-          TSI: 2.439690140186916
-          CEU: 2.367463414141414
-        ct_concordance_primary_vs_light_vif:
-          total_roh_mb_pearson: 0.9930290972872299
-          total_roh_mb_spearman: 0.9772363203932892
-          n_roh_pearson: 0.9092572157590255
-          n_roh_spearman: 0.9108510105671549
-        retained_mean_total_roh_fraction_light_vif_vs_primary:
-          CT: 0.7508133672947829
-          FIN: 0.3420979240141985
-          IBS: 0.33234197793647113
-          GBR: 0.30978683025081355
-          TSI: 0.2745534677006917
-          CEU: 0.25097475859020957
-      observed_gap_het_sensitivity:
-        status: "completed"
-        interpretation: "Maximum gap has a modest effect when one heterozygote per window is allowed, whereas forcing zero heterozygotes strongly reduces long-ROH burden, especially in the 1000G reference populations."
-        selected_candidate_gap_kb: 500
-        selected_candidate_window_het: 1
-        selected_candidate_rationale: "gap=500 kb is a conservative compromise supported by human ROH precedent and remains nearly identical to gap=1000 kb in this dataset; allowing one heterozygote per window reduces sensitivity to isolated genotype errors and is conservative for CT-vs-1000G comparison because the zero-heterozygote setting reduces reference-population burden disproportionately."
-        ct_mean_total_roh_mb:
-          gap100_het0: 21.556273413043478
-          gap100_het1: 35.56596097826087
-          gap500_het0: 22.08977656521739
-          gap500_het1: 36.57970608695652
-          gap1000_het0: 22.44639045652174
-          gap1000_het1: 37.549617043478264
-        ct_gap500_het1_vs_gap1000_het1:
-          total_roh_mb_fraction: 0.9741685512773226
-          total_roh_mb_pearson: 0.9994757379455005
-          total_roh_mb_spearman: 0.9975331483194573
-          max_roh_pearson: 1.0
-          max_roh_spearman: 1.0
-        mean_total_roh_fraction_het0_vs_het1_at_gap500:
-          CT: 0.6038795460061562
-          CEU: 0.20484797609149628
-          FIN: 0.2956600689844446
-          GBR: 0.26922005805930584
-          IBS: 0.2886899196577508
-          TSI: 0.23523907867872426
-      production_parameters:
-        panel: "joint_maf0.05_unpruned"
-        maf_threshold: 0.05
-        maf_scope: "joint_549_sample_ct_plus_1kg_eur"
-        ld_pruning: false
-        homozyg_window_snp: 50
-        homozyg_snp: 50
-        homozyg_kb: 1500
-        homozyg_density: 50
-        homozyg_gap: 500
-        homozyg_window_missing: 5
-        homozyg_window_het: 1
-        homozyg_window_threshold: 0.05
-        homozyg_het: null
-        homozyg_het_rationale: "No whole-run heterozygote cap is imposed; the one-heterozygote tolerance is local to each 50-SNP scanning window."
-        status: "frozen"
-      froh:
-        status: "frozen_for_primary_roh_ge_1.5Mb"
-        denominator_bp: 2770000000
-        denominator_definition: "total SNP-mappable autosomal distance"
-        primary_min_roh_kb: 1500
-        length_classes: ["1.5_to_lt5_Mb", "ge5_Mb"]
-        observed_production:
-          status: "completed"
-          total_roh_segments_ge1.5mb: 2885
-          total_roh_segments_ge5mb: 234
-          population_summary:
-            CT:
-              n: 46
-              mean_froh_ge1.5mb: 0.01320567006749333
-              median_froh_ge1.5mb: 0.00733841083032491
-              mean_n_roh_ge1.5mb: 8.956521739130435
-              median_n_roh_ge1.5mb: 7.0
-              mean_max_roh_mb: 9.23210795652174
-              median_max_roh_mb: 6.5731705
-              mean_n_roh_ge5mb: 1.9565217391304348
-              median_n_roh_ge5mb: 1.0
-              mean_total_roh_mb_ge5mb: 18.35638363043478
-              mean_froh_ge5mb: 0.006626853296185842
-              mean_fraction_roh_burden_ge5mb: 0.5018187840765688
-            FIN:
-              n: 99
-              mean_froh_ge1.5mb: 0.007008009437333625
-              median_froh_ge1.5mb: 0.007033592057761733
-              mean_n_roh_ge1.5mb: 8.030303030303031
-              median_n_roh_ge1.5mb: 8
-              mean_max_roh_mb: 4.267829919191919
-              median_max_roh_mb: 3.690538
-              mean_froh_ge5mb: 0.0008407270794588485
-            IBS:
-              n: 107
-              mean_froh_ge1.5mb: 0.004921886376058572
-              median_froh_ge1.5mb: 0.002811552346570397
-              mean_froh_ge5mb: 0.001360847639933871
-            GBR:
-              n: 91
-              mean_froh_ge1.5mb: 0.00430922746856032
-              median_froh_ge1.5mb: 0.0027341884476534298
-              mean_froh_ge5mb: 0.0008764585948347681
-            CEU:
-              n: 99
-              mean_froh_ge1.5mb: 0.0031111517084199394
-              median_froh_ge1.5mb: 0.00249945559566787
-              mean_froh_ge5mb: 0.0004397975458556686
-            TSI:
-              n: 107
-              mean_froh_ge1.5mb: 0.0029380691588785047
-              median_froh_ge1.5mb: 0.0018374404332129964
-              mean_froh_ge5mb: 0.0006729804919194304
-          interpretation: "CT has the highest mean FROH and a much larger contribution from ROH >=5 Mb, but its median primary FROH is close to FIN. Distributional testing confirms that CT does not differ clearly from FIN for total FROH>=1.5 Mb, whereas CT has substantially higher FROH from ROH>=5 Mb than every reference population, including FIN."
-        population_distribution_analysis:
-          status: "completed"
-          primary_endpoint: "FROH_GE1_5MB"
-          secondary_endpoint: "FROH_GE5MB"
-          test: "two-sided Mann-Whitney with tie-corrected normal approximation"
-          multiplicity: "Holm correction across five CT-vs-reference contrasts within endpoint"
-          effect_size: "Cliff's delta; positive means larger in CT"
-          primary_froh_ge1.5mb:
-            CT_vs_CEU: {p_holm: 2.7560397923721187e-09, cliffs_delta: 0.6376811594202898}
-            CT_vs_FIN: {p_holm: 0.14273767878903862, cliffs_delta: 0.1515151515151516}
-            CT_vs_GBR: {p_holm: 5.289884956989609e-06, cliffs_delta: 0.5009555661729574}
-            CT_vs_IBS: {p_holm: 8.880762411817648e-06, cliffs_delta: 0.46871190572937826}
-            CT_vs_TSI: {p_holm: 5.273615599920656e-10, cliffs_delta: 0.6594880130028444}
-          secondary_froh_ge5mb:
-            CT_vs_CEU: {p_holm: 8.947347990072268e-15, cliffs_delta: 0.5968379446640317}
-            CT_vs_FIN: {p_holm: 1.580921344801194e-07, cliffs_delta: 0.47277119016249447}
-            CT_vs_GBR: {p_holm: 6.663419454027393e-10, cliffs_delta: 0.5296225513616819}
-            CT_vs_IBS: {p_holm: 1.2096679062882647e-07, cliffs_delta: 0.46119463632669655}
-            CT_vs_TSI: {p_holm: 1.18773100723245e-10, cliffs_delta: 0.5381958553433563}
-          long_roh_presence:
-            CT: {n_with_ge5mb_roh: 29, n_total: 46, fraction: 0.6304347826086957}
-            CEU: {n_with_ge5mb_roh: 3, n_total: 99, fraction: 0.030303030303030304}
-            FIN: {n_with_ge5mb_roh: 26, n_total: 99, fraction: 0.26262626262626265}
-            GBR: {n_with_ge5mb_roh: 10, n_total: 91, fraction: 0.10989010989010989}
-            IBS: {n_with_ge5mb_roh: 21, n_total: 107, fraction: 0.19626168224299065}
-            TSI: {n_with_ge5mb_roh: 14, n_total: 107, fraction: 0.1308411214953271}
-          final_interpretation: "The CT signal is not a uniform excess of total autozygosity relative to FIN; rather, CT shows a pronounced enrichment of very long ROH, consistent with a stronger recent-autozygosity component in a subset of individuals. This is an interpretation of ROH-length structure, not a direct demographic-time estimate."
-      maf_scope_sensitivity:
-        enabled: true
-        status: "completed_joint_maf0.05_retained_as_primary"
-        populations: ["CT", "CEU", "FIN", "GBR", "IBS", "TSI"]
-        comparison:
-          primary_candidate: "joint_MAF>=0.05_common_marker_panel"
-          sensitivity: "intersection_of_variants_with_MAF>=0.05_within_each_population"
-        rationale: "Use the same marker set for every population while checking whether joint-MAF filtering silently retains many markers that are rare or nearly uninformative within particular populations. Audit marker count, density and gaps before any alternate ROH call."
-        observed_density_audit:
-          joint_maf0.05_variants: 4878327
-          all_population_maf0.05_intersection_variants: 4142839
-          intersection_fraction_of_joint_panel: 0.8492335589639645
-          per_population_retained_fraction_of_joint_panel:
-            CEU: 0.9673349080535192
-            CT: 0.9410408527349643
-            FIN: 0.9417423227266233
-            GBR: 0.9522073858517479
-            IBS: 0.9652897396996962
-            TSI: 0.9628876867007891
-          markers_per_mb: 1482.8827232350943
-          mean_intermarker_gap_bp: 674.3657383369818
-          gaps_gt_100kb: 208
-          gaps_gt_500kb: 37
-          gaps_gt_1000kb: 22
-          interpretation: "The all-population MAF intersection removes about 15.1% of the joint panel but remains extremely dense and has nearly unchanged large-gap structure. Density alone therefore does not justify replacing the joint-MAF primary candidate."
-        observed_call_sensitivity:
-          status: "completed"
-          interpretation: "The stricter all-population MAF intersection slightly increases absolute ROH burden but preserves population ordering and individual ranking extremely strongly. Joint MAF>=0.05 is retained as the less restrictive primary marker ascertainment, with the all-population intersection retained as sensitivity."
-          primary_joint_mean_total_roh_mb:
-            CT: 36.57970608695652
-            FIN: 19.412186141414143
-            IBS: 13.633625261682242
-            GBR: 11.936560087912088
-            CEU: 8.617890232323232
-            TSI: 8.138451570093459
-          strict_all_population_mean_total_roh_mb:
-            CT: 37.65133630434783
-            FIN: 20.805778666666665
-            IBS: 14.850618046728972
-            GBR: 13.437733824175824
-            CEU: 9.64925594949495
-            TSI: 9.161045429906542
-          ct_concordance:
-            total_roh_mb_pearson: 0.998988156576896
-            total_roh_mb_spearman: 0.9924761023743447
-            n_roh_pearson: 0.9903269784524286
-            n_roh_spearman: 0.9809577447322839
-            max_roh_mb_pearson: 0.990855931418971
-            max_roh_mb_spearman: 0.9965464076472402
-        decision: "Freeze joint MAF>=0.05 as the primary ROH panel; retain the all-population MAF>=0.05 intersection as a prespecified ascertainment sensitivity."
-    marker_density_audit:
-      enabled: true
-      status: "completed"
-      input_master: "exact_harmonized_ct_plus_1kg_eur"
-      ld_pruning_before_audit: false
-      gap_thresholds_kb: [50, 100, 250, 500, 1000]
-      purpose: "Measure physical marker density and inter-marker gaps before choosing ROH SNP-count, density, gap, and LD-pruning settings."
-      observed:
-        retained_variants: 4878327
-        autosomes: 22
-        sum_terminal_marker_spans_bp: 2793824144
-        markers_per_mb_across_terminal_marker_spans: 1746.1109749791037
-        mean_intermarker_gap_bp_genomewide: 572.703863739557
-        maximum_intermarker_gap_bp_genomewide: 21133173
-        total_intermarker_gaps: 4878305
-        gaps_gt_50kb: 355
-        gaps_gt_100kb: 201
-        gaps_gt_250kb: 61
-        gaps_gt_500kb: 35
-        gaps_gt_1000kb: 21
-      interpretation: "The joint MAF>=0.05 WGS-derived panel is extremely dense (about one marker per 573 bp on average). Rare large gaps are localized exceptions; physical-length and LD-sensitivity criteria should therefore drive ROH tuning rather than copying SNP-array SNP-count defaults."
 
-    parameters_to_refine:
-      status: "production_roh_parameters_frozen"
-      remaining: []
-
+    production:
+      homozyg_window_snp: 50
+      homozyg_snp: 50
+      homozyg_kb: 1500
+      homozyg_density: 50
+      homozyg_gap: 500
+      homozyg_window_missing: 5
+      homozyg_window_het: 1
+      homozyg_window_threshold: 0.05
+      froh_denominator_bp: 2770000000
 
 # ============================================================
 # Selection / LASSI branch
