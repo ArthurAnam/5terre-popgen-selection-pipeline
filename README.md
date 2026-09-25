@@ -50,15 +50,14 @@ The target dataset is the Cinque Terre WGS cohort.
 **Verified starting dataset (`all_samples_snp.vcf.gz`):**
 
 * 50 WGS samples
-* 11,490,646 variant records
-* 11,490,646 SNPs
+* 11,490,646 SNP records
 * 0 INDELs
 * 0 multiallelic sites
 * all records `FILTER=PASS`
 * indexed contigs `1-22`, `X`, `Y`
 * GRCh37.p13 / hs37d5 provenance upstream
 
-The value **46 samples** refers to a historical post-QC dataset and is not imposed as an input assumption. The current workflow starts from all 50 delivered individuals and will reconstruct, from reproducible QC evidence, whether four samples should indeed be excluded.
+The workflow starts from all 50 delivered individuals. Sample-level QC then reproduces and documents the exclusion of four reviewed outliers, leaving **46 samples** for downstream population-genomic analyses.
 
 Variant calling, joint genotyping, SNP/biallelic selection, and VQSR were performed upstream and are not repeated within this workflow. Their provenance is documented in `docs/upstream_variant_calling_provenance.md`.
 
