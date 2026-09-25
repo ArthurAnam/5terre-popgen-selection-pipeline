@@ -4,8 +4,6 @@ Reproducible Snakemake workflow for population-genomic analyses and haplotype-ba
 
 ## Target dataset
 
-The target dataset is the Cinque Terre WGS cohort.
-
 - 50 WGS samples (all males)
 - 11,490,646 SNPs
 - Chromosomes `1-22` for downstream analyses
@@ -16,8 +14,6 @@ The workflow starts from 50 individuals. Sample-level QC reproduces and document
 Variant calling, joint genotyping, SNP/biallelic selection, and VQSR were performed upstream and are not repeated within this workflow. Their provenance is documented in `docs/upstream_variant_calling_provenance.md`.
 
 ## Target QC
-
-The final autosomal CT core-QC dataset contains:
 
 - 46 samples
 - 9,000,246 SNPs
@@ -30,17 +26,14 @@ No additional arbitrary QUAL, DP, GQ, or allele-balance hard filters are imposed
 
 ## 1000 Genomes EUR reference
 
-The 1000 Genomes Phase 3 EUR panel contains 503 individuals:
-
+- 503 individuals total
 - CEU: 99
 - FIN: 99
 - GBR: 91
 - IBS: 107
 - TSI: 107
 
-The panel is used for European context, CT phasing support, and population-specific selection comparisons.
-
-For production selection scans:
+Production selection scans:
 
 - CEU, TSI, and IBS are comparison populations
 - FIN and GBR are LD-context populations only
@@ -50,8 +43,6 @@ For production selection scans:
 CEU also has a separate paper-oriented LASSI-T benchmark, distinct from the production CEU comparison.
 
 ## Population-genomic analyses
-
-Implemented analyses include:
 
 - KING relatedness
 - joint CT + EUR PCA
@@ -73,16 +64,8 @@ CT is phased with SHAPEIT2 v2.r904 using the 1000 Genomes Phase 3 EUR reference.
 
 ## Selection scan
 
-Primary method:
-
-- **saltiLASSI Lambda**
-
-Secondary method:
-
-- **original LASSI T**
-
-Implementation:
-
+- primary: **saltiLASSI Lambda**
+- secondary: **original LASSI T**
 - `lassip` v1.2.1
 - commit `a6a9d18c2323330fbf74d5a490f9e9c4ebe41d7c`
 - K=10
@@ -98,10 +81,7 @@ The CT primary candidate threshold is the top 1% of genome-wide Lambda. Top 0.1%
 
 ## Mappability
 
-The production CRG100 resource is:
-
-`wgEncodeCrgMapabilityAlign100mer.bigWig`
-
+- `wgEncodeCrgMapabilityAlign100mer.bigWig`
 - build: hg19 / GRCh37
 - expected MD5: `a1b1a8c99431fedf6a3b4baef028cca4`
 - production threshold: mean CRG100 >=0.9
