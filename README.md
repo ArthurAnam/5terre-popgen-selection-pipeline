@@ -50,7 +50,7 @@ The target dataset is the Cinque Terre WGS cohort.
 **Verified starting dataset (`all_samples_snp.vcf.gz`):**
 
 * 50 WGS samples
-* 11,490,646 SNP records
+* 11,490,646 SNPs
 * 0 INDELs
 * 0 multiallelic sites
 * all records `FILTER=PASS`
